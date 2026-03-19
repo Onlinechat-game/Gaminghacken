@@ -21,6 +21,8 @@ body { background:#0d1117; color:#e6edf3; font-family:Arial; text-align:center; 
 <div id="price">Prix: --</div>
 <div id="status" class="status">--</div>
 <div id="score" class="score">--</div>
+<div id="buyPct" class="score">Achat: --%</div>
+<div id="sellPct" class="score">Vente: --%</div>
 <div id="timer" class="timer">Cycle: --</div>
 </div><div class="card">
 <p>EMA50: <span id="ema"></span></p>
@@ -91,6 +93,10 @@ rsiEl.innerText = rsi.toFixed(2);
 adxEl.innerText = adx.toFixed(2);
 
 scoreEl.innerText = signal + " " + probability + "%";
+
+// Affichage % Achat / Vente
+buyEl.innerText = "Achat: " + probability + "%";
+sellEl.innerText = "Vente: " + (100 - probability) + "%";
 status.innerText = signal;
 status.className = "status " + (signal === "ACHETER" ? "green" : "red");
 
@@ -104,6 +110,8 @@ const adxEl = document.getElementById("adx");
 const scoreEl = document.getElementById("score");
 const status = document.getElementById("status");
 const timerEl = document.getElementById("timer");
+const buyEl = document.getElementById("buyPct");
+const sellEl = document.getElementById("sellPct");
 
 // ⚡ ULTRA RAPIDE 2 secondes + cycle 20s
 setInterval(analyze,2000);
