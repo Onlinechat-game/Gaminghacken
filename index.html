@@ -2,31 +2,32 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BOT PRO MAX</title>
+<title>BOT PRO MAX FAST</title>
 <style>
 body { background:#0d1117; color:#e6edf3; font-family:Arial; text-align:center; }
 .container { margin-top:20px; }
 .title { font-size:34px; font-weight:bold; }
-.status { font-size:50px; margin:20px; font-weight:bold; transition:0.3s; }
+.status { font-size:50px; margin:20px; font-weight:bold; transition:0.2s; }
 .green { color:#00ff88; }
 .red { color:#ff4d4d; }
-.card { background:#161b22; margin:10px auto; padding:15px; width:300px; border-radius:10px; }
+.card { background:#161b22; margin:10px auto; padding:15px; width:320px; border-radius:10px; }
 .score { font-size:22px; }
 </style>
 </head>
 <body>
 <div class="container">
-<div class="title">BOT PRO MAX (LIVE)</div><div class="card">
+<div class="title">BOT PRO MAX FAST (OTC MODE)</div><div class="card">
 <div id="price">Prix: --</div>
 <div id="status" class="status">--</div>
-<div id="score" class="score">Score: --</div>
+<div id="score" class="score">--</div>
 </div><div class="card">
 <p>EMA50: <span id="ema"></span></p>
 <p>RSI14: <span id="rsi"></span></p>
 <p>ADX14: <span id="adx"></span></p>
 <p>Trend: <span id="trend"></span></p>
-</div></div><script>
-const API = (tf) => `https://api.binance.com/api/v3/klines?symbol=BTCUSDT&interval=${tf}&limit=100`;
+</div>
+</div><script>
+const API = (tf) => `https://api.binance.com/api/v3/klines?symbol=EURUSDT&interval=${tf}&limit=100`;
 
 function EMA(a,p){let k=2/(p+1),e=a[0];for(let i=1;i<a.length;i++)e=a[i]*k+e*(1-k);return e;}
 function RSI(a,p=14){let g=0,l=0;
@@ -58,54 +59,60 @@ let closes = data.map(c=>parseFloat(c[4]));
 return {data, closes};
 }
 
-async function analyze(){
-
-// Multi timeframe
-let t1 = await getData("1m");
-let t5 = await getData("5m");
-let t15 = await getData("15m");
-
-let price = t1.closes.at(-1);
-
-let ema = EMA(t1.closes.slice(-50),50);
-let rsi = RSI(t1.closes);
-let adx = ADX(t1.data);
-
-// Scores multi TF
-function scoreTF(t){
+function computeScore(t){
 let ema = EMA(t.closes.slice(-50),50);
 let rsi = RSI(t.closes);
 let adx = ADX(t.data);
 let price = t.closes.at(-1);
 
-let s = 0;
-if(price>ema) s+=1; else s-=1;
-if(rsi>50) s+=1; else s-=1;
-if(adx>20) s+=1;
-return s;
+let score = 0;
+
+// Trend
+score += (price > ema) ? 40 : -40;
+
+// RSI weight
+score += (rsi - 50) * 1.2;
+
+// ADX strength
+score += (adx - 20) * 1.5;
+
+return score;
 }
 
-let score = scoreTF(t1)+scoreTF(t5)+scoreTF(t15);
+async function analyze(){
+let t1 = await getData("1m");
+let t5 = await getData("5m");
 
-// Normalize to %
-let percent = Math.round((score+6)/12*100);
+let s1 = computeScore(t1);
+let s5 = computeScore(t5);
 
-let signal = percent >= 50 ? "ACHETER" : "VENDRE";
+// Weighted score (rapide + stable)
+let finalScore = (s1 * 0.7) + (s5 * 0.3);
 
-// Trend detection
-let trend = "RANGE";
-if(adx > 25) trend = "TENDANCE FORTE";
+// Convert to probability
+let probability = Math.max(0, Math.min(100, Math.round(finalScore + 50)));
 
-// UI update LIVE
-priceEl.innerText = "Prix: "+price.toFixed(2);
-emaEl.innerText = ema.toFixed(2);
+let signal = probability >= 50 ? "ACHETER" : "VENDRE";
+
+let price = t1.closes.at(-1);
+let ema = EMA(t1.closes.slice(-50),50);
+let rsi = RSI(t1.closes);
+let adx = ADX(t1.data);
+
+// Trend detection rapide
+let trend = adx > 25 ? "TENDANCE" : "RANGE";
+
+// UI
+priceEl.innerText = "Prix: " + price.toFixed(4);
+emaEl.innerText = ema.toFixed(4);
 rsiEl.innerText = rsi.toFixed(2);
 adxEl.innerText = adx.toFixed(2);
 trendEl.innerText = trend;
-scoreEl.innerText = "Score: "+percent+"%";
+
+scoreEl.innerText = signal + " " + probability + "%";
 
 status.innerText = signal;
-status.className = "status " + (signal==="ACHETER"?"green":"red");
+status.className = "status " + (signal === "ACHETER" ? "green" : "red");
 }
 
 // DOM
@@ -117,8 +124,8 @@ const trendEl = document.getElementById("trend");
 const scoreEl = document.getElementById("score");
 const status = document.getElementById("status");
 
-// LOOP CONTINU
-setInterval(analyze,10000);
+// ⚡ ANALYSE ULTRA RAPIDE (3 secondes)
+setInterval(analyze, 3000);
 analyze();
 </script></body>
 </html>
