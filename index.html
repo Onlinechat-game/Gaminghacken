@@ -70,6 +70,7 @@
 
   <script>
     async function getData() {
+      // Bougies EURUSDT en 1 minute
       let response = await fetch("https://api.binance.com/api/v3/klines?symbol=EURUSDT&interval=1m&limit=100");
       let data = await response.json();
       return data.map(candle => ({
@@ -89,6 +90,7 @@
     }
 
     function calcRSI(prices, period=14) {
+      if (prices.length < period+1) return 50;
       let gains=0, losses=0;
       for (let i=1; i<period; i++) {
         let diff = prices[i]-prices[i-1];
