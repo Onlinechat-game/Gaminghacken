@@ -3,19 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bot Live Auto - Hacken</title>
+    <title>Bot Live Dark - Hacken</title>
     <script src="https://unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js"></script>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background-color: #050505; color: #fff; text-align: center; padding: 10px; margin: 0; }
+        /* FIX 1: Force le fond de la page en noir absolu */
+        body { 
+            font-family: 'Segoe UI', sans-serif; 
+            background-color: #000000 !important; 
+            color: #fff; 
+            text-align: center; 
+            padding: 10px; 
+            margin: 0; 
+        }
         h2 { color: #ffd700; margin: 5px 0; text-transform: uppercase; letter-spacing: 1px; font-size: 1.3rem; display: flex; align-items: center; justify-content: center; gap: 10px; }
         
-        /* Indicateur LIVE */
         .live-indicator {
-            font-size: 0.8rem;
-            color: #00e676;
+            font-size: 0.8rem; color: #00e676;
             background: rgba(0, 230, 118, 0.1);
-            padding: 4px 8px;
-            border-radius: 12px;
+            padding: 4px 8px; border-radius: 12px;
             border: 1px solid #00e676;
             animation: pulseLive 2s infinite;
         }
@@ -23,13 +28,21 @@
 
         .subtitle { font-size: 0.8rem; color: #888; margin-bottom: 10px; }
         
-        .card { background: #1a1a1a; border-radius: 15px; padding: 15px; box-shadow: 0 0 20px rgba(0, 230, 118, 0.1); max-width: 450px; margin: 0 auto; border: 1px solid #333; }
+        .card { 
+            background: #111111; /* Fond sombre pour la carte */
+            border-radius: 15px; 
+            padding: 15px; 
+            box-shadow: 0 0 20px rgba(0, 230, 118, 0.1); 
+            max-width: 450px; 
+            margin: 0 auto; 
+            border: 1px solid #333; 
+        }
         
-        /* ZONE GRAPHIQUE */
+        /* FIX 2: Force le conteneur du graphique en noir */
         #chart-container {
             width: 100%;
             height: 250px;
-            background: #111;
+            background-color: #000000 !important; /* Noir absolu */
             border-radius: 10px;
             margin: 10px 0;
             border: 1px solid #333;
@@ -38,20 +51,17 @@
         }
         #price-overlay {
             position: absolute;
-            top: 10px;
-            left: 10px;
-            font-size: 1.1rem;
-            font-weight: bold;
+            top: 10px; left: 10px;
+            font-size: 1.1rem; font-weight: bold;
             color: #4fc3f7;
             z-index: 10;
             text-shadow: 1px 1px 2px #000;
             pointer-events: none;
-            background: rgba(0,0,0,0.6);
+            background: rgba(0,0,0,0.7);
             padding: 4px 8px;
             border-radius: 4px;
         }
 
-        /* Sélecteur de temps */
         .time-selector { margin: 10px 0; display: flex; justify-content: center; gap: 5px; flex-wrap: wrap; }
         .time-btn {
             background: #333; border: 1px solid #555; color: #ccc;
@@ -93,7 +103,6 @@
         .details { margin-top: 15px; font-size: 0.75rem; color: #aaa; text-align: left; background: #111; padding: 12px; border-radius: 8px; border-left: 4px solid #ffd700; display: none; }
         .detail-row { display: flex; justify-content: space-between; margin-bottom: 6px; border-bottom: 1px solid #222; padding-bottom: 3px; }
         .val-good { color: #00e676; font-weight: bold; }
-        .val-bad { color: #ff5252; font-weight: bold; }
         .advice { margin-top: 8px; font-style: italic; color: #ffd700; font-size: 0.7rem; }
 
         #enable-sound { margin-top: 10px; background: #333; font-size: 0.75rem; padding: 8px; border: 1px solid #555; width: 100%; color: #fff; border-radius: 5px; cursor: pointer; }
@@ -110,6 +119,7 @@
         </h2>
         <div class="subtitle">Graphique EUR/USD Auto-Mise à jour</div>
         
+        <!-- Le conteneur est maintenant forcé en noir via CSS -->
         <div id="chart-container">
             <div id="price-overlay">Prix: --.--</div>
         </div>
@@ -141,36 +151,60 @@
         let selectedTimeframe = '1h';
         let audioContext = null;
         let isSoundEnabled = false;
-        let currentCandles = []; // Stockage local des données
+        let currentCandles = []; 
 
-        // --- 1. INITIALISATION DU GRAPHIQUE ---
         function initChart() {
             const container = document.getElementById('chart-container');
+            
+            // FIX 3: Configuration explicite du thème sombre dans le JS
             chart = LightweightCharts.createChart(container, {
                 width: container.clientWidth,
                 height: 250,
-                layout: { backgroundColor: '#111', textColor: '#aaa' },
-                grid: { vertLines: { color: '#222' }, horzLines: { color: '#222' } },
-                crosshair: { mode: LightweightCharts.CrosshairMode.Normal },
-                timeScale: { borderColor: '#444', timeVisible: true, secondsVisible: false },
+                layout: { 
+                    backgroundColor: '#000000', // Noir absolu
+                    textColor: '#d1d4dc',       // Texte gris clair
+                },
+                grid: { 
+                    vertLines: { color: '#222222' }, // Grille sombre
+                    horzLines: { color: '#222222' },
+                },
+                crosshair: {
+                    mode: LightweightCharts.CrosshairMode.Normal,
+                },
+                timeScale: { 
+                    borderColor: '#444444',
+                    timeVisible: true, 
+                    secondsVisible: false,
+                    backgroundColor: '#000000', // Axe temporel noir
+                },
+                rightPriceScale: {
+                    borderColor: '#444444',
+                    backgroundColor: '#000000', // Axe prix noir
+                },
             });
 
             candleSeries = chart.addCandlestickSeries({
-                upColor: '#00e676', downColor: '#ff5252',
-                borderDownColor: '#ff5252', borderUpColor: '#00e676',
-                wickDownColor: '#ff5252', wickUpColor: '#00e676',
+                upColor: '#00e676', 
+                downColor: '#ff5252',
+                borderDownColor: '#ff5252', 
+                borderUpColor: '#00e676',
+                wickDownColor: '#ff5252', 
+                wickUpColor: '#00e676',
             });
 
-            emaSeries = chart.addLineSeries({ color: '#2962ff', lineWidth: 2, title: 'EMA 50' });
+            emaSeries = chart.addLineSeries({ 
+                color: '#2962ff', 
+                lineWidth: 2, 
+                title: 'EMA 50',
+                priceLineVisible: false, // Cache la ligne de prix horizontale pour éviter le blanc
+            });
 
             window.addEventListener('resize', () => chart.resize(container.clientWidth, 250));
             
-            // Démarrer la mise à jour automatique immédiate
             updateChartData();
-            setInterval(updateChartData, 3000); // Mise à jour toutes les 3 secondes
+            setInterval(updateChartData, 3000);
         }
 
-        // --- 2. FONCTION DE MISE À JOUR AUTOMATIQUE ---
         async function updateChartData() {
             try {
                 const response = await fetch('https://api.binance.com/api/v3/klines?symbol=EURUSDT&interval=15m&limit=100');
@@ -183,14 +217,12 @@
                     low: parseFloat(k[3]), close: parseFloat(k[4])
                 }));
 
-                currentCandles = candles; // Sauvegarde pour l'analyse
+                currentCandles = candles;
                 candleSeries.setData(candles);
                 
-                // Mise à jour du prix affiché
                 const lastPrice = candles[candles.length - 1].close;
                 document.getElementById('price-overlay').innerText = "Prix: " + lastPrice.toFixed(5);
 
-                // Recalculer et mettre à jour l'EMA automatiquement
                 const closes = candles.map(c => c.close);
                 const emaValues = calculateEMA(closes, 50);
                 const emaData = candles.map((c, i) => ({ time: c.time, value: emaValues[i] }));
@@ -238,7 +270,6 @@
             }
         }
 
-        // --- 3. FONCTIONS DE CALCUL (EMA, RSI, ADX) ---
         function calculateEMA(prices, period) {
             const k = 2 / (period + 1);
             let ema = prices[0];
@@ -258,14 +289,12 @@
 
         function calculateADX(highs, lows, closes, period = 14) {
             if (closes.length < period * 2) return 0;
-            // Version simplifiée pour la performance en temps réel
             let trSum = 0, plusDMSum = 0, minusDMSum = 0;
             for(let i = closes.length - period; i < closes.length; i++) {
                 let tr = Math.max(highs[i] - lows[i], Math.abs(highs[i] - closes[i-1]), Math.abs(lows[i] - closes[i-1]));
                 trSum += tr;
                 let plusDM = Math.max(0, highs[i] - highs[i-1]);
                 let minusDM = Math.max(0, lows[i-1] - lows[i]);
-                if (plusDM > minusDM) minusDMSum += 0; else plusDMSum += 0; // Simplification logique
                 plusDMSum += (plusDM > minusDM ? plusDM : 0);
                 minusDMSum += (minusDM > plusDM ? minusDM : 0);
             }
@@ -276,7 +305,6 @@
             return Math.abs(plusDI - minusDI) / (plusDI + minusDI) * 100;
         }
 
-        // --- 4. LANCEMENT DE L'ANALYSE MANUELLE (Sur données à jour) ---
         function lancerAnalyse() {
             if (currentCandles.length === 0) {
                 alert("Chargement des données...");
@@ -293,13 +321,11 @@
                 const lows = currentCandles.map(c => c.low);
                 const lastClose = closes[closes.length - 1];
                 
-                // Calculs sur les données fraîches
                 const emaValues = calculateEMA(closes, 50);
                 const lastEMA = emaValues[emaValues.length - 1];
                 const rsi = calculateRSI(closes, 14);
                 const adx = calculateADX(highs, lows, closes, 14);
 
-                // Paramètres selon le temps
                 let adxThreshold = 20, slPips = 50, tpPips = 100;
                 if (selectedTimeframe === '20m') { adxThreshold = 25; slPips = 30; tpPips = 60; }
                 else if (selectedTimeframe === '24h') { adxThreshold = 18; slPips = 150; tpPips = 300; }
@@ -321,7 +347,7 @@
 
                 document.getElementById('tech-details').style.display = 'block';
                 document.getElementById('tech-details').innerHTML = `
-                    <div class="detail-row"><span>Prix vs EMA:</span> <span class="${lastClose > lastEMA ? 'val-good' : 'val-bad'}">${lastClose > lastEMA ? 'HAUSSE' : 'BAISSE'}</span></div>
+                    <div class="detail-row"><span>Prix vs EMA:</span> <span class="${lastClose > lastEMA ? 'val-good' : ''}">${lastClose > lastEMA ? 'HAUSSE' : 'BAISSE'}</span></div>
                     <div class="detail-row"><span>ADX:</span> <span>${adx.toFixed(1)}</span></div>
                     <div class="detail-row"><span>RSI:</span> <span>${rsi.toFixed(1)}</span></div>
                     <div class="advice">💡 SL: ${slPips} pts | TP: ${tpPips} pts</div>
