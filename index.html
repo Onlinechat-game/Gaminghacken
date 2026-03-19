@@ -2,50 +2,33 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BOT PRO PRECISION IA</title>
+<title>BOT PRO MAX</title>
 <style>
 body { background:#0d1117; color:#e6edf3; font-family:Arial; text-align:center; }
 .container { margin-top:20px; }
 .title { font-size:34px; font-weight:bold; }
-select, button { margin:10px; padding:8px; background:#161b22; color:white; border:1px solid #30363d; }
-.status { font-size:42px; margin:20px; font-weight:bold; }
+.status { font-size:50px; margin:20px; font-weight:bold; transition:0.3s; }
 .green { color:#00ff88; }
 .red { color:#ff4d4d; }
-.card { background:#161b22; margin:10px auto; padding:15px; width:280px; border-radius:10px; }
-.score { font-size:22px; margin-top:10px; }
+.card { background:#161b22; margin:10px auto; padding:15px; width:300px; border-radius:10px; }
+.score { font-size:22px; }
 </style>
 </head>
 <body>
 <div class="container">
-<div class="title">BOT PRO PRECISION IA</div><select id="pair">
-<option value="BTCUSDT">BTC</option>
-<option value="ETHUSDT">ETH</option>
-<option value="EURUSDT" selected>EUR</option>
-</select><select id="interval">
-<option value="1m">1m</option>
-<option value="5m">5m</option>
-<option value="15m">15m</option>
-</select><div class="card">
+<div class="title">BOT PRO MAX (LIVE)</div><div class="card">
 <div id="price">Prix: --</div>
 <div id="status" class="status">--</div>
 <div id="score" class="score">Score: --</div>
-</div><button onclick="analyze()">NOUVELLE ANALYSE</button>
-
-<div class="card">
+</div><div class="card">
 <p>EMA50: <span id="ema"></span></p>
 <p>RSI14: <span id="rsi"></span></p>
 <p>ADX14: <span id="adx"></span></p>
-<p>Volume: <span id="vol"></span></p>
-</div>
-</div><script>
-function API(){
-let p=document.getElementById("pair").value;
-let i=document.getElementById("interval").value;
-return `https://api.binance.com/api/v3/klines?symbol=${p}&interval=${i}&limit=100`;
-}
+<p>Trend: <span id="trend"></span></p>
+</div></div><script>
+const API = (tf) => `https://api.binance.com/api/v3/klines?symbol=BTCUSDT&interval=${tf}&limit=100`;
 
 function EMA(a,p){let k=2/(p+1),e=a[0];for(let i=1;i<a.length;i++)e=a[i]*k+e*(1-k);return e;}
-
 function RSI(a,p=14){let g=0,l=0;
 for(let i=1;i<=p;i++){let d=a[i]-a[i-1]; if(d>0)g+=d; else l-=d;}
 let ag=g/p, al=l/p;
@@ -53,7 +36,6 @@ for(let i=p+1;i<a.length;i++){let d=a[i]-a[i-1];
 if(d>0){ag=(ag*(p-1)+d)/p; al=(al*(p-1))/p;}
 else{ag=(ag*(p-1))/p; al=(al*(p-1)-d)/p;}}
 let rs=ag/al; return 100-(100/(1+rs));}
-
 function ADX(d,p=14){let trs=[],plus=[],minus=[];
 for(let i=1;i<d.length;i++){
 let h=d[i][2],l=d[i][3],pc=d[i-1][4];
@@ -69,65 +51,73 @@ let mDM=minus.slice(0,p).reduce((a,b)=>a+b)/p;
 let pDI=(pDM/atr)*100, mDI=(mDM/atr)*100;
 return Math.abs(pDI-mDI)/(pDI+mDI)*100;}
 
-function AI_SCORE(price, ema, rsi, adx, volume){
-let score = 0;
-
-// Trend
-if(price > ema) score += 30;
-else score -= 30;
-
-// RSI strength
-score += (rsi - 50) * 0.8;
-
-// ADX trend strength
-score += (adx - 20) * 1.2;
-
-// Volume boost
-if(volume > 1.2) score += 10;
-
-return Math.max(0, Math.min(100, Math.round(score + 50)));
+async function getData(tf){
+let res = await fetch(API(tf));
+let data = await res.json();
+let closes = data.map(c=>parseFloat(c[4]));
+return {data, closes};
 }
 
 async function analyze(){
-let res = await fetch(API());
-let data = await res.json();
 
-let closes = data.map(c=>parseFloat(c[4]));
-let volumes = data.map(c=>parseFloat(c[5]));
+// Multi timeframe
+let t1 = await getData("1m");
+let t5 = await getData("5m");
+let t15 = await getData("15m");
 
-let price = closes.at(-1);
-let ema = EMA(closes.slice(-50),50);
-let rsi = RSI(closes);
-let adx = ADX(data);
+let price = t1.closes.at(-1);
 
-let avgVol = volumes.slice(-20).reduce((a,b)=>a+b)/20;
-let volNow = volumes.at(-1)/avgVol;
+let ema = EMA(t1.closes.slice(-50),50);
+let rsi = RSI(t1.closes);
+let adx = ADX(t1.data);
 
-let score = AI_SCORE(price, ema, rsi, adx, volNow);
+// Scores multi TF
+function scoreTF(t){
+let ema = EMA(t.closes.slice(-50),50);
+let rsi = RSI(t.closes);
+let adx = ADX(t.data);
+let price = t.closes.at(-1);
 
-let signal = score > 50 ? "ACHETER" : "VENDRE";
+let s = 0;
+if(price>ema) s+=1; else s-=1;
+if(rsi>50) s+=1; else s-=1;
+if(adx>20) s+=1;
+return s;
+}
 
-// UI
+let score = scoreTF(t1)+scoreTF(t5)+scoreTF(t15);
+
+// Normalize to %
+let percent = Math.round((score+6)/12*100);
+
+let signal = percent >= 50 ? "ACHETER" : "VENDRE";
+
+// Trend detection
+let trend = "RANGE";
+if(adx > 25) trend = "TENDANCE FORTE";
+
+// UI update LIVE
 priceEl.innerText = "Prix: "+price.toFixed(2);
 emaEl.innerText = ema.toFixed(2);
 rsiEl.innerText = rsi.toFixed(2);
 adxEl.innerText = adx.toFixed(2);
-volEl.innerText = volNow.toFixed(2)+"x";
-scoreEl.innerText = "Score: "+score+"%";
+trendEl.innerText = trend;
+scoreEl.innerText = "Score: "+percent+"%";
 
 status.innerText = signal;
-status.className = "status "+(signal==="ACHETER"?"green":"red");
+status.className = "status " + (signal==="ACHETER"?"green":"red");
 }
 
-// DOM refs
+// DOM
 const priceEl = document.getElementById("price");
 const emaEl = document.getElementById("ema");
 const rsiEl = document.getElementById("rsi");
 const adxEl = document.getElementById("adx");
-const volEl = document.getElementById("vol");
+const trendEl = document.getElementById("trend");
 const scoreEl = document.getElementById("score");
 const status = document.getElementById("status");
 
+// LOOP CONTINU
 setInterval(analyze,10000);
 analyze();
 </script></body>
