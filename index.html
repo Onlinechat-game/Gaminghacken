@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Hacken Auto 10s</title>
+    <title>Hacken Auto Direct 10s</title>
     <style>
         body { 
             font-family: 'Arial Black', sans-serif; 
@@ -25,31 +25,31 @@
         
         /* COMPTEUR GÉANT */
         .timer-box {
-            font-size: 3rem;
+            font-size: 3.5rem;
             font-weight: 900;
-            color: #fff;
+            color: #00c6ff;
             margin: 10px 0;
             font-family: monospace;
-            text-shadow: 0 0 10px rgba(255,255,255,0.5);
+            text-shadow: 0 0 15px rgba(0, 198, 255, 0.6);
         }
         .timer-label { font-size: 0.7rem; color: #888; text-transform: uppercase; margin-top: -5px; display: block;}
 
         /* ZONE DE SIGNAL */
         #signal-box {
             width: 100%;
-            height: 120px;
+            height: 130px;
             border-radius: 15px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            font-size: 2.2rem;
+            font-size: 2.3rem;
             font-weight: 900;
             text-transform: uppercase;
             border: 4px solid #333;
             background: #111;
             margin-bottom: 10px;
-            transition: all 0.2s;
+            transition: all 0.1s;
             position: relative;
             overflow: hidden;
         }
@@ -61,34 +61,34 @@
         .buy { 
             background: linear-gradient(135deg, #00ff00, #006400); 
             color: #fff; border-color: #00ff00; 
-            box-shadow: 0 0 50px #00ff00;
-            animation: flashG 0.5s infinite;
+            box-shadow: 0 0 60px #00ff00;
+            animation: flashG 0.4s infinite;
         }
         .sell { 
             background: linear-gradient(135deg, #ff0000, #8b0000); 
             color: #fff; border-color: #ff0000; 
-            box-shadow: 0 0 50px #ff0000;
-            animation: flashR 0.5s infinite;
+            box-shadow: 0 0 60px #ff0000;
+            animation: flashR 0.4s infinite;
         }
         .scanning {
-            background: #222; color: #00c6ff; border-color: #00c6ff;
+            background: #222; color: #aaa; border-color: #444;
             font-size: 1.5rem;
         }
 
-        @keyframes flashG { 0% { transform: scale(1); } 50% { transform: scale(1.08); filter: brightness(1.6); } 100% { transform: scale(1); } }
-        @keyframes flashR { 0% { transform: scale(1); } 50% { transform: scale(1.08); filter: brightness(1.6); } 100% { transform: scale(1); } }
+        @keyframes flashG { 0% { transform: scale(1); } 50% { transform: scale(1.1); filter: brightness(1.8); } 100% { transform: scale(1); } }
+        @keyframes flashR { 0% { transform: scale(1); } 50% { transform: scale(1.1); filter: brightness(1.8); } 100% { transform: scale(1); } }
 
         .status-bar { font-size: 0.7rem; color: #666; font-family: monospace; margin-top: 10px; }
         .btn-small { background: #333; color: #fff; border: 1px solid #555; padding: 6px; width: 100%; border-radius: 5px; font-size: 0.7rem; margin-top: 5px; cursor: pointer; }
         .btn-small.active { background: #00e676; color: #000; font-weight: bold; border: none; }
-        .error-msg { color: #ff4444; font-size: 0.65rem; min-height: 12px; margin-top: 3px; }
+        .error-msg { color: #ff4444; font-size: 0.65rem; min-height: 12px; margin-top: 3px; font-weight: bold; }
 
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>⚡ Hacken Auto 10s</h1>
+    <h1>⚡ Hacken Auto Direct</h1>
     
     <!-- COMPTEUR -->
     <div class="timer-box" id="countdown">10.0</div>
@@ -96,20 +96,20 @@
 
     <!-- SIGNAL -->
     <div id="signal-box" class="scanning">
-        <div class="signal-text">SCAN...</div>
-        <div class="sub-text">Analyse auto en cours</div>
+        <div class="signal-text">PRÊT</div>
+        <div class="sub-text">Démarrage auto...</div>
     </div>
 
     <div class="status-bar">Prix: <span id="price" style="color:#fff">...</span></div>
     <div id="error-display" class="error-msg"></div>
 
     <button class="btn-small" id="btn-sound" onclick="initAudio()">🔊 ACTIVER SON & VIBRATION</button>
-    <div style="font-size:0.6rem; color:#555; margin-top:5px;">Cycle: Analyse ➔ Signal ➔ Trade 5s ➔ Attente</div>
+    <div style="font-size:0.6rem; color:#555; margin-top:5px;">Cycle: 10s ➔ Signal Auto ➔ Trade 5s</div>
 </div>
 
 <script>
     let audioCtx, isAudioReady = false;
-    let cycleTime = 10.0; // Durée du cycle en secondes
+    let cycleTime = 10.0; 
     let timerInterval;
     let isSignaling = false;
 
@@ -120,29 +120,33 @@
             document.getElementById('btn-sound').innerText = "✅ SON ACTIVÉ";
             document.getElementById('btn-sound').classList.add('active');
             if(navigator.vibrate) navigator.vibrate(100);
-        } catch(e) {}
+            // Test son
+            playAlert();
+        } catch(e) {
+            alert("Erreur Audio: Cliquez plusieurs fois sur le bouton");
+        }
     }
 
     function playAlert() {
         if (!isAudioReady) return;
-        // Sirène double ton
         const osc = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
-        osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(800, audioCtx.currentTime);
-        osc.frequency.linearRampToValueAtTime(1200, audioCtx.currentTime + 0.1);
+        osc.type = 'square';
+        osc.frequency.setValueAtTime(880, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(440, audioCtx.currentTime + 0.1);
         osc.connect(gain);
         gain.connect(audioCtx.destination);
         osc.start();
         gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
         osc.stop(audioCtx.currentTime + 0.3);
         
+        // Double bip
         setTimeout(() => {
             const osc2 = audioCtx.createOscillator();
             const gain2 = audioCtx.createGain();
-            osc2.type = 'sawtooth';
-            osc2.frequency.setValueAtTime(800, audioCtx.currentTime);
-            osc2.frequency.linearRampToValueAtTime(1200, audioCtx.currentTime + 0.1);
+            osc2.type = 'square';
+            osc2.frequency.setValueAtTime(880, audioCtx.currentTime);
+            osc2.frequency.exponentialRampToValueAtTime(440, audioCtx.currentTime + 0.1);
             osc2.connect(gain2);
             gain2.connect(audioCtx.destination);
             osc2.start();
@@ -170,17 +174,17 @@
 
         isSignaling = true;
         
-        // Le signal reste affiché pendant environ 3-4 secondes puis retourne au scan
+        // Le signal reste affiché pendant 4 secondes puis retourne au scan
         setTimeout(() => {
             box.className = 'scanning';
-            box.innerHTML = `<div class="signal-text">NEXT CYCLE</div><div class="sub-text">Préparation...</div>`;
-            document.title = "Hacken Auto 10s";
+            box.innerHTML = `<div class="signal-text">NEXT CYCLE</div><div class="sub-text">Attente...</div>`;
+            document.title = "Hacken Auto Direct";
             isSignaling = false;
         }, 4000);
     }
 
     async function fetchAndDecide() {
-        if (isSignaling) return; // Si on affiche déjà un signal, on ne fait rien
+        if (isSignaling) return; 
 
         const priceEl = document.getElementById('price');
         const errorEl = document.getElementById('error-display');
@@ -188,41 +192,46 @@
 
         errorEl.innerText = "";
         box.className = 'scanning';
-        box.innerHTML = `<div class="signal-text">ANALYSE...</div><div class="sub-text">Lecture marché</div>`;
+        box.innerHTML = `<div class="signal-text">ANALYSE...</div><div class="sub-text">Connexion directe</div>`;
 
         try {
-            // Utilisation du Proxy pour éviter les blocages CORS/Réseau
-            const targetUrl = 'https://api.binance.com/api/v3/klines?symbol=EURUSDT&interval=1m&limit=5';
-            const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(targetUrl)}&t=${Date.now()}`;
+            // CONNEXION DIRECTE SANS PROXY (Comme avant)
+            // Ajout d'un timestamp pour éviter le cache
+            const url = `https://api.binance.com/api/v3/klines?symbol=EURUSDT&interval=1m&limit=5&t=${Date.now()}`;
+            
+            const response = await fetch(url, { 
+                method: 'GET',
+                cache: 'no-cache'
+            });
 
-            const response = await fetch(proxyUrl, { cache: 'no-cache' });
-            if (!response.ok) throw new Error("Network");
+            if (!response.ok) {
+                throw new Error("Err Réseau (" + response.status + ")");
+            }
             
-            const wrapper = await response.json();
-            if (!wrapper.contents) throw new Error("Data");
+            const data = await response.json();
             
-            const data = JSON.parse(wrapper.contents);
-            if (data.length < 3) throw new Error("Short");
+            if (!data || data.length < 3) {
+                throw new Error("Données insuffisantes");
+            }
 
             const closes = data.map(k => parseFloat(k[4]));
             const current = closes[closes.length - 1];
-            const prev = closes[closes.length - 3]; // Comparaison court terme
+            const prev = closes[closes.length - 3]; 
 
             priceEl.innerText = current.toFixed(5);
 
             // LOGIQUE AGRESSIVE : Toujours une décision
-            // Si prix actuel >= prix il y a 2 min -> ACHAT
-            // Sinon -> VENTE
             const direction = (current >= prev) ? 'BUY' : 'SELL';
             
             showSignal(direction);
 
         } catch (err) {
             console.error(err);
-            errorEl.innerText = "Err Réseau. Réessaie auto...";
-            // En cas d'erreur, on force un signal basé sur le hasard ou la dernière tendance connue pour ne pas bloquer le cycle
-            // Mais ici on préfère afficher l'erreur et laisser le compteur tourner
-            box.innerHTML = `<div class="signal-text" style="color:#orange">ERREUR</div><div class="sub-text">Vérifie Internet</div>`;
+            errorEl.innerText = err.message;
+            box.innerHTML = `<div class="signal-text" style="color:#ffaa00">ERREUR</div><div class="sub-text">Vérifie Internet/HTTPS</div>`;
+            
+            // En cas d'erreur, on ne bloque pas le cycle, on attend le prochain
+            isSignaling = false; 
         }
     }
 
@@ -233,25 +242,28 @@
         timerInterval = setInterval(() => {
             timeLeft -= 0.1;
             
-            // Mise à jour affichage
+            // Affichage du compteur
             display.innerText = Math.max(0, timeLeft).toFixed(1);
             
-            // Déclenchement de l'analyse quand le timer arrive à 0
-            if (timeLeft <= 0.5 && !isSignaling) {
+            // Déclenchement de l'analyse quand le timer arrive vers 0
+            // On déclenche à 0.5s pour avoir le temps de calculer avant que le compteur n'affiche 0.0
+            if (timeLeft <= 0.5 && timeLeft > -1 && !isSignaling) {
                 fetchAndDecide();
-                timeLeft = cycleTime; // Reset timer immédiatement après lancement analyse
+                timeLeft = cycleTime; // Reset immédiat du compteur
+                display.innerText = cycleTime.toFixed(1);
             }
             
-            // Sécurité reset si bug
-            if (timeLeft < -1) timeLeft = cycleTime;
+            // Sécurité anti-bug infini
+            if (timeLeft < -2) timeLeft = cycleTime;
 
-        }, 100); // Update every 100ms
+        }, 100); // Mise à jour toutes les 100ms
     }
 
-    // Init
+    // Initialisation
     if ("Notification" in window) Notification.requestPermission();
+    
+    // Démarrage du timer et première analyse après 1 seconde
     startTimer();
-    // Première analyse immédiate
     setTimeout(fetchAndDecide, 1000);
 
 </script>
