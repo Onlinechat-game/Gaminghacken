@@ -1,97 +1,191 @@
-<!DOCTYPE html><html lang="fr">
+<!DOCTYPE html>
+<html lang="fr">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BOT PRO MAX TELEGRAM READY</title>
+<title>BOT PRO MAX SMART</title>
+
 <style>
 body { background:#0d1117; color:#e6edf3; font-family:Arial; text-align:center; }
 .container { margin-top:20px; }
 .title { font-size:32px; font-weight:bold; }
-.status { font-size:50px; margin:15px; font-weight:bold; }
+.status { font-size:50px; margin:20px; font-weight:bold; }
 .green { color:#00ff88; }
 .red { color:#ff4d4d; }
 .card { background:#161b22; margin:10px auto; padding:15px; width:320px; border-radius:10px; }
 .score { font-size:20px; }
 </style>
+
 </head>
 <body>
+
 <div class="container">
-<div class="title">BOT PRO MAX (STABLE + TELEGRAM)</div><div class="card">
+
+<div class="title">BOT PRO MAX SMART</div>
+
+<div class="card">
 <div id="price">Prix: --</div>
 <div id="status" class="status">--</div>
-<div id="score" class="score">--</div>
+<div id="score">--</div>
+
 <div id="buy">Achat: --%</div>
 <div id="sell">Vente: --%</div>
-</div></div><script>
+</div>
+
+<div class="card">
+<p>EMA50: <span id="ema"></span></p>
+<p>RSI14: <span id="rsi"></span></p>
+<p>ADX14: <span id="adx"></span></p>
+</div>
+
+</div>
+
+<script>
+
 const API = "https://api.binance.com/api/v3/klines?symbol=EURUSDT&interval=1m&limit=100";
 
-const TOKEN = "8293120597:AAFXNIVeBI7J-QtaqWV32g_9ftHrYpPlceI"; // 🔑 mets ton token
-const CHAT_ID = "809160737"; // 🔑 mets ton chat id
+const TOKEN = "TON_TOKEN";
+const CHAT_ID = "TON_CHAT_ID";
 
 let lastSignal = "";
 let confirmCount = 0;
 let lastSent = "";
 
-function EMA(a,p){let k=2/(p+1),e=a[0];for(let i=1;i<a.length;i++)e=a[i]*k+e*(1-k);return e;}
-function RSI(a,p=14){let g=0,l=0;for(let i=1;i<=p;i++){let d=a[i]-a[i-1];if(d>0)g+=d;else l-=d;}let ag=g/p,al=l/p;for(let i=p+1;i<a.length;i++){let d=a[i]-a[i-1];if(d>0){ag=(ag*(p-1)+d)/p;al=(al*(p-1))/p;}else{ag=(ag*(p-1))/p;al=(al*(p-1)-d)/p;}}let rs=ag/al;return 100-(100/(1+rs));}
-
-function stableSignal(newSignal){
-    if(newSignal===lastSignal) confirmCount++;
-    else confirmCount=0;
-
-    if(confirmCount>=2){
-        lastSignal=newSignal;
-        return newSignal;
+// EMA
+function EMA(prices, period){
+    let k = 2/(period+1);
+    let ema = prices[0];
+    for(let i=1;i<prices.length;i++){
+        ema = prices[i]*k + ema*(1-k);
     }
-    return lastSignal||newSignal;
+    return ema;
 }
 
+// RSI
+function RSI(prices, period=14){
+    let gain=0, loss=0;
+
+    for(let i=1;i<=period;i++){
+        let d = prices[i]-prices[i-1];
+        if(d>0) gain += d;
+        else loss -= d;
+    }
+
+    let avgGain = gain/period;
+    let avgLoss = loss/period;
+
+    for(let i=period+1;i<prices.length;i++){
+        let d = prices[i]-prices[i-1];
+        if(d>0){
+            avgGain = (avgGain*(period-1)+d)/period;
+            avgLoss = (avgLoss*(period-1))/period;
+        } else {
+            avgGain = (avgGain*(period-1))/period;
+            avgLoss = (avgLoss*(period-1)-d)/period;
+        }
+    }
+
+    let rs = avgGain/avgLoss;
+    return 100 - (100/(1+rs));
+}
+
+// ADX simplifié
+function ADX(data){
+    let up=0, down=0;
+
+    for(let i=1;i<data.length;i++){
+        let prevClose = data[i-1][4];
+        let close = data[i][4];
+
+        if(close > prevClose) up++;
+        else down++;
+    }
+
+    return (up/(up+down))*100;
+}
+
+// Stabilisation du signal
+function stableSignal(newSignal){
+    if(newSignal === lastSignal) confirmCount++;
+    else confirmCount = 0;
+
+    if(confirmCount >= 2){
+        lastSignal = newSignal;
+        return newSignal;
+    }
+
+    return lastSignal || newSignal;
+}
+
+// Telegram
 function sendTelegram(signal, prob){
-    if(!TOKEN || !CHAT_ID) return;
+    if(!8293120597:AAFXNIVeBI7J-QtaqWV32g_9ftHrYpPlceI || !809160737) return;
 
-    let emoji = signal === "ACHETER" ? "📈" : "📉";
-    let msg = `${emoji} EUR/USD OTC\nSignal: ${signal}\nProbabilité: ${prob}%`;
+    let msg = `EUR/USD OTC\nSignal: ${signal}\nProbabilité: ${prob}%`;
 
-    fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent(msg)}`);
+    fetch(`https://api.telegram.org/bot${8293120597:AAFXNIVeBI7J-QtaqWV32g_9ftHrYpPlceI}/sendMessage?chat_id=${809160737}&text=${encodeURIComponent(msg)}`);
 }
 
 async function analyze(){
+
     let res = await fetch(API);
     let data = await res.json();
 
-    let closes = data.map(c=>parseFloat(c[4]));
+    let closes = data.map(c => parseFloat(c[4]));
     let price = closes.at(-1);
 
     let ema = EMA(closes.slice(-50),50);
     let rsi = RSI(closes);
+    let adx = ADX(data);
 
+    // SCORE équilibré
     let score = 0;
-    score += (price>ema)?40:-40;
-    score += (rsi-50)*1.5;
 
+    // EMA
+    score += (price > ema) ? 30 : -30;
+
+    // RSI
+    if(rsi > 55) score += 20;
+    else if(rsi < 45) score -= 20;
+
+    // ADX
+    score += (adx - 50) * 0.5;
+
+    // PROBABILITÉ
     let probability = Math.max(0, Math.min(100, Math.round(score + 50)));
 
-    let raw = probability>=50 ? "ACHETER" : "VENDRE";
-    let signal = stableSignal(raw);
+    // Signal brut
+    let rawSignal = probability >= 50 ? "ACHETER" : "VENDRE";
+
+    // Stabilisation
+    let signal = stableSignal(rawSignal);
 
     // UI
-    document.getElementById("price").innerText = "Prix: "+price.toFixed(4);
+    document.getElementById("price").innerText = "Prix: " + price.toFixed(4);
+    document.getElementById("ema").innerText = ema.toFixed(4);
+    document.getElementById("rsi").innerText = rsi.toFixed(2);
+    document.getElementById("adx").innerText = adx.toFixed(2);
+
+    document.getElementById("score").innerText = signal + " " + probability + "%";
+
     document.getElementById("status").innerText = signal;
-    document.getElementById("status").className = "status "+(signal==="ACHETER"?"green":"red");
+    document.getElementById("status").className = "status " + (signal==="ACHETER"?"green":"red");
 
-    document.getElementById("score").innerText = signal+" "+probability+"%";
-    document.getElementById("buy").innerText = "Achat: "+probability+"%";
-    document.getElementById("sell").innerText = "Vente: "+(100-probability)+"%";
+    document.getElementById("buy").innerText = "Achat: " + probability + "%";
+    document.getElementById("sell").innerText = "Vente: " + (100 - probability) + "%";
 
-    // TELEGRAM (seulement si changement)
-    if(signal!==lastSent){
+    // Telegram uniquement si changement
+    if(signal !== lastSent){
         sendTelegram(signal, probability);
         lastSent = signal;
     }
 }
 
-// ⏱️ 10 secondes stable
-setInterval(analyze,10000);
+// ⏱ analyse toutes les 10 secondes
+setInterval(analyze, 10000);
 analyze();
-</script></body>
+
+</script>
+
+</body>
 </html>
