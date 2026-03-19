@@ -21,11 +21,10 @@
     }
     h1 { color: #00ffcc; }
     .status {
-      font-size: 26px;
+      font-size: 30px;
       font-weight: bold;
-      margin: 15px 0;
+      margin: 20px 0;
     }
-    .status.attendre { color: orange; }
     .status.acheter { color: lime; }
     .status.vendre { color: red; }
     button {
@@ -53,8 +52,8 @@
     <h1>BOT PRO PRECISION</h1>
     <p>Stratégie Triple Confirmation (ADX + RSI + EMA)</p>
     <p>Prix Actuel: <span id="price">-</span></p>
-    <div id="status" class="status attendre">ATTENDRE</div>
-    <button onclick="nouvelleAnalyse()">NOUVELLE ANALYSE</button>
+    <div id="status" class="status">-</div>
+    <button onclick="analyse()">NOUVELLE ANALYSE</button>
     
     <div class="result">
       <p>Tendance (EMA50): <span id="ema">-</span></p>
@@ -62,15 +61,12 @@
       <p>RSI: <span id="rsi">-</span></p>
     </div>
     
-    <p class="note">⚠️ Haute Précision : Le bot filtre les marchés faibles.<br>
-    Si "ATTENDRE", c'est que les 3 conditions ne sont pas réunies.<br>
-    Expiration : 30 Minutes.</p>
-    <p>CREATOR HACKEN STORE</p>
+    <p class="note">⚠️ Analyse automatique toutes les 10 secondes.<br>
+    CREATOR HACKEN STORE</p>
   </div>
 
   <script>
     async function getData() {
-      // Bougies EURUSDT en 1 minute
       let response = await fetch("https://api.binance.com/api/v3/klines?symbol=EURUSDT&interval=1m&limit=100");
       let data = await response.json();
       return data.map(candle => ({
@@ -123,7 +119,7 @@
       return dx.toFixed(1);
     }
 
-    async function nouvelleAnalyse() {
+    async function analyse() {
       let candles = await getData();
       let prices = candles.map(c => c.close);
       let lastPrice = prices[prices.length-1].toFixed(5);
@@ -141,14 +137,15 @@
       if (lastPrice > ema50 && adx > 20 && rsi > 50) {
         statusEl.innerText = "ACHETER";
         statusEl.className = "status acheter";
-      } else if (lastPrice < ema50 && adx > 20 && rsi < 50) {
+      } else {
         statusEl.innerText = "VENDRE";
         statusEl.className = "status vendre";
-      } else {
-        statusEl.innerText = "ATTENDRE";
-        statusEl.className = "status attendre";
       }
     }
+
+    // Analyse automatique toutes les 10 secondes
+    setInterval(analyse, 10000);
+    analyse(); // première exécution immédiate
   </script>
 </body>
 </html>
