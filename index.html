@@ -3,209 +3,369 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Hacken Sentiment Live</title>
+    <title>Hacken XAU Analyste 1H</title>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background-color: #000000; color: #fff; text-align: center; padding: 10px; margin: 0; }
-        h2 { color: #ffd700; margin: 5px 0 15px 0; font-size: 1.3rem; text-transform: uppercase; }
+        body { font-family: 'Segoe UI', sans-serif; background-color: #0a0a0a; color: #fff; text-align: center; padding: 15px; margin: 0; }
         
-        /* PRIX STYLE TICKER */
-        .price-box { background: #111; border: 1px solid #333; border-radius: 10px; padding: 15px; margin-bottom: 20px; }
-        .price-value { font-size: 2.2rem; font-weight: 900; color: #4fc3f7; font-family: monospace; }
-        .price-change { font-size: 1rem; margin-top: 5px; font-weight: bold; }
+        h2 { color: #ffd700; margin-bottom: 5px; font-size: 1.4rem; text-transform: uppercase; letter-spacing: 1px; }
+        .subtitle { font-size: 0.8rem; color: #888; margin-bottom: 20px; }
 
-        /* BARRE DE SENTIMENT (STYLE POCKET OPTION) */
-        .sentiment-container {
-            background: #1a1a1a; border-radius: 15px; padding: 20px;
-            border: 1px solid #333; margin-bottom: 25px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-        }
-        .sentiment-title { font-size: 0.9rem; color: #aaa; text-transform: uppercase; margin-bottom: 10px; letter-spacing: 1px; }
-        
-        .percentages { display: flex; justify-content: space-between; font-size: 1.2rem; font-weight: 900; margin-bottom: 8px; }
-        .txt-buy { color: #00e676; text-shadow: 0 0 10px rgba(0, 230, 118, 0.4); }
-        .txt-sell { color: #ff5252; text-shadow: 0 0 10px rgba(255, 82, 82, 0.4); }
-
-        .progress-bar {
-            height: 30px; background: #333; border-radius: 15px; overflow: hidden;
-            display: flex; position: relative; 
-            box-shadow: inset 0 2px 5px rgba(0,0,0,0.8);
-            border: 1px solid #444;
-        }
-        .bar-buy { 
-            background: linear-gradient(90deg, #004d26, #00e676); 
-            height: 100%; 
-            transition: width 0.2s linear; /* Mouvement fluide et rapide */
-        }
-        .bar-sell { 
-            background: linear-gradient(90deg, #8b0000, #ff5252); 
-            height: 100%; 
-            transition: width 0.2s linear;
-        }
-        
-        /* Indicateur central */
-        .center-marker {
-            position: absolute; left: 50%; top: 0; bottom: 0; width: 2px; background: rgba(255,255,255,0.3); z-index: 10;
+        /* CARTE DE PRÉVISION */
+        .forecast-card {
+            background: #161616;
+            border: 1px solid #333;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
         }
 
-        /* SIGNAL BOX */
-        #signal-box {
-            padding: 20px; border-radius: 12px; border: 2px solid #333;
-            background: #111; transition: all 0.2s;
-        }
-        .sig-text { font-size: 1.5rem; font-weight: 900; text-transform: uppercase; }
-        .sig-sub { font-size: 0.9rem; color: #ccc; margin-top: 5px; }
+        .forecast-title { font-size: 0.9rem; color: #aaa; text-transform: uppercase; margin-bottom: 15px; }
         
-        .sig-buy { background: rgba(0, 230, 118, 0.1); border-color: #00e676; color: #00e676; }
-        .sig-sell { background: rgba(255, 82, 82, 0.1); border-color: #ff5252; color: #ff5252; }
-        .sig-wait { background: #222; border-color: #555; color: #888; }
+        .decision-box {
+            padding: 20px;
+            border-radius: 10px;
+            margin: 15px 0;
+            border: 2px solid transparent;
+            transition: all 0.5s ease;
+        }
 
-        .footer { font-size: 0.7rem; color: #555; margin-top: 20px; }
-        .creator { color: #ffd700; font-weight: bold; margin-top: 10px; display: block; }
+        .decision-text { font-size: 2rem; font-weight: 900; text-transform: uppercase; line-height: 1.2; }
+        .decision-reason { font-size: 0.9rem; color: #ccc; margin-top: 8px; font-style: italic; }
+
+        /* Styles des décisions */
+        .buy-signal {
+            background: rgba(0, 230, 118, 0.1);
+            border-color: #00e676;
+            color: #00e676;
+            box-shadow: 0 0 20px rgba(0, 230, 118, 0.15);
+        }
+        .sell-signal {
+            background: rgba(255, 82, 82, 0.1);
+            border-color: #ff5252;
+            color: #ff5252;
+            box-shadow: 0 0 20px rgba(255, 82, 82, 0.15);
+        }
+        .wait-signal {
+            background: #222;
+            border-color: #444;
+            color: #888;
+        }
+
+        /* TABLEAU DES NIVEAUX */
+        .levels-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            font-size: 0.9rem;
+        }
+        .levels-table th { text-align: left; color: #666; font-weight: normal; padding: 8px 0; font-size: 0.75rem; text-transform: uppercase; }
+        .levels-table td { padding: 10px 0; border-top: 1px solid #222; font-family: monospace; font-size: 1.1rem; font-weight: bold; }
+        .col-type { width: 30%; }
+        .col-price { text-align: right; }
+        
+        .txt-sl { color: #ff5252; }
+        .txt-tp { color: #00e676; }
+        .txt-entry { color: #ffd700; }
+
+        /* INDICATEURS DE CONFIANCE */
+        .confidence-meter {
+            margin: 25px 0 10px 0;
+            text-align: left;
+        }
+        .conf-label { display: flex; justify-content: space-between; font-size: 0.8rem; color: #aaa; margin-bottom: 5px; }
+        .conf-track { height: 6px; background: #222; border-radius: 3px; overflow: hidden; }
+        .conf-fill { height: 100%; width: 0%; background: #ffd700; transition: width 1s ease-out; }
+
+        /* STATS TECHNIQUES */
+        .tech-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 20px;
+            text-align: left;
+        }
+        .stat-box { background: #111; padding: 10px; border-radius: 8px; border: 1px solid #222; }
+        .stat-name { font-size: 0.7rem; color: #666; text-transform: uppercase; }
+        .stat-val { font-size: 1rem; font-weight: bold; color: #fff; margin-top: 3px; }
+
+        .footer { margin-top: 30px; font-size: 0.7rem; color: #555; border-top: 1px solid #222; padding-top: 15px; }
+        .creator { color: #ffd700; font-weight: bold; text-transform: uppercase; font-size: 0.75rem; margin-top: 10px; display: block; }
+        
+        /* Animation de chargement douce */
+        .loading { opacity: 0.6; pointer-events: none; }
     </style>
 </head>
 <body>
 
-    <h2>📊 Hacken Sentiment Live</h2>
+    <h2>🥇 XAU/USD Analyste</h2>
+    <div class="subtitle">Prévision de tendance (Prochaine Heure)</div>
 
-    <div class="price-box">
-        <div style="font-size:0.8rem; color:#888;">EUR/USD</div>
-        <div class="price-value" id="price">--.--</div>
-        <div class="price-change" id="change">--</div>
-    </div>
-
-    <!-- BARRE STYLE POCKET OPTION -->
-    <div class="sentiment-container">
-        <div class="sentiment-title">Sentiment des Traders (Temps Réel)</div>
-        <div class="percentages">
-            <span class="txt-buy" id="buy-txt">50%</span>
-            <span class="txt-sell" id="sell-txt">50%</span>
+    <div class="forecast-card" id="main-card">
+        <div class="forecast-title">Analyse en cours...</div>
+        
+        <div class="decision-box wait-signal" id="decision-box">
+            <div class="decision-text" id="decision-text">CALCUL...</div>
+            <div class="decision-reason" id="decision-reason">Veuillez patienter pendant l'analyse des données H1.</div>
         </div>
-        <div class="progress-bar">
-            <div class="center-marker"></div>
-            <div class="bar-buy" id="bar-buy" style="width: 50%;"></div>
-            <div class="bar-sell" id="bar-sell" style="width: 50%;"></div>
+
+        <table class="levels-table" id="levels-table" style="opacity: 0.3;">
+            <thead>
+                <tr>
+                    <th class="col-type">Type</th>
+                    <th class="col-price">Niveau (USD)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Entrée Recommandée</td>
+                    <td class="txt-entry" id="lvl-entry">--.--</td>
+                </tr>
+                <tr>
+                    <td>Stop Loss (Sécurité)</td>
+                    <td class="txt-sl" id="lvl-sl">--.--</td>
+                </tr>
+                <tr>
+                    <td>Take Profit (Objectif)</td>
+                    <td class="txt-tp" id="lvl-tp">--.--</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Jauge de Confiance -->
+    <div class="confidence-meter">
+        <div class="conf-label">
+            <span>Fiabilité du signal</span>
+            <span id="conf-percent">0%</span>
         </div>
-        <div style="font-size: 0.7rem; color: #666; margin-top: 8px;">Basé sur la vélocité du marché</div>
+        <div class="conf-track">
+            <div class="conf-fill" id="conf-fill"></div>
+        </div>
     </div>
 
-    <div id="signal-box" class="sig-wait">
-        <div class="sig-text" id="sig-main">EN ATTENTE</div>
-        <div class="sig-sub" id="sig-sub">Analyse du flux d'ordres...</div>
+    <!-- Détails Techniques -->
+    <div class="tech-stats">
+        <div class="stat-box">
+            <div class="stat-name">Tendance H1</div>
+            <div class="stat-val" id="stat-trend">--</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-name">Force (RSI)</div>
+            <div class="stat-val" id="stat-rsi">--</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-name">Volatilité (ATR)</div>
+            <div class="stat-val" id="stat-atr">--</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-name">Momentum</div>
+            <div class="stat-val" id="stat-mom">--</div>
+        </div>
     </div>
 
-    <div class="footer">Mise à jour ultra-rapide (2s). Simulation de flux basée sur la volatilité.</div>
+    <div class="footer">
+        Analyse basée sur les structures de marché H1, ATR dynamique et RSI. 
+        Les niveaux sont calculés pour un ratio Risque/Rendement optimal.
+    </div>
     <span class="creator">Creator Hacken STORE</span>
 
     <script>
-        let lastBuyPercent = 50;
-        let lastSellPercent = 50;
-        let trendBuffer = 0; // Pour lisser les changements brusques
+        const SYMBOL = 'XAUUSDT';
+        const INTERVAL = '1h'; // Analyse sur l'heure
 
-        async function fetchMarketData() {
+        async function analyzeMarket() {
+            const card = document.getElementById('main-card');
+            card.classList.add('loading');
+
             try {
-                // Récupération des données très récentes
-                const response = await fetch('https://api.binance.com/api/v3/klines?symbol=EURUSDT&interval=1m&limit=10');
-                if (!response.ok) throw new Error("Net");
+                // Récupération des données H1 (50 dernières heures pour avoir du contexte)
+                const response = await fetch(`https://api.binance.com/api/v3/klines?symbol=${SYMBOL}&interval=${INTERVAL}&limit=50`);
+                if (!response.ok) throw new Error("Erreur réseau");
                 const data = await response.json();
 
                 const closes = data.map(k => parseFloat(k[4]));
+                const highs = data.map(k => parseFloat(k[2]));
+                const lows = data.map(k => parseFloat(k[3]));
                 const opens = data.map(k => parseFloat(k[1]));
+
                 const currentPrice = closes[closes.length - 1];
-                const prevPrice = closes[closes.length - 2];
                 
-                // 1. Affichage Prix
-                const priceEl = document.getElementById('price');
-                const changeEl = document.getElementById('change');
-                priceEl.innerText = currentPrice.toFixed(5);
-                const diff = currentPrice - prevPrice;
-                changeEl.innerText = (diff >= 0 ? "▲ +" : "▼ ") + Math.abs(diff).toFixed(5);
-                changeEl.style.color = diff >= 0 ? '#00e676' : '#ff5252';
-                priceEl.style.color = diff >= 0 ? '#00e676' : '#ff5252';
+                // --- CALCULS TECHNIQUES ---
 
-                // 2. CALCUL DU SENTIMENT (Simulation de Flux)
-                // On analyse la force de la dernière bougie vs les précédentes
-                const lastCandleSize = Math.abs(closes[closes.length-1] - opens[closes.length-1]);
-                const prevCandleSize = Math.abs(closes[closes.length-2] - opens[closes.length-2]);
+                // 1. Tendance (EMA 50)
+                const ema50 = calculateEMA(closes, 50);
+                const lastEMA = ema50[ema50.length - 1];
+                const isUptrend = currentPrice > lastEMA;
+
+                // 2. RSI (14 périodes)
+                const rsi = calculateRSI(closes, 14);
+
+                // 3. ATR (Volatilité moyenne sur 14h) - Crucial pour SL/TP
+                let trSum = 0;
+                const atrPeriod = 14;
+                for(let i = closes.length - atrPeriod; i < closes.length; i++) {
+                    const high = highs[i];
+                    const low = lows[i];
+                    const prevClose = closes[i-1];
+                    const tr = Math.max(high - low, Math.abs(high - prevClose), Math.abs(low - prevClose));
+                    trSum += tr;
+                }
+                const atr = trSum / atrPeriod;
+
+                // 4. Momentum (Comparaison prix actuel vs il y a 3 heures)
+                const momentum = currentPrice - closes[closes.length - 4];
+
+                // --- MISE À JOUR DES STATS VISUELLES ---
+                document.getElementById('stat-trend').innerText = isUptrend ? "HAUSSE ⬆" : "BAISSE ⬇";
+                document.getElementById('stat-trend').style.color = isUptrend ? "#00e676" : "#ff5252";
                 
-                let momentum = 0;
+                document.getElementById('stat-rsi').innerText = rsi.toFixed(1);
+                document.getElementById('stat-rsi').style.color = rsi > 70 || rsi < 30 ? "#ffd700" : "#fff";
+
+                document.getElementById('stat-atr').innerText = atr.toFixed(2) + "$";
+                document.getElementById('stat-mom').innerText = (momentum >= 0 ? "+" : "") + momentum.toFixed(2);
+                document.getElementById('stat-mom').style.color = momentum >= 0 ? "#00e676" : "#ff5252";
+
+                // --- LOGIQUE DE DÉCISION (PRÉVISION 1H) ---
                 
-                // Calcul de la direction et de la force
-                if (closes[closes.length-1] > opens[closes.length-1]) {
-                    // Bougie verte
-                    momentum = (closes[closes.length-1] - opens[closes.length-1]) * 100000; // Force brute
-                    if (closes[closes.length-1] > closes[closes.length-2]) momentum *= 1.5; // Accélération
-                } else {
-                    // Bougie rouge
-                    momentum = -1 * (opens[closes.length-1] - closes[closes.length-1]) * 100000;
-                    if (closes[closes.length-1] < closes[closes.length-2]) momentum *= 1.5;
+                let signal = "WAIT"; // WAIT, BUY, SELL
+                let confidence = 0;
+                let reason = "";
+
+                // Scénario ACHAT
+                if (isUptrend && rsi < 70 && momentum > 0) {
+                    // Si tendance haussière, RSI pas encore en surachat, et momentum positif
+                    signal = "BUY";
+                    confidence = 60;
+                    reason = "Tendance haussière confirmée avec momentum positif.";
+                    
+                    if (rsi < 40) { confidence += 20; reason += " Rebond sur support."; } // RSI bas dans une tendance haussière = forte opportunité
+                    if (atr > 2.0) { confidence += 10; } // Volatilité suffisante pour bouger
+                }
+                // Scénario VENTE
+                else if (!isUptrend && rsi > 30 && momentum < 0) {
+                    // Si tendance baissière, RSI pas encore en survente, et momentum négatif
+                    signal = "SELL";
+                    confidence = 60;
+                    reason = "Tendance baissière confirmée avec pression vendeuse.";
+
+                    if (rsi > 60) { confidence += 20; reason += " Rejet sur résistance."; } // RSI haut dans tendance baissière = forte opportunité
+                    if (atr > 2.0) { confidence += 10; }
+                }
+                // Scénario ATTENTE
+                else {
+                    signal = "WAIT";
+                    confidence = 40;
+                    reason = "Marché indécis ou signes contradictoires. Attendre confirmation.";
+                    
+                    if (!isUptrend && rsi < 30) { reason = "Survente potentielle, attendre rebond."; confidence = 50; }
+                    if (isUptrend && rsi > 70) { reason = "Surachat potentiel, attendre correction."; confidence = 50; }
                 }
 
-                // Transformation du Momentum en Pourcentage (0 à 100)
-                // On utilise une fonction sigmoïde pour que ça reste entre 0 et 100 mais réactif
-                let rawPercent = 50 + (momentum * 2); 
+                // Limitation confiance à 95%
+                confidence = Math.min(confidence, 95);
+
+                // --- AFFICHAGE DU RÉSULTAT ---
                 
-                // Ajout d'un peu de "bruit" aléatoire pour imiter les vrais traders qui hésitent
-                const noise = (Math.random() - 0.5) * 5; 
-                rawPercent += noise;
+                const decisionBox = document.getElementById('decision-box');
+                const decisionText = document.getElementById('decision-text');
+                const decisionReason = document.getElementById('decision-reason');
+                const levelsTable = document.getElementById('levels-table');
+                const confFill = document.getElementById('conf-fill');
+                const confPercent = document.getElementById('conf-percent');
 
-                // Lissage pour éviter que la barre ne téléporte (effet fluide)
-                let targetBuy = Math.max(5, Math.min(95, rawPercent));
-                lastBuyPercent = (lastBuyPercent * 0.7) + (targetBuy * 0.3); // Lissage exponentiel
-                lastSellPercent = 100 - lastBuyPercent;
-
-                // 3. Mise à jour de la Barre (Animation Fluide)
-                const barBuy = document.getElementById('bar-buy');
-                const barSell = document.getElementById('bar-sell');
-                const txtBuy = document.getElementById('buy-txt');
-                const txtSell = document.getElementById('sell-txt');
-
-                barBuy.style.width = lastBuyPercent + '%';
-                barSell.style.width = lastSellPercent + '%';
+                // Reset classes
+                decisionBox.className = 'decision-box';
                 
-                txtBuy.innerText = Math.round(lastBuyPercent) + '%';
-                txtSell.innerText = Math.round(lastSellPercent) + '%';
-
-                // Changement de couleur dynamique si déséquilibre fort
-                if (lastBuyPercent > 65) {
-                    txtBuy.style.textShadow = "0 0 15px #00e676";
-                    txtSell.style.textShadow = "none";
-                } else if (lastSellPercent > 65) {
-                    txtSell.style.textShadow = "0 0 15px #ff5252";
-                    txtBuy.style.textShadow = "none";
+                if (signal === "BUY") {
+                    decisionBox.classList.add('buy-signal');
+                    decisionText.innerText = "ACHETER 🟢";
+                    decisionReason.innerText = reason;
+                    updateLevels(currentPrice, atr, 'BUY');
+                } else if (signal === "SELL") {
+                    decisionBox.classList.add('sell-signal');
+                    decisionText.innerText = "VENDRE 🔴";
+                    decisionReason.innerText = reason;
+                    updateLevels(currentPrice, atr, 'SELL');
                 } else {
-                    txtBuy.style.textShadow = "none";
-                    txtSell.style.textShadow = "none";
+                    decisionBox.classList.add('wait-signal');
+                    decisionText.innerText = "ATTENDRE ⚪";
+                    decisionReason.innerText = reason;
+                    clearLevels();
                 }
 
-                // 4. Signal Basé sur le Sentiment Extrême (Contrarian ou Suiveur)
-                // Ici : Si tout le monde achète massivement (>80%), risque de retournement ou continuation forte
-                const signalBox = document.getElementById('signal-box');
-                const sigMain = document.getElementById('sig-main');
-                const sigSub = document.getElementById('sig-sub');
-
-                if (lastBuyPercent > 75 && momentum > 0) {
-                    signalBox.className = 'sig-buy';
-                    sigMain.innerText = "ACHAT FORT 🟢";
-                    sigSub.innerText = "Les traders sont massivement acheteurs";
-                } else if (lastSellPercent > 75 && momentum < 0) {
-                    signalBox.className = 'sig-sell';
-                    sigMain.innerText = "VENTE FORTE 🔴";
-                    sigSub.innerText = "Les traders sont massivement vendeurs";
-                } else {
-                    signalBox.className = 'sig-wait';
-                    sigMain.innerText = "MARCHÉ MIXTE ⚪";
-                    sigSub.innerText = "Attente d'une direction claire (" + Math.round(lastBuyPercent) + "%/" + Math.round(lastSellPercent) + "%)";
-                }
+                // Animation Jauge
+                confFill.style.width = confidence + '%';
+                confPercent.innerText = confidence + '%';
+                if (confidence > 75) confFill.style.background = '#00e676';
+                else if (confidence > 50) confFill.style.background = '#ffd700';
+                else confFill.style.background = '#ff5252';
 
             } catch (error) {
-                console.log("Err", error);
+                console.error(error);
+                document.getElementById('decision-text').innerText = "ERREUR";
+                document.getElementById('decision-reason').innerText = "Problème de connexion aux données.";
+            } finally {
+                card.classList.remove('loading');
             }
         }
 
-        // Démarrage rapide (toutes les 2 secondes pour l'effet nerveux)
+        function updateLevels(price, atr, type) {
+            const table = document.getElementById('levels-table');
+            table.style.opacity = '1';
+
+            // Calculs Précis
+            // SL : 1.5 x ATR (Pour laisser respirer le trade sur 1h)
+            // TP : 3.0 x ATR (Viser un mouvement complet d'heure)
+            const slDistance = atr * 1.5;
+            const tpDistance = atr * 3.0;
+
+            let slPrice, tpPrice;
+
+            if (type === 'BUY') {
+                slPrice = price - slDistance;
+                tpPrice = price + tpDistance;
+            } else {
+                slPrice = price + slDistance;
+                tpPrice = price - tpDistance;
+            }
+
+            document.getElementById('lvl-entry').innerText = price.toFixed(2);
+            document.getElementById('lvl-sl').innerText = slPrice.toFixed(2);
+            document.getElementById('lvl-tp').innerText = tpPrice.toFixed(2);
+        }
+
+        function clearLevels() {
+            const table = document.getElementById('levels-table');
+            table.style.opacity = '0.3';
+            document.getElementById('lvl-entry').innerText = "--.--";
+            document.getElementById('lvl-sl').innerText = "--.--";
+            document.getElementById('lvl-tp').innerText = "--.--";
+        }
+
+        // Fonctions Mathématiques Standards
+        function calculateEMA(prices, period) {
+            const k = 2 / (period + 1);
+            let ema = prices[0];
+            return prices.map(p => { ema = p * k + ema * (1 - k); return ema; });
+        }
+
+        function calculateRSI(prices, period) {
+            if (prices.length < period + 1) return 50;
+            let gains = 0, losses = 0;
+            for (let i = prices.length - period - 1; i < prices.length - 1; i++) {
+                const diff = prices[i+1] - prices[i];
+                if (diff >= 0) gains += diff; else losses -= diff;
+            }
+            if (losses === 0) return 100;
+            return 100 - (100 / (1 + (gains / losses)));
+        }
+
+        // Lancement : Analyse immédiate puis toutes les 60 secondes (pas besoin de plus rapide pour du 1H)
         window.onload = function() {
-            fetchMarketData();
-            setInterval(fetchMarketData, 2000); 
+            analyzeMarket();
+            setInterval(analyzeMarket, 60000); // Mise à jour chaque minute
         };
     </script>
 </body>
