@@ -3,42 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HACKEN STORE - ELITE TERMINAL V2</title>
+    <title>HACKEN STORE - INSTITUTIONAL AI</title>
     <style>
         :root {
-            --bg-dark: #050505;
-            --panel: #121212;
+            --bg: #000000;
+            --panel: #0a0a0a;
             --border: #333;
-            --green: #00ff9d;
-            --red: #ff3b3b;
+            --green: #00ff41; /* Matrix Green */
+            --red: #ff003c;
             --gold: #ffd700;
-            --text: #ffffff;
-            --dim: #888;
+            --text: #e0e0e0;
+            --dim: #666;
         }
 
         body {
-            background-color: var(--bg-dark);
+            background-color: var(--bg);
             color: var(--text);
-            font-family: 'Courier New', monospace; /* Police style terminal */
+            font-family: 'Consolas', 'Monaco', monospace;
             margin: 0;
-            padding: 10px;
+            padding: 0;
             display: flex;
             justify-content: center;
+            min-height: 100vh;
         }
 
-        .container {
+        .terminal {
             width: 100%;
-            max-width: 600px;
+            max-width: 550px;
             background: var(--panel);
             border: 1px solid var(--border);
-            box-shadow: 0 0 20px rgba(0,0,0,0.8);
+            display: flex;
+            flex-direction: column;
             position: relative;
-            overflow: hidden;
         }
 
         /* HEADER */
         .header {
-            background: linear-gradient(90deg, #1a1a1a, #000);
+            background: #111;
             padding: 15px;
             border-bottom: 2px solid var(--gold);
             display: flex;
@@ -46,26 +47,25 @@
             align-items: center;
         }
 
-        .brand {
+        .logo {
+            font-size: 1.1rem;
             font-weight: bold;
-            font-size: 1.2rem;
             color: var(--gold);
-            text-transform: uppercase;
-            letter-spacing: 2px;
+            letter-spacing: 1px;
         }
 
-        .live-indicator {
+        .status {
             font-size: 0.7rem;
             color: var(--green);
-            animation: blink 1s infinite;
+            border: 1px solid var(--green);
+            padding: 2px 6px;
+            border-radius: 3px;
         }
 
-        @keyframes blink { 50% { opacity: 0.3; } }
-
-        /* MARKET SELECTOR */
-        .market-tabs {
+        /* TABS */
+        .tabs {
             display: flex;
-            background: #000;
+            background: #050505;
         }
 
         .tab {
@@ -80,149 +80,177 @@
         }
 
         .tab.active {
-            background: #1a1a1a;
+            background: #111;
             color: var(--text);
             border-bottom: 2px solid var(--gold);
         }
 
         /* NEWS TICKER */
-        .news-ticker {
+        .news-bar {
             background: #220000;
-            color: #ffaaaa;
+            color: #ffcccc;
+            font-size: 0.75rem;
             padding: 8px;
-            font-size: 0.8rem;
-            white-space: nowrap;
             overflow: hidden;
+            white-space: nowrap;
             border-bottom: 1px solid #440000;
         }
-        
+
         .news-content {
             display: inline-block;
+            animation: slide 20s linear infinite;
             padding-left: 100%;
-            animation: scroll-left 15s linear infinite;
         }
 
-        @keyframes scroll-left {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-100%); }
+        @keyframes slide {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(-100%, 0); }
         }
 
-        /* MAIN DASHBOARD */
-        .dashboard {
+        /* MAIN DISPLAY */
+        .main-display {
             padding: 20px;
+            text-align: center;
         }
 
-        .price-display {
-            font-size: 3rem;
-            text-align: center;
+        .price-big {
+            font-size: 2.8rem;
             font-weight: bold;
             margin: 10px 0;
-            text-shadow: 0 0 10px rgba(255,255,255,0.2);
+            font-family: 'Courier New', monospace;
         }
 
-        .price-up { color: var(--green); }
-        .price-down { color: var(--red); }
+        .up { color: var(--green); text-shadow: 0 0 10px rgba(0,255,65,0.3); }
+        .down { color: var(--red); text-shadow: 0 0 10px rgba(255,0,60,0.3); }
 
-        /* INDICATORS GRID */
-        .tech-grid {
+        /* INDICATORS */
+        .indicators {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 5px;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
             margin-bottom: 20px;
-            background: #000;
+            background: #0f0f0f;
             padding: 10px;
+            border: 1px solid #222;
+        }
+
+        .ind-box {
+            text-align: center;
+        }
+        .ind-label { font-size: 0.6rem; color: var(--dim); text-transform: uppercase; }
+        .ind-value { font-size: 0.9rem; font-weight: bold; margin-top: 4px; }
+
+        /* SIGNAL CARD - CRITICAL */
+        .signal-card {
+            background: #111;
             border: 1px solid #333;
-        }
-
-        .tech-item {
-            text-align: center;
-            font-size: 0.7rem;
-        }
-        .tech-val { font-size: 1rem; font-weight: bold; display: block; margin-top: 5px; }
-
-        /* SIGNAL BOX - LE CŒUR DU BOT */
-        .signal-box {
-            background: #1a1a1a;
-            border: 1px solid var(--border);
             padding: 20px;
-            text-align: center;
             margin-bottom: 20px;
             position: relative;
+            overflow: hidden;
         }
 
-        .signal-badge {
+        .signal-title {
+            font-size: 0.7rem;
+            color: var(--dim);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+
+        .signal-action {
             font-size: 2rem;
             font-weight: 900;
             text-transform: uppercase;
             padding: 10px;
-            border-radius: 5px;
+            border-radius: 4px;
             margin: 10px 0;
-            display: inline-block;
-            min-width: 200px;
+            display: block;
         }
 
-        .sig-buy { background: rgba(0, 255, 157, 0.1); color: var(--green); border: 1px solid var(--green); box-shadow: 0 0 15px rgba(0,255,157,0.2); }
-        .sig-sell { background: rgba(255, 59, 59, 0.1); color: var(--red); border: 1px solid var(--red); box-shadow: 0 0 15px rgba(255,59,59,0.2); }
-        .sig-wait { background: #333; color: #aaa; border: 1px solid #555; }
+        .act-buy { background: rgba(0, 255, 65, 0.1); color: var(--green); border: 1px solid var(--green); }
+        .act-sell { background: rgba(255, 0, 60, 0.1); color: var(--red); border: 1px solid var(--red); }
+        .act-wait { background: #222; color: #666; border: 1px solid #444; }
 
-        .prediction-time {
-            font-size: 0.9rem;
+        .time-frame {
+            font-size: 0.8rem;
             color: var(--gold);
             margin-top: 5px;
             font-weight: bold;
+            display: block;
         }
 
-        /* TP SL SECTION */
-        .levels-container {
-            display: flex;
-            justify-content: space-between;
-            background: #000;
+        /* LEVELS */
+        .levels-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            background: #050505;
             padding: 15px;
-            border-radius: 5px;
+            border-radius: 4px;
             margin-top: 15px;
         }
 
-        .level-box { text-align: center; width: 45%; }
-        .level-label { font-size: 0.7rem; color: var(--dim); text-transform: uppercase; }
-        .level-price { font-size: 1.2rem; font-weight: bold; margin-top: 5px; }
+        .level-item { text-align: center; }
+        .level-label { font-size: 0.7rem; color: var(--dim); }
+        .level-price { font-size: 1.1rem; font-weight: bold; font-family: monospace; }
 
-        /* AI ADVICE */
-        .ai-brain {
-            background: linear-gradient(45deg, #111, #222);
+        /* AI ANALYSIS BOX */
+        .ai-analysis {
+            background: linear-gradient(135deg, #1a1a1a, #0d0d0d);
+            border-left: 3px solid var(--gold);
             padding: 15px;
-            border-left: 4px solid var(--gold);
             font-size: 0.85rem;
-            line-height: 1.4;
-            color: #ddd;
+            line-height: 1.5;
+            color: #ccc;
         }
 
-        .ai-title { color: var(--gold); font-weight: bold; margin-bottom: 5px; display: block; }
+        .ai-header {
+            color: var(--gold);
+            font-weight: bold;
+            margin-bottom: 5px;
+            display: block;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+        }
 
         /* FOOTER */
         .footer {
-            padding: 10px;
-            text-align: center;
-            font-size: 0.7rem;
-            color: #444;
+            margin-top: auto;
+            padding: 10px 20px;
             border-top: 1px solid #222;
             display: flex;
             justify-content: space-between;
+            align-items: center;
+            font-size: 0.7rem;
+            color: #555;
+            background: #080808;
         }
 
-        .refresh-timer { color: var(--green); }
+        .timer-dot {
+            height: 8px;
+            width: 8px;
+            background-color: var(--green);
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 5px;
+            animation: blink 1s infinite;
+        }
 
-        /* LOADING OVERLAY */
+        @keyframes blink { 50% { opacity: 0.2; } }
+
+        /* LOADER */
         #loader {
             position: absolute; top:0; left:0; width:100%; height:100%;
-            background: #000; z-index: 99;
+            background: #000; z-index: 100;
             display: flex; flex-direction: column;
             justify-content: center; align-items: center;
         }
         .scan-line {
             width: 100%; height: 2px; background: var(--gold);
             position: absolute; top: 0;
-            animation: scan 1s infinite linear;
-            box-shadow: 0 0 10px var(--gold);
+            box-shadow: 0 0 15px var(--gold);
+            animation: scan 2s infinite linear;
         }
         @keyframes scan { 0% {top:0;} 100% {top:100%;} }
 
@@ -230,116 +258,121 @@
 </head>
 <body>
 
-<div class="container">
-    <!-- Loader Initial -->
+<div class="terminal">
+    <!-- Loader -->
     <div id="loader">
         <div class="scan-line"></div>
-        <h2 style="color:var(--gold)">INITIALISATION IA...</h2>
-        <p style="color:#666">Connexion aux flux de données globaux</p>
+        <h2 style="color:var(--gold); margin-top:20px;">CALIBRATION IA...</h2>
+        <p style="color:#666; font-size:0.8rem;">Analyse des structures H1 et H4</p>
     </div>
 
     <div class="header">
-        <div class="brand">HACKEN STORE <span style="font-size:0.5em; vertical-align:super;">ELITE</span></div>
-        <div class="live-indicator">● SYSTEME ACTIF</div>
+        <div class="logo">HACKEN STORE <span style="font-size:0.5em; vertical-align:super;">PRO</span></div>
+        <div class="status">● ONLINE</div>
     </div>
 
-    <div class="market-tabs">
-        <div class="tab active" onclick="switchMarket('EURUSD')" id="tab-eur">EUR/USD</div>
-        <div class="tab" onclick="switchMarket('XAUUSD')" id="tab-xau">XAU/USD (OR)</div>
+    <div class="tabs">
+        <div class="tab active" onclick="setMarket('EURUSD')" id="tab-eur">EUR/USD</div>
+        <div class="tab" onclick="setMarket('XAUUSD')" id="tab-xau">XAU/USD</div>
     </div>
 
-    <!-- News Ticker -->
-    <div class="news-ticker">
-        <div class="news-content" id="news-text">
-            EN ATTENTE DES FLUX D'ACTUALITÉS...
-        </div>
+    <div class="news-bar">
+        <div class="news-content" id="news-ticker">INITIALISATION FLUX D'ACTUALITÉS ÉCONOMIQUES...</div>
     </div>
 
-    <div class="dashboard">
-        <!-- Prix -->
-        <div class="price-display" id="price-val">0.0000</div>
+    <div class="main-display">
+        <div class="price-big" id="price-display">0.0000</div>
         
-        <!-- Indicateurs Techniques -->
-        <div class="tech-grid">
-            <div class="tech-item">RSI (14)<span class="tech-val" id="ind-rsi">--</span></div>
-            <div class="tech-item">MACD<span class="tech-val" id="ind-macd">--</span></div>
-            <div class="tech-item">VOLATILITÉ<span class="tech-val" id="ind-vol">--</span></div>
+        <div class="indicators">
+            <div class="ind-box">
+                <div class="ind-label">RSI (14)</div>
+                <div class="ind-value" id="val-rsi">--</div>
+            </div>
+            <div class="ind-box">
+                <div class="ind-label">MACD</div>
+                <div class="ind-value" id="val-macd">--</div>
+            </div>
+            <div class="ind-box">
+                <div class="ind-label">VOLATILITÉ</div>
+                <div class="ind-value" id="val-vol">--</div>
+            </div>
         </div>
 
-        <!-- Zone de Signal Principale -->
-        <div class="signal-box">
-            <div style="font-size:0.8rem; color:#888; text-transform:uppercase;">Prédiction IA Haute Précision</div>
-            <div class="signal-badge sig-wait" id="main-signal">ANALYSE EN COURS</div>
-            <div class="prediction-time" id="time-prediction">--</div>
-            
-            <div class="levels-container">
-                <div class="level-box">
-                    <div class="level-label">Stop Loss (SL)</div>
-                    <div class="level-price" style="color:var(--red)" id="sl-val">---</div>
+        <div class="signal-card">
+            <div class="signal-title">Prédiction Structurelle (H1)</div>
+            <div class="signal-action act-wait" id="main-signal">ANALYSE EN COURS...</div>
+            <span class="time-frame" id="time-prediction">--</span>
+
+            <div class="levels-grid">
+                <div class="level-item">
+                    <div class="level-label">STOP LOSS (SL)</div>
+                    <div class="level-price" style="color:var(--red)" id="sl-price">---</div>
                 </div>
-                <div class="level-box">
-                    <div class="level-label">Take Profit (TP)</div>
-                    <div class="level-price" style="color:var(--green)" id="tp-val">---</div>
+                <div class="level-item">
+                    <div class="level-label">TAKE PROFIT (TP)</div>
+                    <div class="level-price" style="color:var(--green)" id="tp-price">---</div>
                 </div>
             </div>
         </div>
 
-        <!-- Conseil de l'IA -->
-        <div class="ai-brain">
-            <span class="ai-title">🧠 ANALYSE CONTEXTUELLE & NEWS :</span>
-            <span id="ai-advice">Chargement des algorithmes de corrélation...</span>
+        <div class="ai-analysis">
+            <span class="ai-header">🧠 RAPPORT D'INTELLIGENCE ARTIFICIELLE :</span>
+            <span id="ai-text">Chargement des algorithmes de corrélation macro-économique...</span>
         </div>
     </div>
 
     <div class="footer">
         <div>Creator HACKEN STORE</div>
-        <div class="refresh-timer">MAJ AUTO: <span id="timer-count">2.00</span>s</div>
+        <div><span class="timer-dot"></span> SCAN: <span id="scan-timer">2.00</span>s</div>
     </div>
 </div>
 
 <script>
-    // --- CONFIGURATION GLOBALE ---
-    let currentMarket = localStorage.getItem('hacken_market_v2') || 'EURUSD';
-    let lastSignal = null; // Pour garder la stabilité du signal
-    let signalLockTime = 0; // Temps restant avant de pouvoir changer d'avis
-    const STABILITY_THRESHOLD = 30; // Nombre de cycles (2s) avant de permettre un changement de tendance mineur
+    // --- CONFIGURATION ---
+    let currentMarket = localStorage.getItem('hacken_market_v3') || 'EURUSD';
     
-    // Données simulées de base
-    const marketData = {
-        'EURUSD': { base: 1.0850, vol: 0.0005, decimals: 5 },
-        'XAUUSD': { base: 2035.50, vol: 1.20, decimals: 2 }
+    // Mémoire du bot pour la stabilité
+    let historyBuffer = []; // Stocke les 30 dernières secondes de données
+    const BUFFER_SIZE = 30; // 30 secondes d'historique
+    let currentTrendLock = null; // La tendance actuelle verrouillée
+    let lockCounter = 0; // Compteur pour maintenir la tendance
+
+    const marketConfig = {
+        'EURUSD': { base: 1.0850, vol: 0.0004, decimals: 5 },
+        'XAUUSD': { base: 2035.00, vol: 1.50, decimals: 2 }
     };
 
-    // Flux de News Simulés (Impactent le marché)
     const newsFeed = [
-        "La FED annonce une pause dans la hausse des taux -> USD Faible",
-        "Tensions géopolitiques au Moyen-Orient -> Or (XAU) en hausse",
-        "Inflation UE supérieure aux attentes -> EUR Volatil",
-        "Données NFP USA décevantes -> Dollar en baisse",
-        "Banque Centrale Japonaise intervient -> Yen fort",
-        "Aucune news majeure, marché technique."
+        "La FED maintient ses taux directeurs -> USD Stable",
+        "Tensions géopolitiques en hausse -> Refuge vers l'OR (XAU)",
+        "Inflation zone Euro en baisse -> EUR Faible à court terme",
+        "Données emploi USA meilleures que prévu -> USD Fort",
+        "Banque Centrale interventionniste -> Volatilité attendue",
+        "Calme plat sur les marchés, attente des chiffres NFP."
     ];
 
     // --- INITIALISATION ---
     window.onload = function() {
-        // Restaurer le marché choisi
-        updateTabs();
-        
-        // Délai de chargement dramatique
+        restoreState();
         setTimeout(() => {
             document.getElementById('loader').style.display = 'none';
-            startEngine();
-        }, 2000);
+            startLoop();
+        }, 2500);
     };
 
-    function switchMarket(market) {
-        currentMarket = market;
-        localStorage.setItem('hacken_market_v2', market);
+    function restoreState() {
         updateTabs();
-        // Reset le lock de signal quand on change de marché
-        lastSignal = null; 
-        signalLockTime = 0;
-        runAnalysis(); // Analyse immédiate
+    }
+
+    function setMarket(market) {
+        currentMarket = market;
+        localStorage.setItem('hacken_market_v3', market);
+        updateTabs();
+        // Reset buffer et lock quand on change de marché
+        historyBuffer = [];
+        currentTrendLock = null;
+        lockCounter = 0;
+        runCycle();
     }
 
     function updateTabs() {
@@ -348,144 +381,161 @@
         else document.getElementById('tab-xau').classList.add('active');
     }
 
-    // --- MOTEUR PRINCIPAL (Loop 2s) ---
-    function startEngine() {
+    // --- BOUCLE PRINCIPALE (2 Secondes) ---
+    function startLoop() {
         setInterval(() => {
-            runAnalysis();
-        }, 2000); // Exécution toutes les 2 secondes exactes
+            runCycle();
+        }, 2000);
     }
 
-    function runAnalysis() {
-        // 1. Mise à jour du Timer Visuel
-        let timerEl = document.getElementById('timer-count');
+    function runCycle() {
+        // 1. Mise à jour Timer Visuel
+        let timerEl = document.getElementById('scan-timer');
         let val = parseFloat(timerEl.innerText);
-        val -= 0.1; // Decrément rapide pour effet visuel
+        val -= 0.2; 
         if(val <= 0) val = 2.00;
         timerEl.innerText = val.toFixed(2);
 
-        // 2. Simulation Prix & Volatilité
-        const data = marketData[currentMarket];
-        // Mouvement aléatoire mais fluide (Brownian motion simplifié)
-        let move = (Math.random() - 0.5) * data.vol;
-        let currentPrice = data.base + move;
-        data.base = currentPrice; // Update base pour la prochaine itération
+        // 2. Simulation Prix (Mouvement Brownien)
+        const config = marketConfig[currentMarket];
+        let move = (Math.random() - 0.5) * config.vol;
+        let currentPrice = config.base + move;
+        config.base = currentPrice; // Update pour la prochaine itération
 
         // Affichage Prix
-        const priceEl = document.getElementById('price-val');
-        priceEl.innerText = currentPrice.toFixed(data.decimals);
-        priceEl.className = move >= 0 ? 'price-display price-up' : 'price-display price-down';
+        const priceEl = document.getElementById('price-display');
+        priceEl.innerText = currentPrice.toFixed(config.decimals);
+        priceEl.className = move >= 0 ? 'price-big up' : 'price-big down';
 
-        // 3. Calcul Indicateurs Techniques (Simulés mais réalistes)
-        let rsi = 40 + Math.random() * 20; // RSI entre 40 et 60 par défaut
+        // 3. Génération Indicateurs (Simulés mais cohérents)
+        // On ajoute un peu de "mémoire" aux indicateurs pour qu'ils ne sautent pas du tout au tout
+        let rawRSI = 45 + Math.random() * 10; 
+        if(Math.random() > 0.9) rawRSI = Math.random() > 0.5 ? 25 : 75; // Pics rares
+        
         let macdStatus = Math.random() > 0.5 ? "HAUSSIER" : "BAISSIER";
-        let volatility = (Math.random() * 100).toFixed(1) + "%";
+        let volatility = (Math.random() * 50 + 20).toFixed(1) + "%";
 
-        // Injection de News aléatoire (1 chance sur 10 à chaque tick)
-        if(Math.random() > 0.9) {
-            let randomNews = newsFeed[Math.floor(Math.random() * newsFeed.length)];
-            document.getElementById('news-text').innerText = "FLASH INFO: " + randomNews;
-            
-            // Impact des news sur les indicateurs
-            if(randomNews.includes("Or") || randomNews.includes("Géopolitiques")) {
-                if(currentMarket === 'XAUUSD') rsi += 15; // Boost achat
-            }
-            if(randomNews.includes("USD Faible") || randomNews.includes("NFP")) {
-                if(currentMarket === 'EURUSD') rsi += 15;
-                if(currentMarket === 'XAUUSD') rsi += 10;
-            }
+        document.getElementById('val-rsi').innerText = rawRSI.toFixed(2);
+        document.getElementById('val-macd').innerText = macdStatus;
+        document.getElementById('val-vol').innerText = volatility;
+
+        // 4. Gestion des News (Impact lent)
+        if(Math.random() > 0.95) {
+            let news = newsFeed[Math.floor(Math.random() * newsFeed.length)];
+            document.getElementById('news-ticker').innerText = "FLASH: " + news;
+            // Impact news sur RSI simulé
+            if(news.includes("OR") && currentMarket === 'XAUUSD') rawRSI += 10;
+            if(news.includes("USD Fort") && currentMarket === 'EURUSD') rawRSI -= 10;
         } else {
-             document.getElementById('news-text').innerText = "SCANNING GLOBAL MARKETS... NO MAJOR ALERTS";
+            document.getElementById('news-ticker').innerText = "SURVEILLANCE DES MARCHÉS MONDIAUX...";
         }
 
-        document.getElementById('ind-rsi').innerText = rsi.toFixed(2);
-        document.getElementById('ind-macd').innerText = macdStatus;
-        document.getElementById('ind-vol').innerText = volatility;
-
-        // 4. LOGIQUE DE DÉCISION INTELLIGENTE (Le Cœur)
-        determineSignal(rsi, macdStatus, currentPrice, data);
+        // 5. ALGORITHME DE STABILITÉ (Le Cœur de la demande)
+        addToHistory(currentPrice, rawRSI, macdStatus);
+        analyzeTrend(currentPrice, config);
     }
 
-    function determineSignal(rsi, macd, price, data) {
-        let signalType = "WAIT";
+    function addToHistory(price, rsi, macd) {
+        historyBuffer.push({ price, rsi, macd, time: Date.now() });
+        if(historyBuffer.length > BUFFER_SIZE) {
+            historyBuffer.shift(); // Garder seulement les 30 dernières secondes
+        }
+    }
+
+    function analyzeTrend(currentPrice, config) {
+        // Si on n'a pas assez de données, on attend
+        if(historyBuffer.length < 10) {
+            document.getElementById('ai-text').innerText = "Accumulation de données pour filtrer le bruit du marché...";
+            return;
+        }
+
+        // Calcul de la MOYENNE sur les 30 dernières secondes (Lissage)
+        let avgRSI = historyBuffer.reduce((sum, item) => sum + item.rsi, 0) / historyBuffer.length;
+        let avgMacdBullish = historyBuffer.filter(i => i.macd === "HAUSSIER").length;
+        let macdRatio = avgMacdBullish / historyBuffer.length; // % de temps haussier
+
+        // Décision basée sur la MOYENNE, pas l'instant T
+        let newSignal = "WAIT";
         let confidence = 0;
         let advice = "";
         let timeFrame = "";
 
-        // Logique stricte pour éviter le bruit
-        if (rsi > 65) {
-            signalType = "SELL";
-            confidence = rsi;
-            advice = "Surachat détecté combiné à une résistance technique. Probabilité de correction forte.";
-            timeFrame = "Prévision Baissière : 1H - 4H";
-        } else if (rsi < 35) {
-            signalType = "BUY";
-            confidence = 100 - rsi;
-            advice = "Survente identifiée. Les institutionnels accumulent probablement à ce niveau.";
-            timeFrame = "Prévision Haussière : 1H - 4H";
+        // Logique Stricte pour Trend H1
+        if (avgRSI > 60 && macdRatio > 0.6) {
+            newSignal = "SELL";
+            confidence = avgRSI;
+            advice = "Structure baissière confirmée sur la moyenne des 30s. Le RSI moyen indique une surachat persistant. Probabilité de correction dans l'heure.";
+            timeFrame = "OBJECTIF: 1H - 2H";
+        } else if (avgRSI < 40 && macdRatio < 0.4) {
+            newSignal = "BUY";
+            confidence = 100 - avgRSI;
+            advice = "Structure haussière détectée. Accumulation institutionnelle probable en zone de survente. Rebond attendu.";
+            timeFrame = "OBJECTIF: 1H - 2H";
         } else {
-            // Zone neutre, on regarde le MACD
-            if (macd === "HAUSSIER" && rsi > 50) {
-                signalType = "BUY";
-                advice = "Momentum positif confirmé. Suivre la tendance de fond.";
-                timeFrame = "Tendance Lourde : 4H+";
-            } else if (macd === "BAISSIER" && rsi < 50) {
-                signalType = "SELL";
-                advice = "Pression vendeuse structurelle. Attention aux supports.";
-                timeFrame = "Tendance Lourde : 4H+";
-            } else {
-                signalType = "WAIT";
-                advice = "Marché en consolidation (Range). Attendre une cassure claire avant d'entrer. Risque élevé de faux mouvements.";
-                timeFrame = "Pas de trade recommandé";
-            }
+            newSignal = "WAIT";
+            advice = "Marché en consolidation latérale. Les indicateurs sont contradictoires. ATTENDRE une cassure claire avant d'entrer. Risque de faux mouvement élevé.";
+            timeFrame = "PAS DE TRADE";
         }
 
-        // --- SYSTÈME DE STABILITÉ (LOCK) ---
-        // On ne change le signal affiché que si c'est un vrai changement ou si le lock est tombé
-        if (lastSignal !== signalType) {
-            // Si on veut changer de signal, on vérifie si c'est juste du bruit
-            // Ici, on accepte le changement car la logique RSI/MACD est déjà filtrée, 
-            // mais on pourrait ajouter un compteur ici pour forcer 3 ticks consécutifs.
+        // SYSTÈME DE VERROUILLAGE (LOCK)
+        // On ne change le signal affiché que si c'est un VRAI changement de tendance
+        // ou si le compteur de lock est fini.
+        if (currentTrendLock !== newSignal) {
+            // Si on veut changer, on vérifie si c'est juste du bruit
+            // Ici, comme on utilise déjà une moyenne (avgRSI), le changement est déjà fiable.
+            // Mais on ajoute un petit délai de confirmation (lockCounter)
             
-            lastSignal = signalType;
-            updateUI(signalType, price, data, advice, timeFrame);
+            if (lockCounter > 5) { // Attendre 5 cycles (10 secondes) de confirmation avant de switcher
+                currentTrendLock = newSignal;
+                lockCounter = 0;
+                updateDisplay(newSignal, currentPrice, config, advice, timeFrame);
+            } else {
+                lockCounter++;
+                // On garde l'affichage précédent mais on met à jour le texte d'analyse
+                document.getElementById('ai-text').innerText = "Confirmation de tendance en cours... (" + lockCounter + "/5)";
+            }
         } else {
-            // Mise à jour légère sans changer le gros titre (pour la stabilité visuelle)
-            updateLevels(price, data, signalType);
-            document.getElementById('ai-advice').innerText = advice;
-            document.getElementById('time-prediction').innerText = timeFrame;
+            // La tendance est la même, on incrémente le lock pour la renforcer
+            lockCounter++;
+            updateLevels(currentPrice, config, newSignal);
+            document.getElementById('ai-text').innerText = advice + " (Tendance maintenue depuis " + Math.floor(lockCounter*2) + "s)";
+            
+            // Renforcer visuellement le time frame
+            if(newSignal !== "WAIT") {
+                document.getElementById('time-prediction').innerText = timeFrame + " [CONFIRMÉ]";
+            }
         }
     }
 
-    function updateUI(type, price, data, advice, timeFrame) {
+    function updateDisplay(signal, price, config, advice, timeFrame) {
         const badge = document.getElementById('main-signal');
-        badge.className = 'signal-badge'; // Reset
-        
-        if (type === 'BUY') {
-            badge.classList.add('sig-buy');
+        badge.className = 'signal-action'; // Reset classes
+
+        if (signal === 'BUY') {
+            badge.classList.add('act-buy');
             badge.innerText = "ACHETER (LONG)";
-        } else if (type === 'SELL') {
-            badge.classList.add('sig-sell');
+        } else if (signal === 'SELL') {
+            badge.classList.add('act-sell');
             badge.innerText = "VENDRE (SHORT)";
         } else {
-            badge.classList.add('sig-wait');
+            badge.classList.add('act-wait');
             badge.innerText = "ATTENTE / NEUTRE";
         }
 
-        document.getElementById('ai-advice').innerText = advice;
         document.getElementById('time-prediction').innerText = timeFrame;
-        
-        updateLevels(price, data, type);
+        updateLevels(price, config, signal);
     }
 
-    function updateLevels(price, data, type) {
+    function updateLevels(price, config, signal) {
         let sl, tp;
-        let risk = data.vol * 2; // Stop loss serré
-        let reward = data.vol * 4; // Take profit large (Ratio 1:2)
+        // Calcul SL/TP basé sur la volatilité moyenne
+        let risk = config.vol * 3; 
+        let reward = config.vol * 6; // Ratio 1:2
 
-        if (type === 'BUY') {
+        if (signal === 'BUY') {
             sl = price - risk;
             tp = price + reward;
-        } else if (type === 'SELL') {
+        } else if (signal === 'SELL') {
             sl = price + risk;
             tp = price - reward;
         } else {
@@ -493,15 +543,15 @@
         }
 
         if(sl !== 0) {
-            document.getElementById('sl-val').innerText = sl.toFixed(data.decimals);
-            document.getElementById('tp-val').innerText = tp.toFixed(data.decimals);
+            document.getElementById('sl-price').innerText = sl.toFixed(config.decimals);
+            document.getElementById('tp-price').innerText = tp.toFixed(config.decimals);
         } else {
-            document.getElementById('sl-val').innerText = "---";
-            document.getElementById('tp-val').innerText = "---";
+            document.getElementById('sl-price').innerText = "---";
+            document.getElementById('tp-price').innerText = "---";
         }
     }
 
 </script>
 
 </body>
-</html>
+    </html>
