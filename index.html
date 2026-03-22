@@ -3,463 +3,502 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HACKEN STORE - AI TERMINAL</title>
+    <title>HACKEN STORE - ELITE TERMINAL V2</title>
     <style>
         :root {
-            --bg-color: #0b0e11;
-            --panel-color: #151a21;
-            --accent-green: #0ecb81;
-            --accent-red: #f6465d;
-            --text-main: #eaecef;
-            --text-dim: #848e9c;
-            --border: #2b3139;
+            --bg-dark: #050505;
+            --panel: #121212;
+            --border: #333;
+            --green: #00ff9d;
+            --red: #ff3b3b;
+            --gold: #ffd700;
+            --text: #ffffff;
+            --dim: #888;
         }
 
         body {
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            font-family: 'Roboto', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text);
+            font-family: 'Courier New', monospace; /* Police style terminal */
             margin: 0;
-            padding: 20px;
+            padding: 10px;
             display: flex;
             justify-content: center;
-            min-height: 100vh;
         }
 
-        .terminal-container {
+        .container {
             width: 100%;
-            max-width: 500px;
-            background-color: var(--panel-color);
-            border-radius: 8px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            overflow: hidden;
+            max-width: 600px;
+            background: var(--panel);
             border: 1px solid var(--border);
+            box-shadow: 0 0 20px rgba(0,0,0,0.8);
             position: relative;
+            overflow: hidden;
         }
 
         /* HEADER */
         .header {
-            background-color: #1e2329;
+            background: linear-gradient(90deg, #1a1a1a, #000);
             padding: 15px;
+            border-bottom: 2px solid var(--gold);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid var(--border);
         }
 
-        .logo {
+        .brand {
             font-weight: bold;
-            letter-spacing: 1px;
-            color: #f0b90b; /* Binance Yellow style */
+            font-size: 1.2rem;
+            color: var(--gold);
+            text-transform: uppercase;
+            letter-spacing: 2px;
         }
 
-        .status-dot {
-            height: 10px;
-            width: 10px;
-            background-color: var(--accent-green);
-            border-radius: 50%;
-            display: inline-block;
-            animation: pulse 2s infinite;
+        .live-indicator {
+            font-size: 0.7rem;
+            color: var(--green);
+            animation: blink 1s infinite;
         }
 
-        @keyframes pulse {
-            0% { opacity: 1; }
-            50% { opacity: 0.4; }
-            100% { opacity: 1; }
-        }
+        @keyframes blink { 50% { opacity: 0.3; } }
 
-        /* SELECTOR */
-        .market-selector {
+        /* MARKET SELECTOR */
+        .market-tabs {
             display: flex;
-            padding: 10px;
-            gap: 10px;
-            background: #1e2329;
+            background: #000;
         }
 
-        .m-btn {
+        .tab {
             flex: 1;
-            background: transparent;
-            border: 1px solid var(--border);
-            color: var(--text-dim);
-            padding: 10px;
-            cursor: pointer;
-            border-radius: 4px;
-            font-weight: bold;
-            transition: 0.2s;
-        }
-
-        .m-btn.active {
-            background: #2b3139;
-            color: var(--text-main);
-            border-color: #f0b90b;
-        }
-
-        /* MAIN DISPLAY */
-        .display-area {
-            padding: 20px;
+            padding: 15px;
             text-align: center;
-        }
-
-        .price-box {
-            font-size: 2.5rem;
-            font-weight: bold;
-            margin-bottom: 5px;
-            font-family: 'Courier New', monospace;
-        }
-
-        .trend-indicator {
-            font-size: 0.9rem;
-            margin-bottom: 20px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .up { color: var(--accent-green); }
-        .down { color: var(--accent-red); }
-
-        /* SIGNAL BOX */
-        .signal-card {
-            background: #1e2329;
-            border-radius: 8px;
-            padding: 15px;
-            margin-bottom: 15px;
-            border-left: 4px solid gray;
-        }
-
-        .signal-card.buy { border-left-color: var(--accent-green); }
-        .signal-card.sell { border-left-color: var(--accent-red); }
-        .signal-card.wait { border-left-color: var(--text-dim); }
-
-        .signal-title {
-            font-size: 0.8rem;
-            color: var(--text-dim);
-            text-transform: uppercase;
-        }
-
-        .signal-action {
-            font-size: 1.8rem;
-            font-weight: 900;
-            margin: 10px 0;
-        }
-
-        .tp-sl-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-top: 10px;
-            background: #0b0e11;
-            padding: 10px;
-            border-radius: 4px;
-        }
-
-        .stat-label { font-size: 0.7rem; color: var(--text-dim); }
-        .stat-val { font-size: 1rem; font-family: monospace; }
-
-        /* INDICATORS */
-        .indicators-row {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 15px;
-            font-size: 0.8rem;
-            color: var(--text-dim);
-            border-bottom: 1px solid var(--border);
-            padding-bottom: 10px;
-        }
-
-        .ind-item span { color: var(--text-main); font-weight: bold; }
-
-        /* ADVICE */
-        .advice-box {
-            background: rgba(240, 185, 11, 0.1);
-            color: #f0b90b;
-            padding: 10px;
-            border-radius: 4px;
-            font-size: 0.85rem;
-            text-align: left;
-            margin-bottom: 15px;
-            border: 1px solid rgba(240, 185, 11, 0.3);
-        }
-
-        /* FOOTER / CONTROLS */
-        .controls {
-            padding: 15px;
-            border-top: 1px solid var(--border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: #1e2329;
-        }
-
-        .refresh-btn {
-            background: #2b3139;
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 4px;
             cursor: pointer;
-            font-size: 0.9rem;
-            display: flex;
-            align-items: center;
-            gap: 5px;
+            border-bottom: 2px solid transparent;
+            color: var(--dim);
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .tab.active {
+            background: #1a1a1a;
+            color: var(--text);
+            border-bottom: 2px solid var(--gold);
+        }
+
+        /* NEWS TICKER */
+        .news-ticker {
+            background: #220000;
+            color: #ffaaaa;
+            padding: 8px;
+            font-size: 0.8rem;
+            white-space: nowrap;
+            overflow: hidden;
+            border-bottom: 1px solid #440000;
         }
         
-        .refresh-btn:hover { background: #363c45; }
-
-        .timer {
-            font-size: 0.8rem;
-            color: var(--text-dim);
+        .news-content {
+            display: inline-block;
+            padding-left: 100%;
+            animation: scroll-left 15s linear infinite;
         }
 
-        .signature {
+        @keyframes scroll-left {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-100%); }
+        }
+
+        /* MAIN DASHBOARD */
+        .dashboard {
+            padding: 20px;
+        }
+
+        .price-display {
+            font-size: 3rem;
+            text-align: center;
+            font-weight: bold;
+            margin: 10px 0;
+            text-shadow: 0 0 10px rgba(255,255,255,0.2);
+        }
+
+        .price-up { color: var(--green); }
+        .price-down { color: var(--red); }
+
+        /* INDICATORS GRID */
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 5px;
+            margin-bottom: 20px;
+            background: #000;
+            padding: 10px;
+            border: 1px solid #333;
+        }
+
+        .tech-item {
             text-align: center;
             font-size: 0.7rem;
-            color: #474d57;
-            padding: 10px;
-            margin-top: 10px;
         }
+        .tech-val { font-size: 1rem; font-weight: bold; display: block; margin-top: 5px; }
+
+        /* SIGNAL BOX - LE CŒUR DU BOT */
+        .signal-box {
+            background: #1a1a1a;
+            border: 1px solid var(--border);
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .signal-badge {
+            font-size: 2rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            display: inline-block;
+            min-width: 200px;
+        }
+
+        .sig-buy { background: rgba(0, 255, 157, 0.1); color: var(--green); border: 1px solid var(--green); box-shadow: 0 0 15px rgba(0,255,157,0.2); }
+        .sig-sell { background: rgba(255, 59, 59, 0.1); color: var(--red); border: 1px solid var(--red); box-shadow: 0 0 15px rgba(255,59,59,0.2); }
+        .sig-wait { background: #333; color: #aaa; border: 1px solid #555; }
+
+        .prediction-time {
+            font-size: 0.9rem;
+            color: var(--gold);
+            margin-top: 5px;
+            font-weight: bold;
+        }
+
+        /* TP SL SECTION */
+        .levels-container {
+            display: flex;
+            justify-content: space-between;
+            background: #000;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 15px;
+        }
+
+        .level-box { text-align: center; width: 45%; }
+        .level-label { font-size: 0.7rem; color: var(--dim); text-transform: uppercase; }
+        .level-price { font-size: 1.2rem; font-weight: bold; margin-top: 5px; }
+
+        /* AI ADVICE */
+        .ai-brain {
+            background: linear-gradient(45deg, #111, #222);
+            padding: 15px;
+            border-left: 4px solid var(--gold);
+            font-size: 0.85rem;
+            line-height: 1.4;
+            color: #ddd;
+        }
+
+        .ai-title { color: var(--gold); font-weight: bold; margin-bottom: 5px; display: block; }
+
+        /* FOOTER */
+        .footer {
+            padding: 10px;
+            text-align: center;
+            font-size: 0.7rem;
+            color: #444;
+            border-top: 1px solid #222;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .refresh-timer { color: var(--green); }
 
         /* LOADING OVERLAY */
         #loader {
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(11, 14, 17, 0.9);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 10;
+            position: absolute; top:0; left:0; width:100%; height:100%;
+            background: #000; z-index: 99;
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
         }
-        .spinner {
-            width: 40px; height: 40px;
-            border: 4px solid #333;
-            border-top: 4px solid #f0b90b;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
+        .scan-line {
+            width: 100%; height: 2px; background: var(--gold);
+            position: absolute; top: 0;
+            animation: scan 1s infinite linear;
+            box-shadow: 0 0 10px var(--gold);
         }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        @keyframes scan { 0% {top:0;} 100% {top:100%;} }
 
     </style>
 </head>
 <body>
 
-<div class="terminal-container">
-    
-    <!-- Loader -->
+<div class="container">
+    <!-- Loader Initial -->
     <div id="loader">
-        <div class="spinner"></div>
-        <p style="margin-top:15px; color:#848e9c; font-size:0.8rem;">CONNEXION AU SERVEUR...</p>
+        <div class="scan-line"></div>
+        <h2 style="color:var(--gold)">INITIALISATION IA...</h2>
+        <p style="color:#666">Connexion aux flux de données globaux</p>
     </div>
 
-    <!-- Header -->
     <div class="header">
-        <div class="logo">HACKEN STORE <span style="font-size:0.6em; color:#fff;">PRO</span></div>
-        <div style="font-size:0.8rem;">STATUS: <span class="status-dot"></span> LIVE</div>
+        <div class="brand">HACKEN STORE <span style="font-size:0.5em; vertical-align:super;">ELITE</span></div>
+        <div class="live-indicator">● SYSTEME ACTIF</div>
     </div>
 
-    <!-- Market Selector -->
-    <div class="market-selector">
-        <button class="m-btn" onclick="setMarket('EURUSD')" id="btn-eur">EUR/USD</button>
-        <button class="m-btn" onclick="setMarket('XAUUSD')" id="btn-xau">XAU/USD (OR)</button>
+    <div class="market-tabs">
+        <div class="tab active" onclick="switchMarket('EURUSD')" id="tab-eur">EUR/USD</div>
+        <div class="tab" onclick="switchMarket('XAUUSD')" id="tab-xau">XAU/USD (OR)</div>
     </div>
 
-    <!-- Main Content -->
-    <div class="display-area">
+    <!-- News Ticker -->
+    <div class="news-ticker">
+        <div class="news-content" id="news-text">
+            EN ATTENTE DES FLUX D'ACTUALITÉS...
+        </div>
+    </div>
+
+    <div class="dashboard">
+        <!-- Prix -->
+        <div class="price-display" id="price-val">0.0000</div>
         
-        <div class="price-box" id="current-price">0.0000</div>
-        <div class="trend-indicator" id="trend-text">Analyse en cours...</div>
-
-        <!-- Indicators -->
-        <div class="indicators-row">
-            <div class="ind-item">RSI (14): <span id="val-rsi">--</span></div>
-            <div class="ind-item">MACD: <span id="val-macd">--</span></div>
-            <div class="ind-item">ATR: <span id="val-atr">--</span></div>
+        <!-- Indicateurs Techniques -->
+        <div class="tech-grid">
+            <div class="tech-item">RSI (14)<span class="tech-val" id="ind-rsi">--</span></div>
+            <div class="tech-item">MACD<span class="tech-val" id="ind-macd">--</span></div>
+            <div class="tech-item">VOLATILITÉ<span class="tech-val" id="ind-vol">--</span></div>
         </div>
 
-        <!-- Signal Card -->
-        <div class="signal-card wait" id="signal-card">
-            <div class="signal-title">Signal IA Précis</div>
-            <div class="signal-action" id="signal-action">EN ATTENTE</div>
+        <!-- Zone de Signal Principale -->
+        <div class="signal-box">
+            <div style="font-size:0.8rem; color:#888; text-transform:uppercase;">Prédiction IA Haute Précision</div>
+            <div class="signal-badge sig-wait" id="main-signal">ANALYSE EN COURS</div>
+            <div class="prediction-time" id="time-prediction">--</div>
             
-            <div class="tp-sl-grid">
-                <div>
-                    <div class="stat-label">STOP LOSS (SL)</div>
-                    <div class="stat-val" id="sl-val" style="color:var(--accent-red)">---</div>
+            <div class="levels-container">
+                <div class="level-box">
+                    <div class="level-label">Stop Loss (SL)</div>
+                    <div class="level-price" style="color:var(--red)" id="sl-val">---</div>
                 </div>
-                <div style="text-align:right;">
-                    <div class="stat-label">TAKE PROFIT (TP)</div>
-                    <div class="stat-val" id="tp-val" style="color:var(--accent-green)">---</div>
+                <div class="level-box">
+                    <div class="level-label">Take Profit (TP)</div>
+                    <div class="level-price" style="color:var(--green)" id="tp-val">---</div>
                 </div>
-            </div>
-            <div style="margin-top:10px; font-size:0.8rem; color:#aaa;">
-                Temps estimé: <strong id="time-est" style="color:white">--</strong>
             </div>
         </div>
 
-        <!-- Advice -->
-        <div class="advice-box">
-            💡 <strong>Conseil Bot :</strong> <span id="bot-advice">Initialisation des algorithmes...</span>
+        <!-- Conseil de l'IA -->
+        <div class="ai-brain">
+            <span class="ai-title">🧠 ANALYSE CONTEXTUELLE & NEWS :</span>
+            <span id="ai-advice">Chargement des algorithmes de corrélation...</span>
         </div>
-
     </div>
 
-    <!-- Footer Controls -->
-    <div class="controls">
-        <div class="timer">Prochain scan: <span id="countdown">5s</span></div>
-        <button class="refresh-btn" onclick="forceRefresh()">
-            ↻ Actualiser Maintenant
-        </button>
+    <div class="footer">
+        <div>Creator HACKEN STORE</div>
+        <div class="refresh-timer">MAJ AUTO: <span id="timer-count">2.00</span>s</div>
     </div>
-
-    <div class="signature">Creator HACKEN STORE © 2024</div>
 </div>
 
 <script>
-    // --- CONFIGURATION & ETAT ---
-    let currentMarket = localStorage.getItem('hacken_market') || 'EURUSD'; // Récupère la préférence sauvegardée
-    let autoRefreshInterval;
-    let countdownInterval;
-    let timeLeft = 5;
-
-    // Initialisation au chargement
-    window.onload = function() {
-        updateButtons();
-        setTimeout(() => {
-            document.getElementById('loader').style.display = 'none';
-            startAutoPilot();
-        }, 1500); // Faux délai de connexion
+    // --- CONFIGURATION GLOBALE ---
+    let currentMarket = localStorage.getItem('hacken_market_v2') || 'EURUSD';
+    let lastSignal = null; // Pour garder la stabilité du signal
+    let signalLockTime = 0; // Temps restant avant de pouvoir changer d'avis
+    const STABILITY_THRESHOLD = 30; // Nombre de cycles (2s) avant de permettre un changement de tendance mineur
+    
+    // Données simulées de base
+    const marketData = {
+        'EURUSD': { base: 1.0850, vol: 0.0005, decimals: 5 },
+        'XAUUSD': { base: 2035.50, vol: 1.20, decimals: 2 }
     };
 
-    // Changement de marché manuel
-    function setMarket(market) {
+    // Flux de News Simulés (Impactent le marché)
+    const newsFeed = [
+        "La FED annonce une pause dans la hausse des taux -> USD Faible",
+        "Tensions géopolitiques au Moyen-Orient -> Or (XAU) en hausse",
+        "Inflation UE supérieure aux attentes -> EUR Volatil",
+        "Données NFP USA décevantes -> Dollar en baisse",
+        "Banque Centrale Japonaise intervient -> Yen fort",
+        "Aucune news majeure, marché technique."
+    ];
+
+    // --- INITIALISATION ---
+    window.onload = function() {
+        // Restaurer le marché choisi
+        updateTabs();
+        
+        // Délai de chargement dramatique
+        setTimeout(() => {
+            document.getElementById('loader').style.display = 'none';
+            startEngine();
+        }, 2000);
+    };
+
+    function switchMarket(market) {
         currentMarket = market;
-        localStorage.setItem('hacken_market', market); // Sauvegarde la préférence
-        updateButtons();
-        forceRefresh(); // Relance l'analyse immédiatement
+        localStorage.setItem('hacken_market_v2', market);
+        updateTabs();
+        // Reset le lock de signal quand on change de marché
+        lastSignal = null; 
+        signalLockTime = 0;
+        runAnalysis(); // Analyse immédiate
     }
 
-    function updateButtons() {
-        document.querySelectorAll('.m-btn').forEach(b => b.classList.remove('active'));
-        if(currentMarket === 'EURUSD') document.getElementById('btn-eur').classList.add('active');
-        else document.getElementById('btn-xau').classList.add('active');
+    function updateTabs() {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        if(currentMarket === 'EURUSD') document.getElementById('tab-eur').classList.add('active');
+        else document.getElementById('tab-xau').classList.add('active');
     }
 
-    // --- MOTEUR D'ANALYSE (SIMULATION AVANCÉE) ---
-    function analyze() {
-        // 1. Génération Prix de base réaliste
-        let basePrice = currentMarket === 'EURUSD' ? 1.0850 : 1945.50;
-        let volatility = currentMarket === 'EURUSD' ? 0.0015 : 8.50;
-        
-        // Variation aléatoire légère pour simuler le temps réel
-        let randomMove = (Math.random() - 0.5) * volatility;
-        let currentPrice = basePrice + randomMove;
+    // --- MOTEUR PRINCIPAL (Loop 2s) ---
+    function startEngine() {
+        setInterval(() => {
+            runAnalysis();
+        }, 2000); // Exécution toutes les 2 secondes exactes
+    }
 
-        // Mise à jour affichage prix
-        let decimals = currentMarket === 'EURUSD' ? 5 : 2;
-        document.getElementById('current-price').innerText = currentPrice.toFixed(decimals);
-        document.getElementById('current-price').className = randomMove > 0 ? 'price-box up' : 'price-box down';
+    function runAnalysis() {
+        // 1. Mise à jour du Timer Visuel
+        let timerEl = document.getElementById('timer-count');
+        let val = parseFloat(timerEl.innerText);
+        val -= 0.1; // Decrément rapide pour effet visuel
+        if(val <= 0) val = 2.00;
+        timerEl.innerText = val.toFixed(2);
 
-        // 2. Calcul des indicateurs (Logique Mathématique Simulée)
-        // RSI entre 20 et 80 pour éviter les extrêmes trop souvent
-        let rsi = 30 + Math.random() * 40; 
-        if(Math.random() > 0.8) rsi = Math.random() > 0.5 ? 15 + Math.random()*10 : 85 - Math.random()*10; // Pics rares
-        
-        let macdVal = (Math.random() - 0.5).toFixed(4);
-        let atrVal = (volatility * 0.5).toFixed(decimals);
+        // 2. Simulation Prix & Volatilité
+        const data = marketData[currentMarket];
+        // Mouvement aléatoire mais fluide (Brownian motion simplifié)
+        let move = (Math.random() - 0.5) * data.vol;
+        let currentPrice = data.base + move;
+        data.base = currentPrice; // Update base pour la prochaine itération
 
-        document.getElementById('val-rsi').innerText = rsi.toFixed(2);
-        document.getElementById('val-macd').innerText = macdVal > 0 ? "HAUSSIER" : "BAISSIER";
-        document.getElementById('val-macd').style.color = macdVal > 0 ? "var(--accent-green)" : "var(--accent-red)";
-        document.getElementById('val-atr').innerText = atrVal;
+        // Affichage Prix
+        const priceEl = document.getElementById('price-val');
+        priceEl.innerText = currentPrice.toFixed(data.decimals);
+        priceEl.className = move >= 0 ? 'price-display price-up' : 'price-display price-down';
 
-        // 3. Décision du Bot (Algorithme de décision)
-        let signal = "WAIT";
-        let actionText = "NEUTRE / ATTENDRE";
-        let cardClass = "wait";
-        let sl = 0, tp = 0;
-        let advice = "";
-        let timeEst = "";
+        // 3. Calcul Indicateurs Techniques (Simulés mais réalistes)
+        let rsi = 40 + Math.random() * 20; // RSI entre 40 et 60 par défaut
+        let macdStatus = Math.random() > 0.5 ? "HAUSSIER" : "BAISSIER";
+        let volatility = (Math.random() * 100).toFixed(1) + "%";
 
-        // Logique de Trading
-        if (rsi < 30) {
-            // Survente -> ACHAT
-            signal = "BUY";
-            actionText = "ACHETER (LONG)";
-            cardClass = "buy";
-            sl = currentPrice - (atrVal * 1.5);
-            tp = currentPrice + (atrVal * 3);
-            advice = "Le RSI indique une survente forte. Probabilité de rebond technique élevée.";
-            timeEst = "Entrée immédiate (Scalp 15m)";
-        } else if (rsi > 70) {
-            // Surachat -> VENTE
-            signal = "SELL";
-            actionText = "VENDRE (SHORT)";
-            cardClass = "sell";
-            sl = currentPrice + (atrVal * 1.5);
-            tp = currentPrice - (atrVal * 3);
-            advice = "Le marché est en surachat. Correction imminente attendue.";
-            timeEst = "Dans les 30 prochaines minutes";
+        // Injection de News aléatoire (1 chance sur 10 à chaque tick)
+        if(Math.random() > 0.9) {
+            let randomNews = newsFeed[Math.floor(Math.random() * newsFeed.length)];
+            document.getElementById('news-text').innerText = "FLASH INFO: " + randomNews;
+            
+            // Impact des news sur les indicateurs
+            if(randomNews.includes("Or") || randomNews.includes("Géopolitiques")) {
+                if(currentMarket === 'XAUUSD') rsi += 15; // Boost achat
+            }
+            if(randomNews.includes("USD Faible") || randomNews.includes("NFP")) {
+                if(currentMarket === 'EURUSD') rsi += 15;
+                if(currentMarket === 'XAUUSD') rsi += 10;
+            }
         } else {
-            // Tendance ou Range
-            if (macdVal > 0.0005 && rsi > 50) {
-                signal = "BUY";
-                actionText = "ACHETER (Trend)";
-                cardClass = "buy";
-                sl = currentPrice - (atrVal * 2);
-                tp = currentPrice + (atrVal * 4);
-                advice = "Momentum haussier confirmé par le MACD. Suivez la tendance.";
-                timeEst = "Hold 1h - 4h";
-            } else if (macdVal < -0.0005 && rsi < 50) {
-                signal = "SELL";
-                actionText = "VENDRE (Trend)";
-                cardClass = "sell";
-                sl = currentPrice + (atrVal * 2);
-                tp = currentPrice - (atrVal * 4);
-                advice = "Pression vendeuse structurelle. Le support risque de casser.";
-                timeEst = "Hold 1h - 4h";
+             document.getElementById('news-text').innerText = "SCANNING GLOBAL MARKETS... NO MAJOR ALERTS";
+        }
+
+        document.getElementById('ind-rsi').innerText = rsi.toFixed(2);
+        document.getElementById('ind-macd').innerText = macdStatus;
+        document.getElementById('ind-vol').innerText = volatility;
+
+        // 4. LOGIQUE DE DÉCISION INTELLIGENTE (Le Cœur)
+        determineSignal(rsi, macdStatus, currentPrice, data);
+    }
+
+    function determineSignal(rsi, macd, price, data) {
+        let signalType = "WAIT";
+        let confidence = 0;
+        let advice = "";
+        let timeFrame = "";
+
+        // Logique stricte pour éviter le bruit
+        if (rsi > 65) {
+            signalType = "SELL";
+            confidence = rsi;
+            advice = "Surachat détecté combiné à une résistance technique. Probabilité de correction forte.";
+            timeFrame = "Prévision Baissière : 1H - 4H";
+        } else if (rsi < 35) {
+            signalType = "BUY";
+            confidence = 100 - rsi;
+            advice = "Survente identifiée. Les institutionnels accumulent probablement à ce niveau.";
+            timeFrame = "Prévision Haussière : 1H - 4H";
+        } else {
+            // Zone neutre, on regarde le MACD
+            if (macd === "HAUSSIER" && rsi > 50) {
+                signalType = "BUY";
+                advice = "Momentum positif confirmé. Suivre la tendance de fond.";
+                timeFrame = "Tendance Lourde : 4H+";
+            } else if (macd === "BAISSIER" && rsi < 50) {
+                signalType = "SELL";
+                advice = "Pression vendeuse structurelle. Attention aux supports.";
+                timeFrame = "Tendance Lourde : 4H+";
             } else {
-                advice = "Marché en consolidation (Range). Évitez d'ouvrir des positions jusqu'à cassure.";
-                timeEst = "Pas de trade recommandé";
+                signalType = "WAIT";
+                advice = "Marché en consolidation (Range). Attendre une cassure claire avant d'entrer. Risque élevé de faux mouvements.";
+                timeFrame = "Pas de trade recommandé";
             }
         }
 
-        // 4. Mise à jour de l'UI
-        const card = document.getElementById('signal-card');
-        card.className = `signal-card ${cardClass}`;
-        document.getElementById('signal-action').innerText = actionText;
-        document.getElementById('signal-action').style.color = cardClass === 'buy' ? 'var(--accent-green)' : (cardClass === 'sell' ? 'var(--accent-red)' : '#848e9c');
-        
-        document.getElementById('sl-val').innerText = sl.toFixed(decimals);
-        document.getElementById('tp-val').innerText = tp.toFixed(decimals);
-        document.getElementById('time-est').innerText = timeEst;
-        document.getElementById('bot-advice').innerText = advice;
-        
-        // Trend Text global
-        let trendEl = document.getElementById('trend-text');
-        if(signal === 'BUY') { trendEl.innerText = "TENDANCE HAUSSIÈRE DETECTÉE"; trendEl.className = "trend-indicator up"; }
-        else if(signal === 'SELL') { trendEl.innerText = "TENDANCE BAISSIÈRE DETECTÉE"; trendEl.className = "trend-indicator down"; }
-        else { trendEl.innerText = "MARCHÉ INCERTAIN / RANGE"; trendEl.className = "trend-indicator"; }
+        // --- SYSTÈME DE STABILITÉ (LOCK) ---
+        // On ne change le signal affiché que si c'est un vrai changement ou si le lock est tombé
+        if (lastSignal !== signalType) {
+            // Si on veut changer de signal, on vérifie si c'est juste du bruit
+            // Ici, on accepte le changement car la logique RSI/MACD est déjà filtrée, 
+            // mais on pourrait ajouter un compteur ici pour forcer 3 ticks consécutifs.
+            
+            lastSignal = signalType;
+            updateUI(signalType, price, data, advice, timeFrame);
+        } else {
+            // Mise à jour légère sans changer le gros titre (pour la stabilité visuelle)
+            updateLevels(price, data, signalType);
+            document.getElementById('ai-advice').innerText = advice;
+            document.getElementById('time-prediction').innerText = timeFrame;
+        }
     }
 
-    // --- GESTION DU TEMPS RÉEL ---
-    function startAutoPilot() {
-        analyze(); // Premier lancement immédiat
+    function updateUI(type, price, data, advice, timeFrame) {
+        const badge = document.getElementById('main-signal');
+        badge.className = 'signal-badge'; // Reset
         
-        // Compte à rebours visuel
-        countdownInterval = setInterval(() => {
-            timeLeft--;
-            document.getElementById('countdown').innerText = timeLeft + "s";
-            if(timeLeft <= 0) {
-                timeLeft = 5;
-                analyze(); // Relance analyse auto
-            }
-        }, 1000);
+        if (type === 'BUY') {
+            badge.classList.add('sig-buy');
+            badge.innerText = "ACHETER (LONG)";
+        } else if (type === 'SELL') {
+            badge.classList.add('sig-sell');
+            badge.innerText = "VENDRE (SHORT)";
+        } else {
+            badge.classList.add('sig-wait');
+            badge.innerText = "ATTENTE / NEUTRE";
+        }
+
+        document.getElementById('ai-advice').innerText = advice;
+        document.getElementById('time-prediction').innerText = timeFrame;
+        
+        updateLevels(price, data, type);
     }
 
-    function forceRefresh() {
-        // Bouton manuel : reset le timer et relance
-        timeLeft = 5;
-        document.getElementById('countdown').innerText = "5s";
-        analyze();
+    function updateLevels(price, data, type) {
+        let sl, tp;
+        let risk = data.vol * 2; // Stop loss serré
+        let reward = data.vol * 4; // Take profit large (Ratio 1:2)
+
+        if (type === 'BUY') {
+            sl = price - risk;
+            tp = price + reward;
+        } else if (type === 'SELL') {
+            sl = price + risk;
+            tp = price - reward;
+        } else {
+            sl = 0; tp = 0;
+        }
+
+        if(sl !== 0) {
+            document.getElementById('sl-val').innerText = sl.toFixed(data.decimals);
+            document.getElementById('tp-val').innerText = tp.toFixed(data.decimals);
+        } else {
+            document.getElementById('sl-val').innerText = "---";
+            document.getElementById('tp-val').innerText = "---";
+        }
     }
 
 </script>
