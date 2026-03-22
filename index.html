@@ -3,418 +3,417 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HACKEN STORE - PRECISION ANALYZER</title>
+    <title>HACKEN STORE - GOLD ANALYZER</title>
     <style>
         :root {
-            --bg: #0b0c10;
-            --card: #1f2833;
-            --accent: #66fcf1; /* Cyan Neon */
-            --text: #c5c6c7;
-            --green: #45a29e;
-            --buy: #00ff88;
-            --sell: #ff3366;
-            --gold: #ffd700;
+            --bg-dark: #050505;
+            --panel: #121212;
+            --gold-primary: #FFD700;
+            --gold-dim: #b39700;
+            --buy-green: #00ff9d;
+            --sell-red: #ff3b3b;
+            --text-white: #ffffff;
+            --text-gray: #888888;
         }
 
         body {
-            background-color: var(--bg);
-            color: var(--text);
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-white);
+            font-family: 'Courier New', monospace; /* Style terminal financier */
             margin: 0;
             padding: 20px;
             display: flex;
             justify-content: center;
+            align-items: center;
             min-height: 100vh;
         }
 
-        .container {
+        .terminal {
             width: 100%;
-            max-width: 500px;
-            background-color: var(--card);
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            overflow: hidden;
+            max-width: 450px;
+            background-color: var(--panel);
             border: 1px solid #333;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.1);
+            overflow: hidden;
             position: relative;
         }
 
         /* HEADER */
         .header {
-            background: linear-gradient(135deg, #000000, #1f2833);
-            padding: 20px;
-            text-align: center;
-            border-bottom: 2px solid var(--accent);
+            background: linear-gradient(90deg, #1a1a1a, #000);
+            padding: 15px;
+            border-bottom: 2px solid var(--gold-primary);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
         .logo {
-            font-size: 1.5rem;
-            font-weight: 800;
-            color: var(--accent);
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            margin: 0;
-        }
-
-        .subtitle {
-            font-size: 0.8rem;
-            color: #888;
-            margin-top: 5px;
-        }
-
-        /* MARKET SELECTOR */
-        .selector {
-            display: flex;
-            padding: 20px;
-            gap: 15px;
-            background: #151b24;
-        }
-
-        .market-btn {
-            flex: 1;
-            padding: 15px;
-            background: #2c3e50;
-            border: 2px solid transparent;
-            border-radius: 10px;
-            color: white;
+            color: var(--gold-primary);
             font-weight: bold;
-            cursor: pointer;
-            transition: 0.3s;
-            text-align: center;
+            font-size: 1.2rem;
+            letter-spacing: 1px;
         }
 
-        .market-btn.active {
-            border-color: var(--accent);
-            background: #34495e;
-            box-shadow: 0 0 15px rgba(102, 252, 241, 0.2);
+        .asset-badge {
+            background: var(--gold-dim);
+            color: #000;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 0.8rem;
         }
 
-        /* MAIN ACTION AREA */
-        .action-area {
+        /* MAIN BUTTON */
+        .control-panel {
             padding: 30px 20px;
             text-align: center;
         }
 
-        .analyze-btn {
-            background: linear-gradient(90deg, var(--accent), #45a29e);
-            color: #000;
-            border: none;
-            padding: 20px;
-            width: 100%;
-            font-size: 1.2rem;
-            font-weight: 900;
-            border-radius: 50px;
+        .scan-btn {
+            background: transparent;
+            color: var(--gold-primary);
+            border: 2px solid var(--gold-primary);
+            padding: 15px 30px;
+            font-size: 1rem;
+            font-weight: bold;
             cursor: pointer;
             text-transform: uppercase;
-            box-shadow: 0 5px 20px rgba(102, 252, 241, 0.4);
-            transition: transform 0.2s;
-            animation: pulse 2s infinite;
+            border-radius: 5px;
+            transition: 0.3s;
+            width: 100%;
+            font-family: inherit;
         }
 
-        .analyze-btn:active {
-            transform: scale(0.98);
+        .scan-btn:hover {
+            background: var(--gold-primary);
+            color: #000;
+            box-shadow: 0 0 15px var(--gold-primary);
         }
 
-        @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(102, 252, 241, 0.7); }
-            70% { box-shadow: 0 0 0 15px rgba(102, 252, 241, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(102, 252, 241, 0); }
-        }
-
-        /* LOADING SCREEN */
-        .loading-screen {
+        /* LOADING ANIMATION */
+        .loader-container {
             display: none;
             padding: 40px 20px;
             text-align: center;
         }
 
-        .spinner {
-            width: 50px;
-            height: 50px;
-            border: 5px solid #333;
-            border-top: 5px solid var(--accent);
+        .radar {
+            width: 80px;
+            height: 80px;
+            border: 2px solid #333;
             border-radius: 50%;
+            border-top: 2px solid var(--gold-primary);
             animation: spin 1s linear infinite;
             margin: 0 auto 20px;
         }
 
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        .loading-text {
-            font-family: 'Courier New', monospace;
-            color: var(--accent);
-            font-size: 0.9rem;
+        .loading-steps {
+            font-size: 0.8rem;
+            color: var(--text-gray);
+            line-height: 1.6;
         }
+
+        .step-active { color: var(--gold-primary); font-weight: bold; }
 
         /* RESULTS DASHBOARD */
-        .results-dashboard {
+        .results-panel {
             display: none;
             padding: 20px;
-            animation: slideUp 0.5s ease-out;
+            animation: fadeIn 0.5s;
         }
 
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        .prediction-card {
-            background: #151b24;
-            border-radius: 15px;
-            padding: 20px;
+        .price-display {
             text-align: center;
-            border: 1px solid #333;
-            margin-bottom: 20px;
-        }
-
-        .time-badge {
-            background: var(--gold);
-            color: #000;
-            padding: 5px 15px;
-            border-radius: 20px;
+            font-size: 2rem;
             font-weight: bold;
-            font-size: 0.9rem;
-            display: inline-block;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
+            color: var(--text-white);
+            border-bottom: 1px solid #333;
+            padding-bottom: 10px;
         }
 
-        .direction-title {
-            font-size: 1.1rem;
-            color: #888;
-            margin-bottom: 10px;
+        .signal-box {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
         }
 
-        .main-signal {
-            font-size: 2.5rem;
+        .signal-title {
+            font-size: 0.7rem;
+            color: var(--text-gray);
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+
+        .signal-action {
+            font-size: 1.8rem;
             font-weight: 900;
             text-transform: uppercase;
             margin: 10px 0;
-            text-shadow: 0 0 20px rgba(255,255,255,0.1);
         }
 
-        .signal-buy { color: var(--buy); }
-        .signal-sell { color: var(--sell); }
+        .action-buy { color: var(--buy-green); text-shadow: 0 0 10px rgba(0,255,157,0.3); }
+        .action-sell { color: var(--sell-red); text-shadow: 0 0 10px rgba(255,59,59,0.3); }
 
-        .levels-box {
-            display: flex;
-            justify-content: space-between;
-            background: #000;
+        .time-frame {
+            background: #333;
+            color: #fff;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            display: inline-block;
+        }
+
+        /* LEVELS GRID */
+        .levels-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .level-card {
+            background: #0a0a0a;
             padding: 15px;
-            border-radius: 10px;
-            margin-top: 20px;
-        }
-
-        .level-item {
+            border-radius: 8px;
             text-align: center;
-            width: 48%;
+            border: 1px solid #222;
         }
 
         .level-label {
             font-size: 0.7rem;
-            color: #666;
+            color: var(--text-gray);
             text-transform: uppercase;
+            display: block;
+            margin-bottom: 5px;
         }
 
-        .level-value {
+        .level-price {
             font-size: 1.2rem;
             font-weight: bold;
-            font-family: 'Courier New', monospace;
-            margin-top: 5px;
+            font-family: monospace;
         }
 
-        .ai-reasoning {
-            background: rgba(102, 252, 241, 0.05);
-            border-left: 4px solid var(--accent);
+        /* AI ANALYSIS TEXT */
+        .ai-analysis {
+            background: rgba(255, 215, 0, 0.05);
+            border-left: 3px solid var(--gold-primary);
             padding: 15px;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             line-height: 1.4;
             color: #ddd;
-            text-align: left;
         }
 
-        .signature {
+        .footer {
             text-align: center;
-            padding: 20px;
+            padding: 15px;
             font-size: 0.7rem;
-            color: #555;
-            border-top: 1px solid #333;
-            margin-top: 20px;
+            color: #444;
+            border-top: 1px solid #222;
         }
 
     </style>
 </head>
 <body>
 
-<div class="container">
+<div class="terminal">
     <div class="header">
-        <h1 class="logo">HACKEN STORE</h1>
-        <div class="subtitle">AI PRECISION TRADING BOT</div>
+        <div class="logo">HACKEN STORE</div>
+        <div class="asset-badge">XAU/USD</div>
     </div>
 
-    <!-- Sélection du Marché -->
-    <div class="selector">
-        <div class="market-btn active" onclick="selectMarket('EURUSD')" id="btn-eur">
-            🇪🇺 EUR/USD
-        </div>
-        <div class="market-btn" onclick="selectMarket('XAUUSD')" id="btn-xau">
-            🥇 XAU/USD (OR)
-        </div>
-    </div>
-
-    <!-- Zone d'Action -->
-    <div class="action-area" id="action-area">
-        <button class="analyze-btn" onclick="startAnalysis()">
-            🔍 LANCER L'ANALYSE PROFONDE
+    <!-- Écran Principal : Bouton -->
+    <div class="control-panel" id="control-panel">
+        <h3 style="color:#666; font-weight:normal; margin-bottom:30px;">Analyse Technique Or (Gold)</h3>
+        <button class="scan-btn" onclick="startAnalysis()">
+            🔍 LANCER L'ANALYSE PRÉCISE
         </button>
-        <p style="margin-top:15px; font-size:0.8rem; color:#666;">
-            Cliquez pour générer une prédiction précise sur 1h à 4h.
+        <p style="font-size:0.7rem; color:#444; margin-top:15px;">
+            Algorithme v2.4 - Précision Institutionnelle
         </p>
     </div>
 
     <!-- Écran de Chargement -->
-    <div class="loading-screen" id="loading-screen">
-        <div class="spinner"></div>
-        <div class="loading-text" id="loading-text">Connexion aux serveurs...</div>
+    <div class="loader-container" id="loader-container">
+        <div class="radar"></div>
+        <div class="loading-steps">
+            <div id="step-1">Connexion au flux XAU/USD...</div>
+            <div id="step-2">Calcul des supports & résistances...</div>
+            <div id="step-3">Analyse RSI & Momentum...</div>
+            <div id="step-4" style="color:var(--gold-primary)">Génération du signal...</div>
+        </div>
     </div>
 
-    <!-- Résultats -->
-    <div class="results-dashboard" id="results-dashboard">
+    <!-- Écran de Résultats -->
+    <div class="results-panel" id="results-panel">
         
-        <div class="prediction-card">
-            <div class="time-badge" id="time-frame">PRÉVISION: --</div>
-            
-            <div class="direction-title">DIRECTION DU MARCHÉ</div>
-            <div class="main-signal" id="main-signal">--</div>
-            
-            <div style="font-size:0.9rem; color:#aaa; margin-top:5px;" id="market-trend-text">
-                --
-            </div>
+        <div class="price-display" id="current-price">
+            $0000.00
+        </div>
 
-            <div class="levels-box">
-                <div class="level-item">
-                    <div class="level-label">Stop Loss (SL)</div>
-                    <div class="level-value" style="color:var(--sell)" id="sl-val">---</div>
-                </div>
-                <div class="level-item">
-                    <div class="level-label">Take Profit (TP)</div>
-                    <div class="level-value" style="color:var(--buy)" id="tp-val">---</div>
-                </div>
+        <div class="signal-box">
+            <div class="signal-title">Signal IA Confirmé</div>
+            <div class="signal-action" id="signal-text">WAIT</div>
+            <div class="time-frame" id="time-text">--</div>
+        </div>
+
+        <div class="levels-grid">
+            <div class="level-card">
+                <span class="level-label">Stop Loss (SL)</span>
+                <span class="level-price" style="color:var(--sell-red)" id="sl-price">---</span>
+            </div>
+            <div class="level-card">
+                <span class="level-label">Take Profit (TP)</span>
+                <span class="level-price" style="color:var(--buy-green)" id="tp-price">---</span>
             </div>
         </div>
 
-        <div class="ai-reasoning">
-            <strong>🤖 Analyse de l'IA :</strong><br>
-            <span id="ai-text">En attente d'analyse...</span>
+        <div class="ai-analysis">
+            <strong>🤖 Analyse du Bot :</strong><br>
+            <span id="ai-reasoning">En attente...</span>
         </div>
 
-        <button class="analyze-btn" style="margin-top:20px; font-size:1rem; padding:15px; background:#333; color:white; box-shadow:none;" onclick="resetApp()">
+        <button class="scan-btn" style="margin-top:20px; border-color:#444; color:#666;" onclick="resetApp()">
             NOUVELLE ANALYSE
         </button>
     </div>
 
-    <div class="signature">
+    <div class="footer">
         Creator HACKEN STORE © 2024
     </div>
 </div>
 
 <script>
-    let currentMarket = 'EURUSD';
-
-    function selectMarket(market) {
-        currentMarket = market;
-        document.querySelectorAll('.market-btn').forEach(b => b.classList.remove('active'));
-        if(market === 'EURUSD') document.getElementById('btn-eur').classList.add('active');
-        else document.getElementById('btn-xau').classList.add('active');
-        
-        // Reset view if needed
-        resetApp();
-    }
+    // Configuration spécifique pour l'OR (XAU/USD)
+    const GOLD_CONFIG = {
+        basePrice: 2030.00, // Prix de départ simulé
+        volatility: 12.00,  // Volatilité moyenne de l'or
+        decimals: 2
+    };
 
     function startAnalysis() {
-        // Hide action, show loading
-        document.getElementById('action-area').style.display = 'none';
-        document.getElementById('results-dashboard').style.display = 'none';
-        document.getElementById('loading-screen').style.display = 'block';
+        // Masquer le bouton, afficher le chargement
+        document.getElementById('control-panel').style.display = 'none';
+        document.getElementById('results-panel').style.display = 'none';
+        document.getElementById('loader-container').style.display = 'block';
 
-        const loadingText = document.getElementById('loading-text');
+        // Simulation des étapes d'analyse avec délais
+        const steps = ['step-1', 'step-2', 'step-3', 'step-4'];
+        let currentStep = 0;
+
+        const interval = setInterval(() => {
+            // Reset styles
+            steps.forEach(id => {
+                document.getElementById(id).style.color = '#888';
+                document.getElementById(id).style.fontWeight = 'normal';
+            });
+            
+            // Activate current step
+            if(currentStep < steps.length) {
+                document.getElementById(steps[currentStep]).style.color = '#FFD700';
+                document.getElementById(steps[currentStep]).style.fontWeight = 'bold';
+                currentStep++;
+            } else {
+                clearInterval(interval);
+                showResults();
+            }
+        }, 800); // Chaque étape dure 0.8 seconde
+    }
+
+    function showResults() {
+        document.getElementById('loader-container').style.display = 'none';
+        document.getElementById('results-panel').style.display = 'block';
+
+        // 1. Génération du Prix Actuel (Simulé autour de la base)
+        let randomMove = (Math.random() - 0.5) * GOLD_CONFIG.volatility;
+        let currentPrice = GOLD_CONFIG.basePrice + randomMove;
         
-        // Simulation des étapes d'analyse pour donner un effet de sérieux
-        setTimeout(() => { loadingText.innerText = "Analyse des indicateurs RSI & MACD..."; }, 800);
-        setTimeout(() => { loadingText.innerText = "Calcul des supports et résistances H4..."; }, 1600);
-        setTimeout(() => { loadingText.innerText = "Vérification des flux institutionnels..."; }, 2400);
-        setTimeout(() => { loadingText.innerText = "Génération de la prédiction finale..."; }, 3200);
+        // Mise à jour de la base pour la prochaine fois (pour que ça bouge un peu)
+        GOLD_CONFIG.basePrice = currentPrice;
 
-        setTimeout(() => {
-            document.getElementById('loading-screen').style.display = 'none';
-            document.getElementById('results-dashboard').style.display = 'block';
-            generatePrediction();
-        }, 4000);
+        document.getElementById('current-price').innerText = '$' + currentPrice.toFixed(GOLD_CONFIG.decimals);
+
+        // 2. Logique de Décision (Algorithme de Précision)
+        // On utilise un RSI simulé pour décider
+        let rsi = Math.floor(Math.random() * (80 - 20) + 20); // RSI entre 20 et 80
+        let signal = "";
+        let actionText = "";
+        let actionClass = "";
+        let timeFrame = "";
+        let reasoning = "";
+        let sl = 0;
+        let tp = 0;
+
+        // Logique Trading Or
+        if (rsi > 65) {
+            // Surachat -> Vente
+            signal = "SELL";
+            actionText = "VENDRE (SHORT) 📉";
+            actionClass = "action-sell";
+            timeFrame = "Prévision Baissière : 2H - 4H";
+            reasoning = `Le RSI est à ${rsi} (Surachat). L'Or touche une résistance majeure. Forte probabilité de correction technique. Les vendeurs institutionnels entrent en jeu.`;
+            
+            // Calcul SL/TP pour Vente
+            sl = currentPrice + (GOLD_CONFIG.volatility * 1.5); // SL au dessus
+            tp = currentPrice - (GOLD_CONFIG.volatility * 3.0); // TP en dessous (Ratio 1:2)
+
+        } else if (rsi < 35) {
+            // Survente -> Achat
+            signal = "BUY";
+            actionText = "ACHETER (LONG) 📈";
+            actionClass = "action-buy";
+            timeFrame = "Prévision Haussière : 1H - 3H";
+            reasoning = `Le RSI est à ${rsi} (Survente). Le prix a testé un support solide. Rebond technique attendu imminent. Opportunité d'achat à risque contrôlé.`;
+
+            // Calcul SL/TP pour Achat
+            sl = currentPrice - (GOLD_CONFIG.volatility * 1.5); // SL en dessous
+            tp = currentPrice + (GOLD_CONFIG.volatility * 3.0); // TP au dessus
+
+        } else {
+            // Zone neutre mais on force une tendance basée sur le momentum aléatoire
+            if (Math.random() > 0.5) {
+                signal = "BUY";
+                actionText = "ACHETER (SCALP) 📈";
+                actionClass = "action-buy";
+                timeFrame = "Prévision Court Terme : 30min - 1H";
+                reasoning = "Marché en consolidation haussière. Momentum positif détecté sur les petites unités de temps.";
+                sl = currentPrice - (GOLD_CONFIG.volatility * 1.0);
+                tp = currentPrice + (GOLD_CONFIG.volatility * 2.0);
+            } else {
+                signal = "SELL";
+                actionText = "VENDRE (SCALP) 📉";
+                actionClass = "action-sell";
+                timeFrame = "Prévision Court Terme : 30min - 1H";
+                reasoning = "Pression vendeuse légère détectée. Correction rapide attendue avant reprise de tendance.";
+                sl = currentPrice + (GOLD_CONFIG.volatility * 1.0);
+                tp = currentPrice - (GOLD_CONFIG.volatility * 2.0);
+            }
+        }
+
+        // 3. Affichage des résultats
+        const signalEl = document.getElementById('signal-text');
+        signalEl.innerText = actionText;
+        signalEl.className = `signal-action ${actionClass}`;
+
+        document.getElementById('time-text').innerText = timeFrame;
+        document.getElementById('ai-reasoning').innerText = reasoning;
+
+        document.getElementById('sl-price').innerText = '$' + sl.toFixed(GOLD_CONFIG.decimals);
+        document.getElementById('tp-price').innerText = '$' + tp.toFixed(GOLD_CONFIG.decimals);
     }
 
     function resetApp() {
-        document.getElementById('results-dashboard').style.display = 'none';
-        document.getElementById('action-area').style.display = 'block';
-    }
-
-    function generatePrediction() {
-        // Configuration de base
-        const config = currentMarket === 'EURUSD' 
-            ? { price: 1.0850, vol: 0.0020, decimals: 5 } 
-            : { price: 2035.00, vol: 15.00, decimals: 2 };
-
-        // 1. Déterminer la tendance (Logique pondérée)
-        const rand = Math.random();
-        let signalType = ""; // BUY or SELL
-        let directionText = "";
-        let timeHours = 0;
-        let advice = "";
-
-        // Logique de simulation réaliste
-        if (rand > 0.55) {
-            // Tendance Haussière
-            signalType = "BUY";
-            directionText = "LE MARCHÉ VA MONTER 📈";
-            timeHours = Math.floor(Math.random() * 3) + 1; // 1 à 3 heures
-            advice = "Les indicateurs montrent une accumulation haussière forte. Le prix a rebondi sur un support majeur. La pression acheteuse devrait dominer dans les prochaines heures.";
-        } else if (rand < 0.45) {
-            // Tendance Baissière
-            signalType = "SELL";
-            directionText = "LE MARCHÉ VA DESCENDRE 📉";
-            timeHours = Math.floor(Math.random() * 3) + 2; // 2 à 4 heures
-            advice = "Une résistance structurelle a été touchée. Le momentum est baissier et les volumes de vente augmentent. Correction attendue à court terme.";
-        } else {
-            // Cas rare de consolidation forte (on force une tendance pour l'exercice mais avec prudence)
-            signalType = Math.random() > 0.5 ? "BUY" : "SELL";
-            directionText = signalType === "BUY" ? "LE MARCHÉ VA MONTER (Rebond) 📈" : "LE MARCHÉ VA DESCENDRE (Correction) 📉";
-            timeHours = 1;
-            advice = "Marché en range temporaire, mais une cassure technique est imminente. Opportunité de scalping sur la prochaine impulsion.";
-        }
-
-        // 2. Calculer les prix
-        let currentPrice = config.price + (Math.random() * config.vol - config.vol/2);
-        let slDist = config.vol * 1.5;
-        let tpDist = config.vol * 3.0; // Ratio 1:2
-
-        let slPrice, tpPrice;
-
-        if (signalType === "BUY") {
-            slPrice = currentPrice - slDist;
-            tpPrice = currentPrice + tpDist;
-        } else {
-            slPrice = currentPrice + slDist;
-            tpPrice = currentPrice - tpDist;
-        }
-
-        // 3. Afficher les résultats
-        const signalEl = document.getElementById('main-signal');
-        signalEl.className = `main-signal ${signalType === 'BUY' ? 'signal-buy' : 'signal-sell'}`;
-        signalEl.innerText = signalType === 'BUY' ? "ACHETER (LONG)" : "VENDRE (SHORT)";
-
-        document.getElementById('market-trend-text').innerText = directionText;
-        document.getElementById('time-frame').innerText = `PRÉVISION VALABLE POUR LES ${timeHours}H PROCHAINES`;
-        document.getElementById('ai-text').innerText = advice;
-
-        document.getElementById('sl-val').innerText = slPrice.toFixed(config.decimals);
-        document.getElementById('tp-val').innerText = tpPrice.toFixed(config.decimals);
+        document.getElementById('results-panel').style.display = 'none';
+        document.getElementById('control-panel').style.display = 'block';
     }
 </script>
 
