@@ -3,24 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HACKEN STORE - PRIME AI TERMINAL</title>
+    <title>HACKEN STORE - GOLD MASTER</title>
     <style>
         :root {
-            --bg-color: #000000;
-            --panel-color: #0a0a0a;
-            --border-color: #333;
-            --primary-gold: #FFD700;
-            --text-main: #e0e0e0;
-            --text-dim: #666;
-            --signal-green: #00ff9d;
-            --signal-red: #ff3b3b;
-            --font-mono: 'Courier New', Courier, monospace;
+            --bg: #000000;
+            --card: #0f0f0f;
+            --gold: #FFD700;
+            --gold-dim: #998200;
+            --buy: #00ff9d;
+            --sell: #ff3b3b;
+            --text: #ffffff;
+            --gray: #888888;
         }
 
         body {
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Courier New', monospace; /* Style Terminal */
             margin: 0;
             padding: 20px;
             display: flex;
@@ -28,13 +27,13 @@
             min-height: 100vh;
         }
 
-        .terminal-container {
+        .terminal {
             width: 100%;
-            max-width: 550px;
-            background-color: var(--panel-color);
-            border: 1px solid var(--border-color);
-            border-radius: 4px;
-            box-shadow: 0 0 30px rgba(255, 215, 0, 0.05);
+            max-width: 480px;
+            background-color: var(--card);
+            border: 1px solid #333;
+            border-top: 4px solid var(--gold);
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.1);
             position: relative;
             overflow: hidden;
             display: flex;
@@ -43,158 +42,131 @@
 
         /* HEADER */
         .header {
-            background: linear-gradient(90deg, #111, #000);
-            padding: 15px 20px;
-            border-bottom: 2px solid var(--primary-gold);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .brand {
-            font-family: var(--font-mono);
-            font-weight: 900;
-            font-size: 1.2rem;
-            color: var(--primary-gold);
-            letter-spacing: 1px;
-        }
-
-        .status-badge {
-            font-size: 0.7rem;
-            background: #222;
-            padding: 4px 8px;
-            border-radius: 2px;
-            color: var(--primary-gold);
-            border: 1px solid var(--primary-gold);
-        }
-
-        /* MARKET SELECTOR */
-        .market-selector {
-            display: flex;
-            background: #111;
-            border-bottom: 1px solid #222;
-        }
-
-        .m-tab {
-            flex: 1;
-            padding: 15px;
-            text-align: center;
-            cursor: pointer;
-            font-weight: bold;
-            color: var(--text-dim);
-            transition: 0.3s;
-            border-bottom: 2px solid transparent;
-        }
-
-        .m-tab.active {
-            color: var(--text-main);
-            background: #1a1a1a;
-            border-bottom: 2px solid var(--primary-gold);
-        }
-
-        /* MAIN CONTENT AREA */
-        .content-area {
             padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid #222;
+            background: linear-gradient(180deg, #1a1a1a, #0f0f0f);
+        }
+
+        .logo {
+            font-size: 1.4rem;
+            font-weight: 900;
+            color: var(--gold);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin: 0;
+        }
+
+        .sub-logo {
+            font-size: 0.8rem;
+            color: var(--gray);
+            margin-top: 5px;
+            display: block;
+        }
+
+        .asset-badge {
+            display: inline-block;
+            margin-top: 10px;
+            background: rgba(255, 215, 0, 0.1);
+            color: var(--gold);
+            border: 1px solid var(--gold-dim);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+
+        /* CONTENT AREA */
+        .content {
+            padding: 25px;
             flex-grow: 1;
             display: flex;
             flex-direction: column;
             justify-content: center;
-            min-height: 400px;
+            min-height: 350px;
         }
 
-        /* BUTTON STYLE */
-        .action-btn {
+        /* BUTTON */
+        .btn-scan {
             background: transparent;
-            border: 1px solid var(--primary-gold);
-            color: var(--primary-gold);
-            padding: 20px;
-            font-size: 1.1rem;
+            border: 2px solid var(--gold);
+            color: var(--gold);
+            padding: 18px;
+            width: 100%;
+            font-family: inherit;
+            font-size: 1rem;
             font-weight: bold;
             text-transform: uppercase;
             cursor: pointer;
-            width: 100%;
-            transition: 0.3s;
-            font-family: var(--font-mono);
+            transition: all 0.3s;
             letter-spacing: 1px;
-        }
-
-        .action-btn:hover {
-            background: var(--primary-gold);
-            color: #000;
-            box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
-        }
-
-        /* LOADING SEQUENCE */
-        .loading-sequence {
-            display: none;
-            text-align: left;
-            font-family: var(--font-mono);
-            font-size: 0.85rem;
-            line-height: 1.8;
-            color: #888;
-        }
-
-        .log-entry {
-            opacity: 0;
-            transform: translateX(-10px);
-            animation: fadeInLog 0.3s forwards;
-        }
-
-        .log-entry.success { color: var(--signal-green); }
-        .log-entry.warning { color: var(--primary-gold); }
-        .log-entry.error { color: var(--signal-red); }
-
-        @keyframes fadeInLog {
-            to { opacity: 1; transform: translateX(0); }
-        }
-
-        .progress-bar {
-            height: 2px;
-            background: #333;
-            margin-top: 20px;
             position: relative;
             overflow: hidden;
         }
 
-        .progress-fill {
-            height: 100%;
-            background: var(--primary-gold);
-            width: 0%;
-            transition: width 0.2s;
+        .btn-scan:hover {
+            background: var(--gold);
+            color: #000;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
         }
 
-        /* RESULTS DASHBOARD */
-        .results-dashboard {
+        /* LOADING */
+        .loader {
+            display: none;
+            text-align: center;
+        }
+
+        .radar {
+            width: 60px;
+            height: 60px;
+            border: 2px solid #333;
+            border-radius: 50%;
+            border-top: 2px solid var(--gold);
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        .log-text {
+            font-size: 0.8rem;
+            color: var(--gray);
+            line-height: 1.6;
+            text-align: left;
+            background: #050505;
+            padding: 10px;
+            border: 1px solid #222;
+            margin-top: 15px;
+            height: 120px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+        }
+
+        .log-line { margin-bottom: 4px; opacity: 0; animation: fadeIn 0.3s forwards; }
+        .log-line.ok { color: var(--buy); }
+        .log-line.warn { color: var(--gold); }
+        
+        @keyframes fadeIn { to { opacity: 1; } }
+
+        /* RESULTS */
+        .results {
             display: none;
             animation: slideUp 0.5s ease-out;
         }
 
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-        .price-header {
+        .price-display {
             text-align: center;
-            margin-bottom: 20px;
-            border-bottom: 1px solid #222;
-            padding-bottom: 15px;
-        }
-
-        .current-price {
             font-size: 2.5rem;
             font-weight: bold;
-            font-family: var(--font-mono);
-            color: var(--text-main);
+            color: var(--text);
+            margin-bottom: 20px;
+            font-family: 'Courier New', monospace;
+            text-shadow: 0 0 10px rgba(255,255,255,0.1);
         }
 
-        .market-sentiment {
-            font-size: 0.8rem;
-            color: var(--text-dim);
-            margin-top: 5px;
-        }
-
-        .signal-card {
+        .signal-box {
             background: #111;
             border: 1px solid #333;
             padding: 20px;
@@ -203,75 +175,70 @@
             position: relative;
         }
 
-        .signal-card::before {
-            content: '';
+        .signal-box::before {
+            content: "SIGNAL VERROUILLÉ";
             position: absolute;
-            top: 0; left: 0; right: 0;
-            height: 3px;
-            background: var(--primary-gold);
-        }
-
-        .signal-label {
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--gold);
+            color: #000;
             font-size: 0.7rem;
-            text-transform: uppercase;
-            color: var(--text-dim);
-            letter-spacing: 1px;
+            font-weight: bold;
+            padding: 2px 10px;
         }
 
-        .signal-value {
+        .signal-text {
             font-size: 2.2rem;
             font-weight: 900;
             text-transform: uppercase;
             margin: 10px 0;
-            font-family: var(--font-mono);
         }
 
-        .sig-buy { color: var(--signal-green); text-shadow: 0 0 15px rgba(0,255,157,0.3); }
-        .sig-sell { color: var(--signal-red); text-shadow: 0 0 15px rgba(255,59,59,0.3); }
-        .sig-wait { color: #666; }
+        .sig-buy { color: var(--buy); text-shadow: 0 0 15px rgba(0,255,157,0.3); }
+        .sig-sell { color: var(--sell); text-shadow: 0 0 15px rgba(255,59,59,0.3); }
+        .sig-wait { color: var(--gray); }
 
-        .time-horizon {
-            background: #222;
-            color: var(--primary-gold);
-            padding: 5px 10px;
-            border-radius: 3px;
+        .time-frame {
+            color: var(--gold);
             font-size: 0.8rem;
             font-weight: bold;
-            display: inline-block;
-            margin-top: 5px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
-        .levels-container {
+        .levels-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 15px;
             margin-bottom: 20px;
         }
 
-        .level-box {
-            background: #0f0f0f;
+        .level-card {
+            background: #080808;
             padding: 15px;
             border-radius: 4px;
             text-align: center;
             border: 1px solid #222;
         }
 
-        .level-title {
+        .level-label {
             font-size: 0.7rem;
-            color: var(--text-dim);
+            color: var(--gray);
             text-transform: uppercase;
+            display: block;
             margin-bottom: 5px;
         }
 
         .level-price {
-            font-size: 1.2rem;
+            font-size: 1.3rem;
             font-weight: bold;
-            font-family: var(--font-mono);
+            font-family: monospace;
         }
 
-        .ai-insight {
+        .candle-insight {
             background: rgba(255, 215, 0, 0.05);
-            border-left: 3px solid var(--primary-gold);
+            border-left: 3px solid var(--gold);
             padding: 15px;
             font-size: 0.85rem;
             line-height: 1.5;
@@ -279,14 +246,13 @@
             margin-bottom: 20px;
         }
 
-        .news-ticker {
-            background: #111;
-            color: #888;
-            font-size: 0.7rem;
-            padding: 8px;
-            text-align: center;
-            border-top: 1px solid #222;
-            font-family: var(--font-mono);
+        .candle-title {
+            color: var(--gold);
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            font-size: 0.75rem;
         }
 
         .footer {
@@ -295,298 +261,234 @@
             font-size: 0.7rem;
             color: #444;
             border-top: 1px solid #222;
+            background: #050505;
         }
-
-        /* Utility Classes */
-        .hidden { display: none !important; }
-        .text-green { color: var(--signal-green); }
-        .text-red { color: var(--signal-red); }
 
     </style>
 </head>
 <body>
 
-<div class="terminal-container">
+<div class="terminal">
     <div class="header">
-        <div class="brand">HACKEN STORE <span style="font-size:0.5em; vertical-align:super;">PRIME</span></div>
-        <div class="status-badge">● SYSTEME ACTIF</div>
+        <h1 class="logo">HACKEN STORE</h1>
+        <span class="sub-logo">GOLD SPECIALIST AI</span>
+        <div class="asset-badge">XAU/USD ONLY</div>
     </div>
 
-    <div class="market-selector">
-        <div class="m-tab active" onclick="switchMarket('XAUUSD')" id="tab-xau">XAU/USD (OR)</div>
-        <div class="m-tab" onclick="switchMarket('EURUSD')" id="tab-eur">EUR/USD</div>
-    </div>
-
-    <div class="content-area">
+    <div class="content">
         
-        <!-- Écran d'Accueil -->
+        <!-- HOME SCREEN -->
         <div id="home-screen">
-            <div style="text-align:center; margin-bottom:30px;">
-                <h2 style="color:var(--text-main); font-weight:300;">ANALYSE INSTITUTIONNELLE</h2>
-                <p style="color:var(--text-dim); font-size:0.9rem;">Algorithme de confluence multi-facteurs</p>
-            </div>
-            <button class="action-btn" onclick="startDeepScan()">
-                🔍 LANCER LE SCAN COMPLET
+            <button class="btn-scan" onclick="startDeepScan()">
+                🔍 LANCER L'ANALYSE OR
             </button>
-            <p style="text-align:center; color:#444; font-size:0.7rem; margin-top:15px;">
-                Temps estimé : 15 secondes • Précision Maximale
+            <p style="text-align:center; color:#555; font-size:0.75rem; margin-top:15px;">
+                Algorithme de stabilité activé.<br>Le signal restera identique tant que la tendance est valide.
             </p>
         </div>
 
-        <!-- Écran de Chargement (Logs) -->
-        <div id="loading-screen" class="loading-sequence">
-            <!-- Les logs seront injectés ici par JS -->
-            <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+        <!-- LOADING SCREEN -->
+        <div id="loading-screen" class="loader">
+            <div class="radar"></div>
+            <div class="log-text" id="console-log">
+                <!-- Logs injected here -->
+            </div>
         </div>
 
-        <!-- Écran de Résultats -->
-        <div id="results-screen" class="results-dashboard">
-            
-            <div class="price-header">
-                <div class="current-price" id="display-price">0.00</div>
-                <div class="market-sentiment" id="display-sentiment">Sentiment: Neutre</div>
+        <!-- RESULTS SCREEN -->
+        <div id="results-screen" class="results">
+            <div class="price-display" id="price-val">$0000.00</div>
+
+            <div class="signal-box">
+                <div class="signal-text" id="signal-val">WAIT</div>
+                <div class="time-frame" id="time-val">--</div>
             </div>
 
-            <div class="signal-card">
-                <div class="signal-label">Signal Prime Confirmé</div>
-                <div class="signal-value" id="display-signal">WAIT</div>
-                <div class="time-horizon" id="display-time">--</div>
-            </div>
-
-            <div class="levels-container">
-                <div class="level-box">
-                    <div class="level-title">Stop Loss (SL)</div>
-                    <div class="level-price text-red" id="display-sl">---</div>
+            <div class="levels-grid">
+                <div class="level-card">
+                    <span class="level-label">Stop Loss (SL)</span>
+                    <span class="level-price" style="color:var(--sell)" id="sl-val">---</span>
                 </div>
-                <div class="level-box">
-                    <div class="level-title">Take Profit (TP)</div>
-                    <div class="level-price text-green" id="display-tp">---</div>
+                <div class="level-card">
+                    <span class="level-label">Take Profit (TP)</span>
+                    <span class="level-price" style="color:var(--buy)" id="tp-val">---</span>
                 </div>
             </div>
 
-            <div class="ai-insight">
-                <strong style="color:var(--primary-gold)">🧠 RAPPORT IA :</strong><br>
-                <span id="display-reasoning">Analyse en cours...</span>
+            <div class="candle-insight">
+                <span class="candle-title">🕯️ Analyse des Bougies Japonaises</span>
+                <span id="candle-text">En attente...</span>
             </div>
 
-            <button class="action-btn" style="border-color:#444; color:#666;" onclick="resetApp()">
+            <button class="btn-scan" style="border-color:#444; color:#666;" onclick="resetApp()">
                 NOUVELLE ANALYSE
             </button>
         </div>
 
     </div>
 
-    <div class="news-ticker" id="news-ticker">
-        EN ATTENTE DES FLUX D'ACTUALITÉS...
-    </div>
-
     <div class="footer">
-        Creator HACKEN STORE © 2024 - VERSION PRIME
+        Creator HACKEN STORE © 2024 - XAU/USD MASTER
     </div>
 </div>
 
 <script>
-    // --- CONFIGURATION & ETAT GLOBAL ---
-    let currentMarket = 'XAUUSD';
-    let isAnalyzing = false;
-
-    // Données de marché simulées (Base réaliste)
-    const marketData = {
-        'XAUUSD': { price: 2035.50, vol: 15.00, decimals: 2, name: "Gold Spot" },
-        'EURUSD': { price: 1.0850, vol: 0.0020, decimals: 5, name: "Euro Dollar" }
+    // --- CONFIGURATION STRICTE XAU/USD ---
+    const GOLD_CONFIG = {
+        basePrice: 2035.50,
+        volatility: 12.00, // Volatilité moyenne de l'Or
+        decimals: 2
     };
 
-    // Flux de News Simulés (Impactent l'analyse)
-    const newsFeeds = [
-        "La FED maintient ses taux directeurs -> USD Stable",
-        "Tensions géopolitiques au Moyen-Orient -> Refuge vers l'Or",
-        "Inflation US supérieure aux attentes -> Pression sur les marchés",
-        "Banque Centrale Européenne hint de baisse de taux -> EUR Faible",
-        "Données NFP USA mitigées -> Volatilité attendue",
-        "Aucune news majeure, mouvement technique pur."
+    // Mémoire pour la stabilité (Le cœur du système)
+    let cachedResult = null;
+    let scanCount = 0;
+
+    // Base de données de bougies japonaises spécifiques à l'Or
+    const candlePatterns = [
+        { name: "Marteau (Hammer)", type: "BUY", desc: "Rejet fort des bas. Les acheteurs institutionnels entrent." },
+        { name: "Étoile Filante (Shooting Star)", type: "SELL", desc: "Rejet des hauts. Pression vendeuse massive." },
+        { name: "Englobante Haussière", type: "BUY", desc: "Une bougie verte avale la rouge précédente. Signal fort." },
+        { name: "Englobante Baissière", type: "SELL", desc: "Une bougie rouge avale la verte précédente. Danger." },
+        { name: "Doji (Croix)", type: "WAIT", desc: "Indécision totale du marché. Attendre confirmation." },
+        { name: "Avalement (Engulfing)", type: "MIXED", desc: "Volatilité extrême. Risque élevé." },
+        { name: "Trois Soldats Blancs", type: "BUY", desc: "Tendance haussière très forte confirmée." },
+        { name: "Trois Corbeaux Noirs", type: "SELL", desc: "Krach ou correction majeure en cours." }
     ];
 
-    // --- FONCTIONS PRINCIPALES ---
-
-    function switchMarket(market) {
-        if(isAnalyzing) return; // Bloquer le changement pendant l'analyse
-        currentMarket = market;
-        
-        // Update UI Tabs
-        document.querySelectorAll('.m-tab').forEach(t => t.classList.remove('active'));
-        document.getElementById(market === 'XAUUSD' ? 'tab-xau' : 'tab-eur').classList.add('active');
-        
-        resetApp();
-    }
-
-    function resetApp() {
-        document.getElementById('results-screen').style.display = 'none';
-        document.getElementById('home-screen').style.display = 'block';
-        document.getElementById('news-ticker').innerText = "EN ATTENTE DES FLUX D'ACTUALITÉS...";
-    }
-
     function startDeepScan() {
-        isAnalyzing = true;
         document.getElementById('home-screen').style.display = 'none';
         document.getElementById('results-screen').style.display = 'none';
         document.getElementById('loading-screen').style.display = 'block';
         
-        const logContainer = document.getElementById('loading-screen');
-        const progressFill = document.getElementById('progress-fill');
-        
-        // Nettoyer les anciens logs (garder la barre de progression)
-        const oldLogs = logContainer.querySelectorAll('.log-entry');
-        oldLogs.forEach(l => l.remove());
-        progressFill.style.width = '0%';
+        const consoleEl = document.getElementById('console-log');
+        consoleEl.innerHTML = ''; // Clear logs
 
-        // Séquence d'analyse stricte et détaillée
         const steps = [
-            { msg: "Connexion au serveur Bloomberg Terminal...", delay: 800, type: "" },
-            { msg: "Récupération des données XAU/USD en temps réel...", delay: 1500, type: "" },
-            { msg: "Analyse des supports et résistances H4...", delay: 2500, type: "success" },
-            { msg: "Calcul des indicateurs RSI, MACD, Bollinger...", delay: 3500, type: "" },
-            { msg: "Scan des flux d'actualités économiques (News)...", delay: 4500, type: "warning" },
-            { msg: "Détection du sentiment institutionnel...", delay: 5500, type: "" },
-            { msg: "Vérification de la confluence des signaux...", delay: 7000, type: "success" },
-            { msg: "Calcul des niveaux de risque (SL/TP)...", delay: 8500, type: "" },
-            { msg: "Génération du rapport final PRIME...", delay: 10000, type: "success" }
+            { msg: "Connexion au flux XAU/USD...", delay: 600 },
+            { msg: "Analyse de la structure H4...", delay: 1200, class: "ok" },
+            { msg: "Identification des bougies japonaises...", delay: 1800 },
+            { msg: "Calcul des zones de liquidité...", delay: 2400, class: "warn" },
+            { msg: "Vérification de la cohérence (Stability Check)...", delay: 3000 },
+            { msg: "Verrouillage du signal...", delay: 3600, class: "ok" }
         ];
 
-        let currentTime = 0;
-        const totalDuration = 11000; // Durée totale approx
+        let totalDelay = 0;
 
-        steps.forEach((step, index) => {
+        steps.forEach(step => {
             setTimeout(() => {
-                addLog(step.msg, step.type);
-                // Update Progress Bar
-                const progress = ((index + 1) / steps.length) * 100;
-                progressFill.style.width = `${progress}%`;
-                
-                // Injecter une fausse news aléatoire à mi-parcours
-                if(index === 4) {
-                    const randomNews = newsFeeds[Math.floor(Math.random() * newsFeeds.length)];
-                    document.getElementById('news-ticker').innerText = "FLASH INFO: " + randomNews;
-                }
-
-                // Fin de l'analyse
-                if(index === steps.length - 1) {
-                    setTimeout(showResults, 1000);
-                }
-            }, step.delay);
+                const div = document.createElement('div');
+                div.className = `log-line ${step.class || ''}`;
+                div.innerText = `> ${step.msg}`;
+                consoleEl.appendChild(div);
+                consoleEl.scrollTop = consoleEl.scrollHeight;
+            }, totalDelay);
+            totalDelay += step.delay;
         });
+
+        setTimeout(() => {
+            generateStableSignal();
+        }, totalDelay + 500);
     }
 
-    function addLog(text, type) {
-        const logContainer = document.getElementById('loading-screen');
-        const div = document.createElement('div');
-        div.className = `log-entry ${type}`;
-        div.innerText = `> ${text}`;
-        // Insérer avant la barre de progression
-        const progressBar = logContainer.querySelector('.progress-bar');
-        logContainer.insertBefore(div, progressBar);
-        // Auto scroll vers le bas
-        logContainer.scrollTop = logContainer.scrollHeight;
-    }
-
-    function showResults() {
-        isAnalyzing = false;
+    function generateStableSignal() {
         document.getElementById('loading-screen').style.display = 'none';
         document.getElementById('results-screen').style.display = 'block';
 
-        generatePrediction();
+        // 1. Mise à jour du prix (Simulation légère)
+        let move = (Math.random() - 0.5) * (GOLD_CONFIG.volatility * 0.2);
+        let currentPrice = GOLD_CONFIG.basePrice + move;
+        GOLD_CONFIG.basePrice = currentPrice; // Update for next time
+
+        // 2. LOGIQUE DE STABILITÉ
+        // Si on a déjà un résultat en cache ET qu'on n'a pas scanné trop de fois (simulant peu de temps passé)
+        // On REUTILISE le même résultat pour garantir que ça ne change pas en désordre.
+        if (cachedResult && scanCount < 5) {
+            scanCount++;
+            displayResult(currentPrice, cachedResult);
+            return;
+        }
+
+        // Sinon, on calcule un NOUVEAU signal
+        scanCount = 0;
+        calculateNewSignal(currentPrice);
     }
 
-    // --- MOTEUR DE PRÉDICTION (LOGIQUE STRICTE) ---
-
-    function generatePrediction() {
-        const data = marketData[currentMarket];
+    function calculateNewSignal(price) {
+        // A. Sélection aléatoire mais pondérée d'une bougie
+        const candle = candlePatterns[Math.floor(Math.random() * candlePatterns.length)];
         
-        // 1. Simulation du prix actuel avec léger mouvement
-        let move = (Math.random() - 0.5) * (data.vol * 0.2);
-        let currentPrice = data.price + move;
-        data.price = currentPrice; // Mise à jour pour la prochaine fois
+        // B. Facteur aléatoire de tendance (RSI simulé)
+        const rsi = Math.floor(Math.random() * (80 - 20) + 20);
 
-        // Affichage Prix
-        document.getElementById('display-price').innerText = currentPrice.toFixed(data.decimals);
-        
-        // 2. Calcul des indicateurs simulés (Mais cohérents)
-        // On génère un RSI et un Sentiment qui vont dicter la tendance
-        let rsi = 30 + Math.random() * 40; // Base entre 30 et 70
-        let sentimentScore = Math.random(); // 0 à 1
-        
-        // Injection de l'impact des News (Simulé)
-        const currentNews = document.getElementById('news-ticker').innerText;
-        if(currentNews.includes("Or") && currentMarket === 'XAUUSD') sentimentScore += 0.3;
-        if(currentNews.includes("USD Stable") && currentMarket === 'XAUUSD') sentimentScore -= 0.1;
-        if(currentNews.includes("EUR Faible") && currentMarket === 'EURUSD') sentimentScore -= 0.3;
-
-        // Normalisation du score
-        if(sentimentScore > 1) sentimentScore = 1;
-        if(sentimentScore < 0) sentimentScore = 0;
-
-        // 3. Décision Stricte (Confluence)
         let signal = "WAIT";
-        let direction = "";
         let timeFrame = "";
-        let reasoning = "";
         let sl = 0;
         let tp = 0;
+        let reasoning = "";
 
-        // Logique de Trading Institutionnel
-        if (sentimentScore > 0.65 || rsi < 35) {
-            // SCÉNARIO ACHAT
+        // C. Logique de décision stricte basée sur la bougie + RSI
+        if (candle.type === "BUY" && rsi < 70) {
             signal = "BUY";
-            direction = "HAUSSE CONFIRMÉE";
-            timeFrame = "Horizon: 2H à 4H";
-            
-            // Calcul SL/TP (Ratio 1:2.5 pour l'Or, 1:2 pour Forex)
-            let risk = data.vol * 1.2;
-            let reward = data.vol * 3.0;
-            sl = currentPrice - risk;
-            tp = currentPrice + reward;
-
-            reasoning = `Confluence haussière détectée. Le prix teste un support majeur avec un RSI en zone de rebond (${rsi.toFixed(1)}). Les flux institutionnels indiquent une accumulation. Objectif : Cassure de la résistance prochaine.`;
-            document.getElementById('display-sentiment').innerText = "Sentiment: Fortement Haussier 🟢";
-
-        } else if (sentimentScore < 0.35 || rsi > 65) {
-            // SCÉNARIO VENTE
+            timeFrame = "Prévision Haussière : 2H - 4H";
+            sl = price - (GOLD_CONFIG.volatility * 1.5);
+            tp = price + (GOLD_CONFIG.volatility * 3.0);
+            reasoning = `La bougie <strong>${candle.name}</strong> confirme un rebond. ${candle.desc} RSI à ${rsi} permet encore de la hausse.`;
+        } else if (candle.type === "SELL" && rsi > 30) {
             signal = "SELL";
-            direction = "BAISSE CONFIRMÉE";
-            timeFrame = "Horizon: 1H à 3H";
-
-            let risk = data.vol * 1.2;
-            let reward = data.vol * 3.0;
-            sl = currentPrice + risk;
-            tp = currentPrice - reward;
-
-            reasoning = `Pression vendeuse structurelle. Le marché atteint une zone de surachat (${rsi.toFixed(1)}) coïncidant avec une résistance clé. Les nouvelles macro-économiques favorisent une correction. Prudence sur les rebonds.`;
-            document.getElementById('display-sentiment').innerText = "Sentiment: Fortement Baissier 🔴";
-
+            timeFrame = "Prévision Baissière : 1H - 3H";
+            sl = price + (GOLD_CONFIG.volatility * 1.5);
+            tp = price - (GOLD_CONFIG.volatility * 3.0);
+            reasoning = `La bougie <strong>${candle.name}</strong> indique un rejet. ${candle.desc} RSI à ${rsi} confirme la force vendeuse.`;
         } else {
-            // SCÉNARIO ATTENTE (Le plus important pour la précision)
             signal = "WAIT";
-            direction = "CONSOLIDATION";
-            timeFrame = "Pas de trade recommandé";
-            sl = 0; tp = 0;
-            reasoning = `Le marché est en zone neutre (RSI: ${rsi.toFixed(1)}). Aucune confluence claire entre les indicateurs techniques et les fondamentaux. Risque de faux mouvement trop élevé. ATTENDRE une cassure nette.`;
-            document.getElementById('display-sentiment').innerText = "Sentiment: Neutre / Incertain ⚪";
+            timeFrame = "Marché Incertain / Range";
+            reasoning = `Bougie <strong>${candle.name}</strong> détectée. ${candle.desc} Confluence insuffisante pour entrer. Attente recommandée.`;
         }
 
-        // 4. Mise à jour de l'UI Finale
-        const signalEl = document.getElementById('display-signal');
-        signalEl.className = `signal-value ${signal === 'BUY' ? 'sig-buy' : (signal === 'SELL' ? 'sig-sell' : 'sig-wait')}`;
-        signalEl.innerText = signal === 'BUY' ? "ACHETER" : (signal === 'SELL' ? "VENDRE" : "ATTENDRE");
+        // Sauvegarde en cache pour les prochains scans
+        cachedResult = {
+            signal, timeFrame, sl, tp, candleName: candle.name, candleDesc: candle.desc, reasoning
+        };
 
-        document.getElementById('display-time').innerText = timeFrame;
-        document.getElementById('display-reasoning').innerText = reasoning;
+        displayResult(price, cachedResult);
+    }
 
-        if(signal !== 'WAIT') {
-            document.getElementById('display-sl').innerText = sl.toFixed(data.decimals);
-            document.getElementById('display-tp').innerText = tp.toFixed(data.decimals);
+    function displayResult(price, data) {
+        // Prix
+        document.getElementById('price-val').innerText = '$' + price.toFixed(GOLD_CONFIG.decimals);
+
+        // Signal
+        const sigEl = document.getElementById('signal-val');
+        sigEl.className = `signal-text ${data.signal === 'BUY' ? 'sig-buy' : (data.signal === 'SELL' ? 'sig-sell' : 'sig-wait')}`;
+        sigEl.innerText = data.signal === 'BUY' ? 'ACHETER' : (data.signal === 'SELL' ? 'VENDRE' : 'ATTENDRE');
+
+        document.getElementById('time-val').innerText = data.timeFrame;
+
+        // Niveaux
+        if (data.signal !== 'WAIT') {
+            document.getElementById('sl-val').innerText = '$' + data.sl.toFixed(GOLD_CONFIG.decimals);
+            document.getElementById('tp-val').innerText = '$' + data.tp.toFixed(GOLD_CONFIG.decimals);
         } else {
-            document.getElementById('display-sl').innerText = "---";
-            document.getElementById('display-tp').innerText = "---";
+            document.getElementById('sl-val').innerText = '---';
+            document.getElementById('tp-val').innerText = '---';
         }
+
+        // Analyse Bougie
+        document.getElementById('candle-text').innerHTML = `
+            Formation : <strong style="color:#fff">${data.candleName}</strong><br>
+            ${data.candleDesc}<br><br>
+            <span style="color:#888; font-size:0.8em">Note IA : ${data.reasoning}</span>
+        `;
+    }
+
+    function resetApp() {
+        // Optionnel : Vider le cache si on veut forcer un nouveau calcul immédiat
+        // cachedResult = null; 
+        // scanCount = 0;
+        
+        document.getElementById('results-screen').style.display = 'none';
+        document.getElementById('home-screen').style.display = 'block';
     }
 </script>
 
