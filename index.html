@@ -3,492 +3,617 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HACKEN STORE - GOLD MASTER</title>
+    <title>HACKEN STORE - NEURAL TRADER PRO</title>
     <style>
         :root {
-            --bg: #000000;
-            --card: #0f0f0f;
-            --gold: #FFD700;
-            --gold-dim: #998200;
-            --buy: #00ff9d;
-            --sell: #ff3b3b;
-            --text: #ffffff;
-            --gray: #888888;
+            --bg: #030305;
+            --panel: #0a0a0f;
+            --primary: #00f3ff; /* Cyan Neon */
+            --secondary: #7000ff; /* Violet Neon */
+            --success: #00ff9d;
+            --danger: #ff3b3b;
+            --text: #e0e0e0;
+            --dim: #555;
+            --border: #1f1f2e;
         }
 
         body {
             background-color: var(--bg);
             color: var(--text);
-            font-family: 'Courier New', monospace; /* Style Terminal */
+            font-family: 'Segoe UI', 'Roboto', monospace;
             margin: 0;
             padding: 20px;
             display: flex;
             justify-content: center;
             min-height: 100vh;
+            background-image: radial-gradient(circle at 50% 50%, #11111a 0%, #030305 100%);
         }
 
-        .terminal {
+        .container {
             width: 100%;
-            max-width: 480px;
-            background-color: var(--card);
-            border: 1px solid #333;
-            border-top: 4px solid var(--gold);
-            box-shadow: 0 0 30px rgba(255, 215, 0, 0.1);
-            position: relative;
-            overflow: hidden;
+            max-width: 900px;
+            display: grid;
+            grid-template-columns: 1fr 350px; /* Dashboard | Chat */
+            gap: 20px;
+            height: 85vh;
+        }
+
+        /* --- LEFT PANEL: DASHBOARD --- */
+        .dashboard {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-top: 3px solid var(--primary);
+            border-radius: 10px;
             display: flex;
             flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 0 30px rgba(0, 243, 255, 0.05);
         }
 
-        /* HEADER */
         .header {
             padding: 20px;
-            text-align: center;
-            border-bottom: 1px solid #222;
-            background: linear-gradient(180deg, #1a1a1a, #0f0f0f);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255,255,255,0.02);
         }
 
         .logo {
             font-size: 1.4rem;
             font-weight: 900;
-            color: var(--gold);
+            color: var(--primary);
+            text-transform: uppercase;
             letter-spacing: 2px;
-            text-transform: uppercase;
-            margin: 0;
+            text-shadow: 0 0 10px rgba(0, 243, 255, 0.5);
         }
 
-        .sub-logo {
-            font-size: 0.8rem;
-            color: var(--gray);
-            margin-top: 5px;
-            display: block;
-        }
-
-        .asset-badge {
-            display: inline-block;
-            margin-top: 10px;
-            background: rgba(255, 215, 0, 0.1);
-            color: var(--gold);
-            border: 1px solid var(--gold-dim);
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: bold;
-        }
-
-        /* CONTENT AREA */
-        .content {
-            padding: 25px;
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            min-height: 350px;
-        }
-
-        /* BUTTON */
-        .btn-scan {
-            background: transparent;
-            border: 2px solid var(--gold);
-            color: var(--gold);
-            padding: 18px;
-            width: 100%;
-            font-family: inherit;
-            font-size: 1rem;
-            font-weight: bold;
-            text-transform: uppercase;
-            cursor: pointer;
-            transition: all 0.3s;
-            letter-spacing: 1px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .btn-scan:hover {
-            background: var(--gold);
-            color: #000;
-            box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
-        }
-
-        /* LOADING */
-        .loader {
-            display: none;
-            text-align: center;
-        }
-
-        .radar {
-            width: 60px;
-            height: 60px;
-            border: 2px solid #333;
-            border-radius: 50%;
-            border-top: 2px solid var(--gold);
-            animation: spin 1s linear infinite;
-            margin: 0 auto 20px;
-        }
-
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
-        .log-text {
-            font-size: 0.8rem;
-            color: var(--gray);
-            line-height: 1.6;
-            text-align: left;
-            background: #050505;
-            padding: 10px;
-            border: 1px solid #222;
-            margin-top: 15px;
-            height: 120px;
-            overflow-y: auto;
-            font-family: 'Courier New', monospace;
-        }
-
-        .log-line { margin-bottom: 4px; opacity: 0; animation: fadeIn 0.3s forwards; }
-        .log-line.ok { color: var(--buy); }
-        .log-line.warn { color: var(--gold); }
-        
-        @keyframes fadeIn { to { opacity: 1; } }
-
-        /* RESULTS */
-        .results {
-            display: none;
-            animation: slideUp 0.5s ease-out;
-        }
-
-        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-
-        .price-display {
-            text-align: center;
-            font-size: 2.5rem;
-            font-weight: bold;
-            color: var(--text);
-            margin-bottom: 20px;
-            font-family: 'Courier New', monospace;
-            text-shadow: 0 0 10px rgba(255,255,255,0.1);
-        }
-
-        .signal-box {
-            background: #111;
-            border: 1px solid #333;
-            padding: 20px;
-            text-align: center;
-            margin-bottom: 20px;
-            position: relative;
-        }
-
-        .signal-box::before {
-            content: "SIGNAL VERROUILLÉ";
-            position: absolute;
-            top: -10px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: var(--gold);
-            color: #000;
+        .status-badge {
             font-size: 0.7rem;
-            font-weight: bold;
-            padding: 2px 10px;
+            padding: 4px 10px;
+            border-radius: 20px;
+            background: rgba(0, 255, 157, 0.1);
+            color: var(--success);
+            border: 1px solid var(--success);
+            display: flex;
+            align-items: center;
+            gap: 5px;
         }
 
-        .signal-text {
-            font-size: 2.2rem;
+        .status-dot {
+            width: 6px; height: 6px;
+            background: var(--success);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
+
+        .content-area {
+            padding: 20px;
+            flex-grow: 1;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        /* Price Display */
+        .price-hero {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .price-label { font-size: 0.8rem; color: var(--dim); text-transform: uppercase; letter-spacing: 1px; }
+        .price-value { 
+            font-size: 3.5rem; 
+            font-weight: 700; 
+            font-family: 'Courier New', monospace; 
+            color: var(--text);
+            text-shadow: 0 0 20px rgba(255,255,255,0.1);
+        }
+        .price-up { color: var(--success); }
+        .price-down { color: var(--danger); }
+
+        /* Action Button */
+        .btn-scan {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border: none;
+            color: #fff;
             font-weight: 900;
+            font-size: 1rem;
             text-transform: uppercase;
-            margin: 10px 0;
-        }
-
-        .sig-buy { color: var(--buy); text-shadow: 0 0 15px rgba(0,255,157,0.3); }
-        .sig-sell { color: var(--sell); text-shadow: 0 0 15px rgba(255,59,59,0.3); }
-        .sig-wait { color: var(--gray); }
-
-        .time-frame {
-            color: var(--gold);
-            font-size: 0.8rem;
-            font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .levels-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
+            letter-spacing: 2px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: 0.3s;
+            box-shadow: 0 0 20px rgba(112, 0, 255, 0.3);
             margin-bottom: 20px;
         }
+        .btn-scan:hover { transform: translateY(-2px); box-shadow: 0 0 30px rgba(0, 243, 255, 0.5); }
+        .btn-scan:disabled { background: #333; cursor: not-allowed; box-shadow: none; transform: none; }
 
-        .level-card {
-            background: #080808;
-            padding: 15px;
+        /* Console Logs */
+        .console {
+            background: #000;
+            border: 1px solid #333;
+            height: 150px;
+            padding: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.75rem;
+            color: #aaa;
+            overflow-y: auto;
+            margin-bottom: 20px;
+            border-radius: 4px;
+        }
+        .log-line { margin-bottom: 4px; }
+        .log-info { color: #666; }
+        .log-warn { color: var(--primary); }
+        .log-success { color: var(--success); }
+        .log-error { color: var(--danger); }
+
+        /* Result Card */
+        .result-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--border);
+            border-left: 4px solid var(--dim);
+            padding: 20px;
+            border-radius: 4px;
+            display: none;
+            animation: slideIn 0.4s ease-out;
+        }
+        @keyframes slideIn { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
+
+        .result-card.buy { border-left-color: var(--success); box-shadow: 0 0 20px rgba(0, 255, 157, 0.1); }
+        .result-card.sell { border-left-color: var(--danger); box-shadow: 0 0 20px rgba(255, 59, 59, 0.1); }
+
+        .signal-title { font-size: 0.8rem; color: var(--dim); text-transform: uppercase; margin-bottom: 5px; }
+        .signal-main { font-size: 2rem; font-weight: 900; text-transform: uppercase; margin-bottom: 10px; }
+        .signal-buy { color: var(--success); }
+        .signal-sell { color: var(--danger); }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid var(--border);
+        }
+        .metric-box { text-align: center; }
+        .metric-label { font-size: 0.6rem; color: var(--dim); display: block; }
+        .metric-val { font-size: 1.1rem; font-weight: bold; color: var(--text); }
+
+        .levels-row {
+            display: flex;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        .level-box {
+            flex: 1;
+            background: #000;
+            padding: 10px;
             border-radius: 4px;
             text-align: center;
-            border: 1px solid #222;
+            border: 1px solid #333;
+        }
+        .level-label { font-size: 0.6rem; color: var(--dim); text-transform: uppercase; }
+        .level-price { font-size: 1.1rem; font-weight: bold; font-family: monospace; margin-top: 5px; }
+
+        /* --- RIGHT PANEL: CHAT --- */
+        .chat-panel {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
         }
 
-        .level-label {
-            font-size: 0.7rem;
-            color: var(--gray);
-            text-transform: uppercase;
-            display: block;
-            margin-bottom: 5px;
-        }
-
-        .level-price {
-            font-size: 1.3rem;
-            font-weight: bold;
-            font-family: monospace;
-        }
-
-        .candle-insight {
-            background: rgba(255, 215, 0, 0.05);
-            border-left: 3px solid var(--gold);
+        .chat-header {
             padding: 15px;
+            background: rgba(255,255,255,0.02);
+            border-bottom: 1px solid var(--border);
+            font-weight: bold;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .chat-messages {
+            flex-grow: 1;
+            padding: 15px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            background: #050508;
+        }
+
+        .message {
+            max-width: 85%;
+            padding: 10px 14px;
+            border-radius: 10px;
             font-size: 0.85rem;
-            line-height: 1.5;
-            color: #ccc;
-            margin-bottom: 20px;
+            line-height: 1.4;
+            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        @keyframes popIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+
+        .msg-bot {
+            background: rgba(0, 243, 255, 0.1);
+            border: 1px solid rgba(0, 243, 255, 0.2);
+            color: #fff;
+            align-self: flex-start;
+            border-bottom-left-radius: 2px;
         }
 
-        .candle-title {
-            color: var(--gold);
-            font-weight: bold;
-            display: block;
-            margin-bottom: 5px;
-            text-transform: uppercase;
-            font-size: 0.75rem;
+        .msg-user {
+            background: rgba(112, 0, 255, 0.2);
+            border: 1px solid rgba(112, 0, 255, 0.3);
+            color: #fff;
+            align-self: flex-end;
+            border-bottom-right-radius: 2px;
         }
 
-        .footer {
-            text-align: center;
+        .chat-input-area {
             padding: 15px;
-            font-size: 0.7rem;
-            color: #444;
-            border-top: 1px solid #222;
-            background: #050505;
+            background: rgba(255,255,255,0.02);
+            border-top: 1px solid var(--border);
+            display: flex;
+            gap: 10px;
         }
 
+        .chat-input {
+            flex-grow: 1;
+            background: #000;
+            border: 1px solid #333;
+            color: #fff;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: inherit;
+            outline: none;
+        }
+        .chat-input:focus { border-color: var(--primary); }
+
+        .btn-send {
+            background: var(--primary);
+            border: none;
+            color: #000;
+            width: 40px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+        .btn-send:hover { background: #fff; }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container { grid-template-columns: 1fr; height: auto; }
+            .chat-panel { height: 400px; }
+        }
     </style>
 </head>
 <body>
 
-<div class="terminal">
-    <div class="header">
-        <h1 class="logo">HACKEN STORE</h1>
-        <span class="sub-logo">GOLD SPECIALIST AI</span>
-        <div class="asset-badge">XAU/USD ONLY</div>
+<div class="container">
+    <!-- LEFT: DASHBOARD -->
+    <div class="dashboard">
+        <div class="header">
+            <div class="logo">HACKEN STORE <span style="font-size:0.5em; vertical-align:super; color:#fff;">PRO</span></div>
+            <div class="status-badge">
+                <div class="status-dot"></div> SYSTEME ACTIF
+            </div>
+        </div>
+
+        <div class="content-area">
+            <div class="price-hero">
+                <div class="price-label">XAU/USD LIVE PRICE</div>
+                <div class="price-value" id="price-display">0.00</div>
+            </div>
+
+            <button class="btn-scan" id="btn-analyze" onclick="startFullAnalysis()">
+                🧠 LANCER L'ANALYSE NEURALE
+            </button>
+
+            <div class="console" id="console">
+                <div class="log-line log-info">> Initialisation du moteur Neural...</div>
+                <div class="log-line log-info">> Connexion API Binance: OK</div>
+                <div class="log-line log-info">> Connexion API OpenAI: En attente...</div>
+                <div class="log-line log-info">> Prêt à analyser le marché.</div>
+            </div>
+
+            <div class="result-card" id="result-card">
+                <div class="signal-title">Signal Institutionnel</div>
+                <div class="signal-main" id="signal-text">WAIT</div>
+                
+                <div class="levels-row">
+                    <div class="level-box">
+                        <div class="level-label">Stop Loss</div>
+                        <div class="level-price" style="color:var(--danger)" id="sl-val">---</div>
+                    </div>
+                    <div class="level-box">
+                        <div class="level-label">Take Profit</div>
+                        <div class="level-price" style="color:var(--success)" id="tp-val">---</div>
+                    </div>
+                </div>
+
+                <div class="metrics-grid">
+                    <div class="metric-box">
+                        <span class="metric-label">RSI (14)</span>
+                        <span class="metric-val" id="val-rsi">--</span>
+                    </div>
+                    <div class="metric-box">
+                        <span class="metric-label">Tendance</span>
+                        <span class="metric-val" id="val-trend">--</span>
+                    </div>
+                    <div class="metric-box">
+                        <span class="metric-label">Confiance IA</span>
+                        <span class="metric-val" id="val-conf">--%</span>
+                    </div>
+                </div>
+                
+                <div style="margin-top:15px; font-size:0.8rem; color:#ccc; line-height:1.5; background:rgba(0,0,0,0.3); padding:10px; border-radius:4px;">
+                    <strong style="color:var(--primary)">🤖 Analyse :</strong> <span id="ai-reasoning">--</span>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <div class="content">
+    <!-- RIGHT: CHAT -->
+    <div class="chat-panel">
+        <div class="chat-header">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+            ASSISTANT TRADING IA
+        </div>
         
-        <!-- HOME SCREEN -->
-        <div id="home-screen">
-            <button class="btn-scan" onclick="startDeepScan()">
-                🔍 LANCER L'ANALYSE OR
-            </button>
-            <p style="text-align:center; color:#555; font-size:0.75rem; margin-top:15px;">
-                Algorithme de stabilité activé.<br>Le signal restera identique tant que la tendance est valide.
-            </p>
-        </div>
-
-        <!-- LOADING SCREEN -->
-        <div id="loading-screen" class="loader">
-            <div class="radar"></div>
-            <div class="log-text" id="console-log">
-                <!-- Logs injected here -->
+        <div class="chat-messages" id="chat-messages">
+            <div class="message msg-bot">
+                Bonjour. Je suis connecté aux flux de données XAU/USD. Lance une analyse ou pose-moi une question sur le marché.
             </div>
         </div>
 
-        <!-- RESULTS SCREEN -->
-        <div id="results-screen" class="results">
-            <div class="price-display" id="price-val">$0000.00</div>
-
-            <div class="signal-box">
-                <div class="signal-text" id="signal-val">WAIT</div>
-                <div class="time-frame" id="time-val">--</div>
-            </div>
-
-            <div class="levels-grid">
-                <div class="level-card">
-                    <span class="level-label">Stop Loss (SL)</span>
-                    <span class="level-price" style="color:var(--sell)" id="sl-val">---</span>
-                </div>
-                <div class="level-card">
-                    <span class="level-label">Take Profit (TP)</span>
-                    <span class="level-price" style="color:var(--buy)" id="tp-val">---</span>
-                </div>
-            </div>
-
-            <div class="candle-insight">
-                <span class="candle-title">🕯️ Analyse des Bougies Japonaises</span>
-                <span id="candle-text">En attente...</span>
-            </div>
-
-            <button class="btn-scan" style="border-color:#444; color:#666;" onclick="resetApp()">
-                NOUVELLE ANALYSE
-            </button>
+        <div class="chat-input-area">
+            <input type="text" class="chat-input" id="user-input" placeholder="Pose ta question..." onkeypress="handleEnter(event)">
+            <button class="btn-send" onclick="sendMessage()">➤</button>
         </div>
-
-    </div>
-
-    <div class="footer">
-        Creator HACKEN STORE © 2024 - XAU/USD MASTER
     </div>
 </div>
 
 <script>
-    // --- CONFIGURATION STRICTE XAU/USD ---
-    const GOLD_CONFIG = {
-        basePrice: 2035.50,
-        volatility: 12.00, // Volatilité moyenne de l'Or
-        decimals: 2
-    };
+    // --- CONFIGURATION ---
+    const USER_API_KEY = "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";
+    const BINANCE_URL = 'https://api.binance.com/api/v3/klines?symbol=XAUUSDT&interval=1h&limit=50';
+    const OPENAI_URL = 'https://api.openai.com/v1/chat/completions';
 
-    // Mémoire pour la stabilité (Le cœur du système)
-    let cachedResult = null;
-    let scanCount = 0;
+    let marketContext = ""; // Pour garder le contexte dans le chat
 
-    // Base de données de bougies japonaises spécifiques à l'Or
-    const candlePatterns = [
-        { name: "Marteau (Hammer)", type: "BUY", desc: "Rejet fort des bas. Les acheteurs institutionnels entrent." },
-        { name: "Étoile Filante (Shooting Star)", type: "SELL", desc: "Rejet des hauts. Pression vendeuse massive." },
-        { name: "Englobante Haussière", type: "BUY", desc: "Une bougie verte avale la rouge précédente. Signal fort." },
-        { name: "Englobante Baissière", type: "SELL", desc: "Une bougie rouge avale la verte précédente. Danger." },
-        { name: "Doji (Croix)", type: "WAIT", desc: "Indécision totale du marché. Attendre confirmation." },
-        { name: "Avalement (Engulfing)", type: "MIXED", desc: "Volatilité extrême. Risque élevé." },
-        { name: "Trois Soldats Blancs", type: "BUY", desc: "Tendance haussière très forte confirmée." },
-        { name: "Trois Corbeaux Noirs", type: "SELL", desc: "Krach ou correction majeure en cours." }
-    ];
+    // --- UTILS ---
+    function log(msg, type = 'info') {
+        const consoleEl = document.getElementById('console');
+        const div = document.createElement('div');
+        div.className = `log-line log-${type}`;
+        div.innerText = `[${new Date().toLocaleTimeString()}] ${msg}`;
+        consoleEl.appendChild(div);
+        consoleEl.scrollTop = consoleEl.scrollHeight;
+    }
 
-    function startDeepScan() {
-        document.getElementById('home-screen').style.display = 'none';
-        document.getElementById('results-screen').style.display = 'none';
-        document.getElementById('loading-screen').style.display = 'block';
+    function addMessage(text, sender) {
+        const chatEl = document.getElementById('chat-messages');
+        const div = document.createElement('div');
+        div.className = `message msg-${sender}`;
+        div.innerText = text;
+        chatEl.appendChild(div);
+        chatEl.scrollTop = chatEl.scrollHeight;
+    }
+
+    function handleEnter(e) {
+        if(e.key === 'Enter') sendMessage();
+    }
+
+    // --- CORE FUNCTIONS ---
+
+    async function startFullAnalysis() {
+        const btn = document.getElementById('btn-analyze');
+        const resultCard = document.getElementById('result-card');
         
-        const consoleEl = document.getElementById('console-log');
-        consoleEl.innerHTML = ''; // Clear logs
-
-        const steps = [
-            { msg: "Connexion au flux XAU/USD...", delay: 600 },
-            { msg: "Analyse de la structure H4...", delay: 1200, class: "ok" },
-            { msg: "Identification des bougies japonaises...", delay: 1800 },
-            { msg: "Calcul des zones de liquidité...", delay: 2400, class: "warn" },
-            { msg: "Vérification de la cohérence (Stability Check)...", delay: 3000 },
-            { msg: "Verrouillage du signal...", delay: 3600, class: "ok" }
-        ];
-
-        let totalDelay = 0;
-
-        steps.forEach(step => {
-            setTimeout(() => {
-                const div = document.createElement('div');
-                div.className = `log-line ${step.class || ''}`;
-                div.innerText = `> ${step.msg}`;
-                consoleEl.appendChild(div);
-                consoleEl.scrollTop = consoleEl.scrollHeight;
-            }, totalDelay);
-            totalDelay += step.delay;
-        });
-
-        setTimeout(() => {
-            generateStableSignal();
-        }, totalDelay + 500);
-    }
-
-    function generateStableSignal() {
-        document.getElementById('loading-screen').style.display = 'none';
-        document.getElementById('results-screen').style.display = 'block';
-
-        // 1. Mise à jour du prix (Simulation légère)
-        let move = (Math.random() - 0.5) * (GOLD_CONFIG.volatility * 0.2);
-        let currentPrice = GOLD_CONFIG.basePrice + move;
-        GOLD_CONFIG.basePrice = currentPrice; // Update for next time
-
-        // 2. LOGIQUE DE STABILITÉ
-        // Si on a déjà un résultat en cache ET qu'on n'a pas scanné trop de fois (simulant peu de temps passé)
-        // On REUTILISE le même résultat pour garantir que ça ne change pas en désordre.
-        if (cachedResult && scanCount < 5) {
-            scanCount++;
-            displayResult(currentPrice, cachedResult);
-            return;
-        }
-
-        // Sinon, on calcule un NOUVEAU signal
-        scanCount = 0;
-        calculateNewSignal(currentPrice);
-    }
-
-    function calculateNewSignal(price) {
-        // A. Sélection aléatoire mais pondérée d'une bougie
-        const candle = candlePatterns[Math.floor(Math.random() * candlePatterns.length)];
+        btn.disabled = true;
+        btn.innerText = "ANALYSE EN COURS...";
+        resultCard.style.display = 'none';
         
-        // B. Facteur aléatoire de tendance (RSI simulé)
-        const rsi = Math.floor(Math.random() * (80 - 20) + 20);
+        log("Récupération des données marché en temps réel...", "info");
 
-        let signal = "WAIT";
-        let timeFrame = "";
-        let sl = 0;
-        let tp = 0;
-        let reasoning = "";
+        try {
+            // 1. Fetch Market Data
+            const res = await fetch(BINANCE_URL);
+            if(!res.ok) throw new Error("Erreur connexion Binance");
+            const data = await res.json();
+            
+            const candles = data.map(d => ({
+                close: parseFloat(d[4]),
+                high: parseFloat(d[2]),
+                low: parseFloat(d[3]),
+                volume: parseFloat(d[5])
+            }));
 
-        // C. Logique de décision stricte basée sur la bougie + RSI
-        if (candle.type === "BUY" && rsi < 70) {
-            signal = "BUY";
-            timeFrame = "Prévision Haussière : 2H - 4H";
-            sl = price - (GOLD_CONFIG.volatility * 1.5);
-            tp = price + (GOLD_CONFIG.volatility * 3.0);
-            reasoning = `La bougie <strong>${candle.name}</strong> confirme un rebond. ${candle.desc} RSI à ${rsi} permet encore de la hausse.`;
-        } else if (candle.type === "SELL" && rsi > 30) {
-            signal = "SELL";
-            timeFrame = "Prévision Baissière : 1H - 3H";
-            sl = price + (GOLD_CONFIG.volatility * 1.5);
-            tp = price - (GOLD_CONFIG.volatility * 3.0);
-            reasoning = `La bougie <strong>${candle.name}</strong> indique un rejet. ${candle.desc} RSI à ${rsi} confirme la force vendeuse.`;
-        } else {
-            signal = "WAIT";
-            timeFrame = "Marché Incertain / Range";
-            reasoning = `Bougie <strong>${candle.name}</strong> détectée. ${candle.desc} Confluence insuffisante pour entrer. Attente recommandée.`;
+            const currentPrice = candles[candles.length - 1].close;
+            document.getElementById('price-display').innerText = currentPrice.toFixed(2);
+            
+            // Update Color
+            const prevClose = candles[candles.length - 2].close;
+            const priceEl = document.getElementById('price-display');
+            priceEl.className = `price-value ${currentPrice >= prevClose ? 'price-up' : 'price-down'}`;
+
+            log(`Données reçues: Prix $${currentPrice}`, "success");
+
+            // 2. Calculate Indicators
+            const rsi = calculateRSI(candles, 14);
+            const sma20 = calculateSMA(candles, 20);
+            const atr = calculateATR(candles, 14);
+            const trend = currentPrice > sma20 ? "HAUSSIERE" : "BAISSIERE";
+
+            log(`Indicateurs: RSI=${rsi.toFixed(2)}, Tendance=${trend}`, "warn");
+
+            // 3. Prepare AI Prompt
+            const prompt = `
+            Tu es un expert trader institutionnel spécialisé sur l'Or (XAU/USD).
+            Données actuelles (Timeframe 1H):
+            - Prix: ${currentPrice}
+            - RSI: ${rsi.toFixed(2)}
+            - Tendance (vs SMA20): ${trend}
+            - Volatilité (ATR): ${atr.toFixed(2)}
+            - Derniers prix: ${candles.slice(-5).map(c=>c.close).join(', ')}
+
+            Tâche:
+            1. Donne un signal clair: BUY, SELL, ou WAIT.
+            2. Donne un niveau de confiance (0-100).
+            3. Calcule un SL et TP précis basés sur l'ATR.
+            4. Explique brièvement pourquoi.
+
+            Réponds UNIQUEMENT en JSON valide:
+            {
+                "signal": "BUY",
+                "confidence": 85,
+                "sl": 1234.56,
+                "tp": 1234.56,
+                "reasoning": "Explication..."
+            }
+            `;
+
+            marketContext = `Contexte Actuel: Prix ${currentPrice}, RSI ${rsi.toFixed(2)}, Tendance ${trend}. Dernière analyse IA: ${prompt}`;
+
+            log("Envoi au Neural Engine...", "info");
+            
+            // 4. Call OpenAI
+            const aiRes = await fetch(OPENAI_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${USER_API_KEY}`
+                },
+                body: JSON.stringify({
+                    model: "gpt-3.5-turbo",
+                    messages: [{ role: "user", content: prompt }],
+                    temperature: 0.3
+                })
+            });
+
+            if(!aiRes.ok) {
+                const err = await aiRes.json();
+                throw new Error(err.error?.message || "Erreur API IA");
+            }
+
+            const aiData = await aiRes.json();
+            const content = aiData.choices[0].message.content;
+            
+            // Parse JSON
+            const cleanJson = content.replace(/```json/g, '').replace(/```/g, '').trim();
+            const analysis = JSON.parse(cleanJson);
+
+            // 5. Display Results
+            displayResults(analysis, rsi, trend);
+            addMessage(`Analyse terminée. Signal: ${analysis.signal}. Confiance: ${analysis.confidence}%`, 'bot');
+            log("Analyse terminée avec succès.", "success");
+
+        } catch (error) {
+            log(`ERREUR: ${error.message}`, "error");
+            addMessage(`Erreur système: ${error.message}`, 'bot');
+        } finally {
+            btn.disabled = false;
+            btn.innerText = "🧠 LANCER L'ANALYSE NEURALE";
         }
-
-        // Sauvegarde en cache pour les prochains scans
-        cachedResult = {
-            signal, timeFrame, sl, tp, candleName: candle.name, candleDesc: candle.desc, reasoning
-        };
-
-        displayResult(price, cachedResult);
     }
 
-    function displayResult(price, data) {
-        // Prix
-        document.getElementById('price-val').innerText = '$' + price.toFixed(GOLD_CONFIG.decimals);
+    function displayResults(data, rsi, trend) {
+        const card = document.getElementById('result-card');
+        card.style.display = 'block';
+        card.className = `result-card ${data.signal.toLowerCase()}`;
 
-        // Signal
-        const sigEl = document.getElementById('signal-val');
-        sigEl.className = `signal-text ${data.signal === 'BUY' ? 'sig-buy' : (data.signal === 'SELL' ? 'sig-sell' : 'sig-wait')}`;
+        const sigEl = document.getElementById('signal-text');
         sigEl.innerText = data.signal === 'BUY' ? 'ACHETER' : (data.signal === 'SELL' ? 'VENDRE' : 'ATTENDRE');
+        sigEl.className = `signal-main ${data.signal === 'BUY' ? 'signal-buy' : (data.signal === 'SELL' ? 'signal-sell' : '')}`;
 
-        document.getElementById('time-val').innerText = data.timeFrame;
-
-        // Niveaux
-        if (data.signal !== 'WAIT') {
-            document.getElementById('sl-val').innerText = '$' + data.sl.toFixed(GOLD_CONFIG.decimals);
-            document.getElementById('tp-val').innerText = '$' + data.tp.toFixed(GOLD_CONFIG.decimals);
-        } else {
-            document.getElementById('sl-val').innerText = '---';
-            document.getElementById('tp-val').innerText = '---';
-        }
-
-        // Analyse Bougie
-        document.getElementById('candle-text').innerHTML = `
-            Formation : <strong style="color:#fff">${data.candleName}</strong><br>
-            ${data.candleDesc}<br><br>
-            <span style="color:#888; font-size:0.8em">Note IA : ${data.reasoning}</span>
-        `;
+        document.getElementById('sl-val').innerText = data.sl.toFixed(2);
+        document.getElementById('tp-val').innerText = data.tp.toFixed(2);
+        document.getElementById('val-rsi').innerText = rsi.toFixed(2);
+        document.getElementById('val-trend').innerText = trend;
+        document.getElementById('val-conf').innerText = data.confidence + "%";
+        document.getElementById('ai-reasoning').innerText = data.reasoning;
     }
 
-    function resetApp() {
-        // Optionnel : Vider le cache si on veut forcer un nouveau calcul immédiat
-        // cachedResult = null; 
-        // scanCount = 0;
-        
-        document.getElementById('results-screen').style.display = 'none';
-        document.getElementById('home-screen').style.display = 'block';
+    async function sendMessage() {
+        const input = document.getElementById('user-input');
+        const text = input.value.trim();
+        if(!text) return;
+
+        addMessage(text, 'user');
+        input.value = '';
+
+        // Loading state in chat
+        const loadingId = 'loading-' + Date.now();
+        const chatEl = document.getElementById('chat-messages');
+        const loadDiv = document.createElement('div');
+        loadDiv.className = 'message msg-bot';
+        loadDiv.id = loadingId;
+        loadDiv.innerText = "Réflexion...";
+        chatEl.appendChild(loadDiv);
+
+        try {
+            const response = await fetch(OPENAI_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${USER_API_KEY}`
+                },
+                body: JSON.stringify({
+                    model: "gpt-3.5-turbo",
+                    messages: [
+                        { role: "system", content: "Tu es un assistant trading expert. Réponds de manière concise et professionnelle." },
+                        { role: "user", content: marketContext + "\n\nQuestion de l'utilisateur: " + text }
+                    ]
+                })
+            });
+
+            const data = await response.json();
+            const reply = data.choices[0].message.content;
+
+            document.getElementById(loadingId).remove();
+            addMessage(reply, 'bot');
+
+        } catch (error) {
+            document.getElementById(loadingId).innerText = "Erreur de communication avec l'IA.";
+        }
+    }
+
+    // --- MATH HELPERS ---
+    function calculateRSI(data, period) {
+        let gains = 0, losses = 0;
+        for (let i = data.length - period; i < data.length; i++) {
+            const change = data[i].close - data[i-1].close;
+            if (change > 0) gains += change; else losses += Math.abs(change);
+        }
+        const avgGain = gains / period;
+        const avgLoss = losses / period;
+        if (avgLoss === 0) return 100;
+        return 100 - (100 / (1 + (avgGain / avgLoss)));
+    }
+
+    function calculateSMA(data, period) {
+        let sum = 0;
+        for (let i = data.length - period; i < data.length; i++) sum += data[i].close;
+        return sum / period;
+    }
+
+    function calculateATR(data, period) {
+        let trSum = 0;
+        for (let i = data.length - period; i < data.length; i++) {
+            const high = data[i].high, low = data[i].low, prevClose = data[i-1].close;
+            const tr = Math.max(high - low, Math.abs(high - prevClose), Math.abs(low - prevClose));
+            trSum += tr;
+        }
+        return trSum / period;
     }
 </script>
 
