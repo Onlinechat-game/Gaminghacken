@@ -2,58 +2,52 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HACKEN STORE - GLOBAL AI TRADER</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>HACKEN STORE - LOCAL ALGO</title>
     <style>
-        :root { --bg: #050505; --panel: #0f0f0f; --primary: #00f3ff; --secondary: #7000ff; --success: #00ff9d; --danger: #ff3b3b; --text: #e0e0e0; --dim: #666; --border: #1f1f2e; }
-        body { background-color: var(--bg); color: var(--text); font-family: 'Segoe UI', sans-serif; margin: 0; padding: 20px; display: flex; justify-content: center; min-height: 100vh; background-image: radial-gradient(circle at top right, #11111a 0%, #050505 100%); }
-        .container { width: 100%; max-width: 900px; display: grid; grid-template-columns: 1fr 350px; gap: 20px; height: 85vh; }
-        .dashboard { background: var(--panel); border: 1px solid var(--border); border-top: 3px solid var(--primary); border-radius: 10px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 0 30px rgba(0, 243, 255, 0.05); }
-        .header { padding: 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.02); }
-        .logo { font-size: 1.4rem; font-weight: 900; color: var(--primary); text-transform: uppercase; letter-spacing: 2px; text-shadow: 0 0 10px rgba(0, 243, 255, 0.5); }
-        .status-badge { font-size: 0.7rem; padding: 4px 10px; border-radius: 20px; background: rgba(0, 255, 157, 0.1); color: var(--success); border: 1px solid var(--success); display: flex; align-items: center; gap: 5px; }
-        .status-dot { width: 6px; height: 6px; background: var(--success); border-radius: 50%; animation: pulse 2s infinite; }
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
-        .content-area { padding: 20px; flex-grow: 1; overflow-y: auto; position: relative; }
-        .price-hero { text-align: center; margin-bottom: 30px; }
-        .price-label { font-size: 0.8rem; color: var(--dim); text-transform: uppercase; letter-spacing: 1px; }
-        .price-value { font-size: 3.5rem; font-weight: 700; font-family: 'Courier New', monospace; color: var(--text); text-shadow: 0 0 20px rgba(255,255,255,0.1); }
-        .price-up { color: var(--success); } .price-down { color: var(--danger); }
-        .btn-scan { width: 100%; padding: 18px; background: linear-gradient(90deg, var(--primary), var(--secondary)); border: none; color: #fff; font-weight: 900; font-size: 1rem; text-transform: uppercase; letter-spacing: 2px; cursor: pointer; border-radius: 5px; transition: 0.3s; box-shadow: 0 0 20px rgba(112, 0, 255, 0.3); margin-bottom: 20px; }
-        .btn-scan:hover { transform: translateY(-2px); box-shadow: 0 0 30px rgba(0, 243, 255, 0.5); }
-        .btn-scan:disabled { background: #333; cursor: not-allowed; box-shadow: none; transform: none; }
-        .console { background: #000; border: 1px solid #333; height: 150px; padding: 10px; font-family: 'Courier New', monospace; font-size: 0.75rem; color: #aaa; overflow-y: auto; margin-bottom: 20px; border-radius: 4px; }
-        .log-line { margin-bottom: 4px; } .log-info { color: #666; } .log-warn { color: var(--primary); } .log-success { color: var(--success); } .log-error { color: var(--danger); }
-        .result-card { background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-left: 4px solid var(--dim); padding: 20px; border-radius: 4px; display: none; animation: slideIn 0.4s ease-out; }
-        @keyframes slideIn { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
-        .result-card.buy { border-left-color: var(--success); box-shadow: 0 0 20px rgba(0, 255, 157, 0.1); }
-        .result-card.sell { border-left-color: var(--danger); box-shadow: 0 0 20px rgba(255, 59, 59, 0.1); }
-        .signal-title { font-size: 0.8rem; color: var(--dim); text-transform: uppercase; margin-bottom: 5px; }
-        .signal-main { font-size: 2rem; font-weight: 900; text-transform: uppercase; margin-bottom: 10px; }
-        .signal-buy { color: var(--success); } .signal-sell { color: var(--danger); } .signal-wait { color: var(--dim); }
-        .metrics-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 15px; padding-top: 15px; border-top: 1px solid var(--border); }
-        .metric-box { text-align: center; } .metric-label { font-size: 0.6rem; color: var(--dim); display: block; } .metric-val { font-size: 1.1rem; font-weight: bold; color: var(--text); }
-        .levels-row { display: flex; gap: 15px; margin-top: 15px; }
-        .level-box { flex: 1; background: #000; padding: 10px; border-radius: 4px; text-align: center; border: 1px solid #333; }
-        .level-label { font-size: 0.6rem; color: var(--dim); text-transform: uppercase; }
-        .level-price { font-size: 1.1rem; font-weight: bold; font-family: monospace; margin-top: 5px; }
-        .ai-reasoning-box { margin-top: 15px; padding: 10px; background: rgba(0,0,0,0.3); border-radius: 4px; font-size: 0.8rem; line-height: 1.5; color: #ccc; }
-        .ai-reasoning-box strong { color: var(--primary); }
+        :root { --bg: #000000; --panel: #0a0a0a; --primary: #00f3ff; --success: #00ff9d; --danger: #ff3b3b; --text: #ffffff; --dim: #555555; --border: #222222; }
+        body { background-color: var(--bg); color: var(--text); font-family: 'Courier New', monospace; margin: 0; padding: 10px; display: flex; flex-direction: column; min-height: 100vh; }
+        .container { display: flex; flex-direction: column; gap: 15px; }
         
-        /* Chat */
-        .chat-panel { background: var(--panel); border: 1px solid var(--border); border-radius: 10px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 0 20px rgba(0,0,0,0.5); }
-        .chat-header { padding: 15px; background: rgba(255,255,255,0.02); border-bottom: 1px solid var(--border); font-weight: bold; color: var(--primary); display: flex; align-items: center; gap: 10px; }
-        .chat-messages { flex-grow: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; background: #050508; }
-        .message { max-width: 85%; padding: 10px 14px; border-radius: 10px; font-size: 0.85rem; line-height: 1.4; animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        @keyframes popIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
-        .msg-bot { background: rgba(0, 243, 255, 0.1); border: 1px solid rgba(0, 243, 255, 0.2); color: #fff; align-self: flex-start; border-bottom-left-radius: 2px; }
-        .msg-user { background: rgba(112, 0, 255, 0.2); border: 1px solid rgba(112, 0, 255, 0.3); color: #fff; align-self: flex-end; border-bottom-right-radius: 2px; }
-        .chat-input-area { padding: 15px; background: rgba(255,255,255,0.02); border-top: 1px solid var(--border); display: flex; gap: 10px; }
-        .chat-input { flex-grow: 1; background: #000; border: 1px solid #333; color: #fff; padding: 10px; border-radius: 5px; font-family: inherit; outline: none; }
-        .chat-input:focus { border-color: var(--primary); }
-        .btn-send { background: var(--primary); border: none; color: #000; width: 40px; border-radius: 5px; cursor: pointer; font-weight: bold; transition: 0.2s; }
-        .btn-send:hover { background: #fff; }
-        @media (max-width: 768px) { .container { grid-template-columns: 1fr; height: auto; } .chat-panel { height: 400px; } }
+        .dashboard { background: var(--panel); border: 1px solid var(--border); border-top: 4px solid var(--primary); border-radius: 4px; padding: 15px; }
+        
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid #222; padding-bottom: 10px; }
+        .logo { font-size: 1rem; font-weight: 900; color: var(--primary); text-transform: uppercase; letter-spacing: 1px; }
+        .status-badge { font-size: 0.6rem; padding: 3px 8px; border-radius: 2px; background: rgba(0, 243, 255, 0.1); color: var(--primary); border: 1px solid var(--primary); }
+        
+        .price-hero { text-align: center; margin: 10px 0; background: rgba(255,255,255,0.02); padding: 15px; border-radius: 4px; border: 1px solid #111; }
+        .price-label { font-size: 0.7rem; color: var(--dim); text-transform: uppercase; letter-spacing: 2px; }
+        .price-value { font-size: 2.8rem; font-weight: 700; color: var(--text); margin: 5px 0; }
+        .price-up { color: var(--success); } .price-down { color: var(--danger); }
+
+        .btn-scan { width: 100%; padding: 16px; background: var(--primary); border: none; color: #000; font-weight: 900; font-size: 0.9rem; text-transform: uppercase; cursor: pointer; border-radius: 2px; margin: 10px 0; box-shadow: 0 0 15px rgba(0, 243, 255, 0.2); }
+        .btn-scan:active { transform: scale(0.98); }
+        .btn-scan:disabled { background: #333; color: #666; }
+
+        .console { background: #000; border: 1px solid #222; height: 100px; padding: 8px; font-size: 0.65rem; color: #888; overflow-y: auto; margin-bottom: 10px; border-radius: 2px; font-family: 'Consolas', monospace; }
+        .log-line { margin-bottom: 3px; } 
+        .log-info { color: #555; } .log-warn { color: var(--primary); } .log-success { color: var(--success); } .log-error { color: var(--danger); }
+
+        .result-card { background: rgba(20,20,20,0.8); border: 1px solid var(--border); border-left: 4px solid var(--dim); padding: 15px; border-radius: 2px; display: none; margin-top: 10px; animation: slideUp 0.3s ease-out; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .result-card.buy { border-left-color: var(--success); background: linear-gradient(to right, rgba(0,255,157,0.05), transparent); } 
+        .result-card.sell { border-left-color: var(--danger); background: linear-gradient(to right, rgba(255,59,59,0.05), transparent); }
+
+        .signal-main { font-size: 2rem; font-weight: 900; text-transform: uppercase; text-align: center; margin: 10px 0; letter-spacing: 2px; }
+        .signal-buy { color: var(--success); } .signal-sell { color: var(--danger); } .signal-wait { color: var(--dim); }
+
+        .levels-row { display: flex; gap: 10px; margin: 15px 0; }
+        .level-box { flex: 1; background: #000; padding: 10px; border-radius: 2px; text-align: center; border: 1px solid #333; }
+        .level-label { font-size: 0.6rem; color: var(--dim); text-transform: uppercase; display: block; margin-bottom: 5px; }
+        .level-price { font-size: 1.1rem; font-weight: bold; font-family: monospace; }
+
+        .metrics-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; margin-top: 10px; padding-top: 10px; border-top: 1px solid #222; }
+        .metric-box { text-align: center; } 
+        .metric-label { font-size: 0.55rem; color: var(--dim); display: block; text-transform: uppercase; } 
+        .metric-val { font-size: 0.9rem; font-weight: bold; color: var(--text); }
+
+        .algo-reasoning-box { margin-top: 15px; padding: 12px; background: rgba(0, 243, 255, 0.03); border: 1px solid rgba(0, 243, 255, 0.2); border-radius: 2px; font-size: 0.75rem; line-height: 1.5; color: #ddd; }
+        .algo-reasoning-box strong { color: var(--primary); display: block; margin-bottom: 6px; text-transform: uppercase; font-size: 0.65rem; }
     </style>
 </head>
 <body>
@@ -61,64 +55,57 @@
 <div class="container">
     <div class="dashboard">
         <div class="header">
-            <div class="logo">HACKEN STORE <span style="font-size:0.5em; vertical-align:super; color:#fff;">PRO</span></div>
-            <div class="status-badge"><div class="status-dot"></div> EN LIGNE (GITHUB)</div>
+            <div class="logo">HACKEN STORE <span style="font-size:0.6em; vertical-align:super;">LOCAL AI</span></div>
+            <div class="status-badge">● SYSTÈME AUTONOME</div>
         </div>
-        <div class="content-area">
-            <div class="price-hero">
-                <div class="price-label">XAU/USD LIVE PRICE</div>
-                <div class="price-value" id="price-display">0.00</div>
-            </div>
-            <button class="btn-scan" id="btn-analyze" onclick="startFullAnalysis()">
-                🧠 LANCER L'ANALYSE NEURALE
-            </button>
-            <div class="console" id="console">
-                <div class="log-line log-info">> Système prêt.</div>
-                <div class="log-line log-info">> Mode Proxy Activé (Compatible GitHub Pages).</div>
-                <div class="log-line log-success">> Prêt à analyser.</div>
-            </div>
-            <div class="result-card" id="result-card">
-                <div class="signal-title">Signal Institutionnel</div>
-                <div class="signal-main" id="signal-text">WAIT</div>
-                <div class="levels-row">
-                    <div class="level-box"><div class="level-label">Stop Loss</div><div class="level-price" style="color:var(--danger)" id="sl-val">---</div></div>
-                    <div class="level-box"><div class="level-label">Take Profit</div><div class="level-price" style="color:var(--success)" id="tp-val">---</div></div>
-                </div>
-                <div class="metrics-grid">
-                    <div class="metric-box"><span class="metric-label">RSI (14)</span><span class="metric-val" id="val-rsi">--</span></div>
-                    <div class="metric-box"><span class="metric-label">Tendance</span><span class="metric-val" id="val-trend">--</span></div>
-                    <div class="metric-box"><span class="metric-label">Confiance IA</span><span class="metric-val" id="val-conf">--%</span></div>
-                </div>
-                <div class="ai-reasoning-box"><strong>🤖 Analyse :</strong> <span id="ai-reasoning">--</span></div>
-            </div>
-        </div>
-    </div>
 
-    <div class="chat-panel">
-        <div class="chat-header">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-            ASSISTANT IA
+        <div class="price-hero">
+            <div class="price-label">XAU/USD LIVE PRICE</div>
+            <div class="price-value" id="price-display">0.00</div>
         </div>
-        <div class="chat-messages" id="chat-messages">
-            <div class="message msg-bot">Bonjour. Je suis connecté via Proxy sécurisé. Lance une analyse ou pose-moi une question.</div>
+
+        <button class="btn-scan" id="btn-analyze" onclick="runLocalAlgo()">
+            ⚡ LANCER ANALYSE LOCALE
+        </button>
+
+        <div class="console" id="console">
+            <div class="log-line log-info">> Moteur Local Prêt.</div>
+            <div class="log-line log-success">> Aucune connexion externe requise.</div>
+            <div class="log-line log-info">> En attente...</div>
         </div>
-        <div class="chat-input-area">
-            <input type="text" class="chat-input" id="user-input" placeholder="Pose ta question..." onkeypress="handleEnter(event)">
-            <button class="btn-send" onclick="sendMessage()">➤</button>
+
+        <div class="result-card" id="result-card">
+            <div class="signal-main" id="signal-text">WAIT</div>
+            
+            <div class="levels-row">
+                <div class="level-box">
+                    <span class="level-label">Stop Loss (SL)</span>
+                    <span class="level-price" style="color:var(--danger)" id="sl-val">---</span>
+                </div>
+                <div class="level-box">
+                    <span class="level-label">Take Profit (TP)</span>
+                    <span class="level-price" style="color:var(--success)" id="tp-val">---</span>
+                </div>
+            </div>
+
+            <div class="metrics-grid">
+                <div class="metric-box"><span class="metric-label">RSI (14)</span><span class="metric-val" id="val-rsi">--</span></div>
+                <div class="metric-box"><span class="metric-label">Bollinger</span><span class="metric-val" id="val-bb">--</span></div>
+                <div class="metric-box"><span class="metric-label">Trend</span><span class="metric-val" id="val-trend">--</span></div>
+            </div>
+
+            <div class="algo-reasoning-box">
+                <strong> Logique Algorithmique :</strong>
+                <span id="algo-reasoning">En attente...</span>
+            </div>
         </div>
     </div>
 </div>
 
 <script>
-    // --- CONFIGURATION ---
-    const HF_API_KEY = "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";
-    const HF_MODEL = "mistralai/Mistral-7B-Instruct-v0.3";
-    const BINANCE_URL = 'https://api.binance.com/api/v3/klines?symbol=XAUUSDT&interval=1h&limit=50';
-    
-    // PROXY URL POUR CONTOURNER LES BLOCAGES GITHUB/CORS
-    const PROXY_URL = 'https://api.allorigins.win/raw?url=';
-
-    let marketContextData = "";
+    const BINANCE_URL = 'https://api.binance.com/api/v3/klines?symbol=XAUUSDT&interval=1h&limit=100';
+    // Proxy pour contourner CORS sur mobile si nécessaire
+    const PROXY = "https://api.allorigins.win/raw?url=";
 
     function log(msg, type = 'info') {
         const consoleEl = document.getElementById('console');
@@ -129,36 +116,26 @@
         consoleEl.scrollTop = consoleEl.scrollHeight;
     }
 
-    function addMessage(text, sender) {
-        const chatEl = document.getElementById('chat-messages');
-        const div = document.createElement('div');
-        div.className = `message msg-${sender}`;
-        div.innerHTML = text.replace(/\n/g, '<br>');
-        chatEl.appendChild(div);
-        chatEl.scrollTop = chatEl.scrollHeight;
-    }
-
-    function handleEnter(e) { if(e.key === 'Enter') sendMessage(); }
-
-    async function startFullAnalysis(retryCount = 0) {
+    async function runLocalAlgo() {
         const btn = document.getElementById('btn-analyze');
         const resultCard = document.getElementById('result-card');
         
-        if (retryCount === 0) {
-            btn.disabled = true;
-            btn.innerText = "ANALYSE EN COURS...";
-            resultCard.style.display = 'none';
-            log("Récupération des données marché...", "info");
-        }
+        btn.disabled = true;
+        btn.innerText = "CALCUL EN COURS...";
+        resultCard.style.display = 'none';
+        
+        log("Récupération des données marché...", "info");
 
         try {
-            // 1. Données Marché (Binance est souvent ouvert, mais on peut aussi le passer par proxy si besoin)
-            const res = await fetch(BINANCE_URL);
-            if(!res.ok) throw new Error("Erreur connexion Binance");
+            // Fetch Data via Proxy pour éviter erreur CORS
+            const res = await fetch(PROXY + encodeURIComponent(BINANCE_URL));
+            if(!res.ok) throw new Error("Erreur Réseau");
             const data = await res.json();
             
             const candles = data.map(d => ({
-                close: parseFloat(d[4]), high: parseFloat(d[2]), low: parseFloat(d[3]), volume: parseFloat(d[5])
+                close: parseFloat(d[4]), 
+                high: parseFloat(d[2]), 
+                low: parseFloat(d[3])
             }));
 
             const currentPrice = candles[candles.length - 1].close;
@@ -168,127 +145,105 @@
             const priceEl = document.getElementById('price-display');
             priceEl.className = `price-value ${currentPrice >= prevClose ? 'price-up' : 'price-down'}`;
 
-            if (retryCount === 0) log(`Données reçues: Prix $${currentPrice}`, "success");
+            log("Données reçues. Calcul des indicateurs...", "success");
 
-            // 2. Indicateurs
-            const rsi = calculateRSI(candles, 14);
-            const sma20 = calculateSMA(candles, 20);
-            const atr = calculateATR(candles, 14);
-            const trend = currentPrice > sma20 ? "HAUSSIERE" : "BAISSIERE";
-            marketContextData = `Prix: ${currentPrice}, RSI: ${rsi.toFixed(2)}, Tendance: ${trend}`;
-
-            // 3. Prompt
-            const prompt = `[INST] Tu es un expert trader XAU/USD. Données: Prix ${currentPrice}, RSI ${rsi.toFixed(2)}, Tendance ${trend}, ATR ${atr.toFixed(2)}. Historique: ${candles.slice(-5).map(c=>c.close).join(', ')}. Donne un signal (BUY/SELL/WAIT), confiance (0-100), SL, TP et une raison courte. Réponds UNIQUEMENT en JSON pur sans markdown. [/INST]`;
-
-            // 4. Appel API HF VIA PROXY
-            // On encode l'URL de destination pour qu'AllOrigins puisse la relayer
-            const targetUrl = `https://api-inference.huggingface.co/models/${HF_MODEL}`;
-            const proxyTarget = encodeURIComponent(targetUrl);
+            // --- CERVEAU DE L'ALGO LOCAL ---
             
-            log("Envoi au modèle via Proxy Sécurisé...", "warn");
+            // 1. RSI
+            const rsi = calculateRSI(candles, 14);
+            
+            // 2. Bandes de Bollinger (20, 2)
+            const bb = calculateBollinger(candles, 20, 2);
+            const upperBand = bb.upper;
+            const lowerBand = bb.lower;
+            const middleBand = bb.middle;
+            
+            let bbStatus = "NEUTRE";
+            if (currentPrice > upperBand) bbStatus = "SURACHAT (HAUT)";
+            else if (currentPrice < lowerBand) bbStatus = "SURVENTE (BAS)";
 
-            const response = await fetch(`${PROXY_URL}${proxyTarget}`, {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${HF_API_KEY}`,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    inputs: prompt,
-                    parameters: { max_new_tokens: 250, temperature: 0.3, return_full_text: false }
-                })
-            });
+            // 3. Tendance (Moyenne Mobile 50)
+            const sma50 = calculateSMA(candles, 50);
+            const trend = currentPrice > sma50 ? "HAUSSIER" : "BAISSIER";
 
-            if (!response.ok) {
-                const errText = await response.text();
-                if (errText.includes("loading") || response.status === 503) {
-                    const waitTime = 5 + (retryCount * 2);
-                    log(`Modèle en chargement... Réessai auto dans ${waitTime}s`, "warn");
-                    if (retryCount < 3) {
-                        await new Promise(r => setTimeout(r, waitTime * 1000));
-                        return startFullAnalysis(retryCount + 1);
-                    } else {
-                        throw new Error("Le modèle met trop de temps à charger.");
-                    }
-                }
-                throw new Error(`Erreur API: ${response.status}`);
+            // Affichage Métriques
+            document.getElementById('val-rsi').innerText = rsi.toFixed(1);
+            document.getElementById('val-bb').innerText = bbStatus;
+            document.getElementById('val-trend').innerText = trend;
+
+            // --- PRISE DE DÉCISION (LOGIQUE STRICTE) ---
+            let signal = "WAIT";
+            let reasoning = "";
+            let sl = 0;
+            let tp = 0;
+            const atr = calculateATR(candles, 14); // Volatilité pour SL/TP
+
+            // Condition ACHAT : RSI < 30 (Survente) ET Prix proche ou sous Bande Inférieure
+            if (rsi < 30 && currentPrice <= lowerBand * 1.002) {
+                signal = "BUY";
+                reasoning = `Confluence Haussière détectée : RSI en survente (${rsi.toFixed(1)}) et prix touchant la bande de Bollinger inférieure. Rebond technique probable.`;
+                sl = currentPrice - (atr * 1.5);
+                tp = currentPrice + (atr * 3.0);
+            } 
+            // Condition VENTE : RSI > 70 (Surachat) ET Prix proche ou au-dessus Bande Supérieure
+            else if (rsi > 70 && currentPrice >= upperBand * 0.998) {
+                signal = "SELL";
+                reasoning = `Confluence Baissière détectée : RSI en surachat (${rsi.toFixed(1)}) et prix touchant la bande de Bollinger supérieure. Correction attendue.`;
+                sl = currentPrice + (atr * 1.5);
+                tp = currentPrice - (atr * 3.0);
+            }
+            // Condition Tendance Lourde (Breakout)
+            else if (trend === "HAUSSIER" && rsi > 50 && rsi < 70) {
+                signal = "BUY";
+                reasoning = `Tendance de fond haussière confirmée (Prix > SMA50). Momentum positif sans être en surachat extrême.`;
+                sl = currentPrice - (atr * 2.0);
+                tp = currentPrice + (atr * 4.0);
+            }
+            else if (trend === "BAISSIER" && rsi < 50 && rsi > 30) {
+                signal = "SELL";
+                reasoning = `Tendance de fond baissière confirmée (Prix < SMA50). Pression vendeuse dominante.`;
+                sl = currentPrice + (atr * 2.0);
+                tp = currentPrice - (atr * 4.0);
+            }
+            else {
+                signal = "WAIT";
+                reasoning = `Aucune configuration à haute probabilité détectée. RSI (${rsi.toFixed(1)}) et Bandes de Bollinger indiquent un marché neutre ou incertain. Attente recommandée.`;
             }
 
-            const hfData = await response.json();
-            let aiText = Array.isArray(hfData) ? hfData[0].generated_text : (hfData.generated_text || "");
-            
-            const cleanJson = aiText.replace(/```json/g, '').replace(/```/g, '').trim();
-            const jsonMatch = cleanJson.match(/\{[\s\S]*\}/);
-            if(!jsonMatch) throw new Error("Format JSON invalide");
-            
-            const analysis = JSON.parse(jsonMatch[0]);
-            displayResults(analysis, rsi, trend);
-            addMessage(`Analyse terminée. Signal: <strong>${analysis.signal}</strong>`, 'bot');
-            log("Analyse réussie.", "success");
+            // Affichage Résultat
+            displayResult(signal, reasoning, sl, tp);
+            log("Analyse locale terminée.", "success");
 
         } catch (error) {
             log(`ERREUR: ${error.message}`, "error");
-            if(retryCount === 0) addMessage(`⚠️ ${error.message}`, 'bot');
+            alert("Erreur de connexion aux données marché. Vérifie ta connexion internet.");
         } finally {
-            if (retryCount === 0) {
-                btn.disabled = false;
-                btn.innerText = "🧠 LANCER L'ANALYSE NEURALE";
-            }
+            btn.disabled = false;
+            btn.innerText = "⚡ LANCER ANALYSE LOCALE";
         }
     }
 
-    function displayResults(data, rsi, trend) {
+    function displayResult(signal, reasoning, sl, tp) {
         const card = document.getElementById('result-card');
         card.style.display = 'block';
-        card.className = `result-card ${data.signal.toLowerCase()}`;
-        const sigEl = document.getElementById('signal-text');
-        sigEl.innerText = data.signal === 'BUY' ? 'ACHETER' : (data.signal === 'SELL' ? 'VENDRE' : 'ATTENDRE');
-        sigEl.className = `signal-main ${data.signal === 'BUY' ? 'signal-buy' : (data.signal === 'SELL' ? 'signal-sell' : 'signal-wait')}`;
-        document.getElementById('val-conf').innerText = `${data.confidence}%`;
-        document.getElementById('sl-val').innerText = data.sl ? data.sl.toFixed(2) : "---";
-        document.getElementById('tp-val').innerText = data.tp ? data.tp.toFixed(2) : "---";
-        document.getElementById('val-rsi').innerText = rsi.toFixed(2);
-        document.getElementById('val-trend').innerText = trend;
-        document.getElementById('ai-reasoning').innerText = data.reasoning || "Non disponible.";
-    }
-
-    async function sendMessage() {
-        const input = document.getElementById('user-input');
-        const text = input.value.trim();
-        if(!text) return;
-        addMessage(text, 'user');
-        input.value = '';
+        card.className = `result-card ${signal.toLowerCase()}`;
         
-        const loadDiv = document.createElement('div');
-        loadDiv.className = 'message msg-bot';
-        loadDiv.innerText = "Réflexion...";
-        document.getElementById('chat-messages').appendChild(loadDiv);
+        const sigEl = document.getElementById('signal-text');
+        sigEl.innerText = signal === 'BUY' ? 'ACHETER' : (signal === 'SELL' ? 'VENDRE' : 'ATTENDRE');
+        sigEl.className = `signal-main ${signal === 'BUY' ? 'signal-buy' : (signal === 'SELL' ? 'signal-sell' : 'signal-wait')}`;
 
-        try {
-            const prompt = `[INST] Contexte: ${marketContextData || "Aucun"}. Question: ${text}. Réponds brièvement. [/INST]`;
-            const targetUrl = `https://api-inference.huggingface.co/models/${HF_MODEL}`;
-            const proxyTarget = encodeURIComponent(targetUrl);
-
-            const response = await fetch(`${PROXY_URL}${proxyTarget}`, {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${HF_API_KEY}`,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    inputs: prompt,
-                    parameters: { max_new_tokens: 150, return_full_text: false }
-                })
-            });
-
-            const data = await response.json();
-            let reply = Array.isArray(data) ? data[0].generated_text : (data.generated_text || "Erreur.");
-            loadDiv.remove();
-            addMessage(reply, 'bot');
-        } catch (e) {
-            loadDiv.innerText = "Erreur de connexion.";
+        if(signal !== 'WAIT') {
+            document.getElementById('sl-val').innerText = sl.toFixed(2);
+            document.getElementById('tp-val').innerText = tp.toFixed(2);
+        } else {
+            document.getElementById('sl-val').innerText = "---";
+            document.getElementById('tp-val').innerText = "---";
         }
+        
+        document.getElementById('algo-reasoning').innerText = reasoning;
     }
+
+    // --- MOTEURS DE CALCUL MATHÉMATIQUE ---
 
     function calculateRSI(data, period) {
         let gains = 0, losses = 0;
@@ -297,19 +252,42 @@
             if (change > 0) gains += change; else losses += Math.abs(change);
         }
         if (losses === 0) return 100;
-        return 100 - (100 / (1 + (gains/period) / (losses/period)));
+        const avgGain = gains / period;
+        const avgLoss = losses / period;
+        return 100 - (100 / (1 + (avgGain / avgLoss)));
     }
+
     function calculateSMA(data, period) {
-        return data.slice(-period).reduce((a,b) => a + b.close, 0) / period;
-    }
-    function calculateATR(data, period) {
         let sum = 0;
-        for(let i=data.length-period; i<data.length; i++) {
-            const h=data[i].high, l=data[i].low, c=data[i-1].close;
-            sum += Math.max(h-l, Math.abs(h-c), Math.abs(l-c));
+        for (let i = data.length - period; i < data.length; i++) {
+            sum += data[i].close;
         }
-        return sum/period;
+        return sum / period;
+    }
+
+    function calculateBollinger(data, period, multiplier) {
+        const sma = calculateSMA(data, period);
+        let sumSq = 0;
+        for (let i = data.length - period; i < data.length; i++) {
+            sumSq += Math.pow(data[i].close - sma, 2);
+        }
+        const stdDev = Math.sqrt(sumSq / period);
+        return {
+            upper: sma + (stdDev * multiplier),
+            middle: sma,
+            lower: sma - (stdDev * multiplier)
+        };
+    }
+
+    function calculateATR(data, period) {
+        let trSum = 0;
+        for(let i = data.length - period; i < data.length; i++) {
+            const h = data[i].high, l = data[i].low, c = data[i-1].close;
+            const tr = Math.max(h - l, Math.abs(h - c), Math.abs(l - c));
+            trSum += tr;
+        }
+        return trSum / period;
     }
 </script>
 </body>
-    </html>
+</html>
