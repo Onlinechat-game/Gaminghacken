@@ -3,291 +3,424 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>HACKEN STORE - LOCAL ALGO</title>
+    <title>XAU/USD Mobile AI Bot</title>
+    <!-- Chart.js pour les graphiques légers -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        :root { --bg: #000000; --panel: #0a0a0a; --primary: #00f3ff; --success: #00ff9d; --danger: #ff3b3b; --text: #ffffff; --dim: #555555; --border: #222222; }
-        body { background-color: var(--bg); color: var(--text); font-family: 'Courier New', monospace; margin: 0; padding: 10px; display: flex; flex-direction: column; min-height: 100vh; }
-        .container { display: flex; flex-direction: column; gap: 15px; }
-        
-        .dashboard { background: var(--panel); border: 1px solid var(--border); border-top: 4px solid var(--primary); border-radius: 4px; padding: 15px; }
-        
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid #222; padding-bottom: 10px; }
-        .logo { font-size: 1rem; font-weight: 900; color: var(--primary); text-transform: uppercase; letter-spacing: 1px; }
-        .status-badge { font-size: 0.6rem; padding: 3px 8px; border-radius: 2px; background: rgba(0, 243, 255, 0.1); color: var(--primary); border: 1px solid var(--primary); }
-        
-        .price-hero { text-align: center; margin: 10px 0; background: rgba(255,255,255,0.02); padding: 15px; border-radius: 4px; border: 1px solid #111; }
-        .price-label { font-size: 0.7rem; color: var(--dim); text-transform: uppercase; letter-spacing: 2px; }
-        .price-value { font-size: 2.8rem; font-weight: 700; color: var(--text); margin: 5px 0; }
-        .price-up { color: var(--success); } .price-down { color: var(--danger); }
+        :root {
+            --bg: #000000;
+            --card: #121212;
+            --text: #ffffff;
+            --green: #00ff88;
+            --red: #ff3333;
+            --blue: #00ccff;
+            --gray: #888888;
+        }
 
-        .btn-scan { width: 100%; padding: 16px; background: var(--primary); border: none; color: #000; font-weight: 900; font-size: 0.9rem; text-transform: uppercase; cursor: pointer; border-radius: 2px; margin: 10px 0; box-shadow: 0 0 15px rgba(0, 243, 255, 0.2); }
-        .btn-scan:active { transform: scale(0.98); }
-        .btn-scan:disabled { background: #333; color: #666; }
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
 
-        .console { background: #000; border: 1px solid #222; height: 100px; padding: 8px; font-size: 0.65rem; color: #888; overflow-y: auto; margin-bottom: 10px; border-radius: 2px; font-family: 'Consolas', monospace; }
-        .log-line { margin-bottom: 3px; } 
-        .log-info { color: #555; } .log-warn { color: var(--primary); } .log-success { color: var(--success); } .log-error { color: var(--danger); }
+        h1 { font-size: 1.2rem; margin-bottom: 5px; text-align: center; }
+        .subtitle { font-size: 0.8rem; color: var(--gray); margin-bottom: 20px; text-align: center; }
 
-        .result-card { background: rgba(20,20,20,0.8); border: 1px solid var(--border); border-left: 4px solid var(--dim); padding: 15px; border-radius: 2px; display: none; margin-top: 10px; animation: slideUp 0.3s ease-out; }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .result-card.buy { border-left-color: var(--success); background: linear-gradient(to right, rgba(0,255,157,0.05), transparent); } 
-        .result-card.sell { border-left-color: var(--danger); background: linear-gradient(to right, rgba(255,59,59,0.05), transparent); }
+        /* Carte Principale de Signal */
+        .signal-card {
+            background: linear-gradient(145deg, #1a1a1a, #0d0d0d);
+            border: 1px solid #333;
+            border-radius: 15px;
+            width: 100%;
+            max-width: 400px;
+            padding: 25px;
+            text-align: center;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+        }
 
-        .signal-main { font-size: 2rem; font-weight: 900; text-transform: uppercase; text-align: center; margin: 10px 0; letter-spacing: 2px; }
-        .signal-buy { color: var(--success); } .signal-sell { color: var(--danger); } .signal-wait { color: var(--dim); }
+        .signal-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; height: 4px;
+            background: var(--gray);
+            transition: background 0.5s;
+        }
+        .signal-card.buy::before { background: var(--green); }
+        .signal-card.sell::before { background: var(--red); }
+        .signal-card.wait::before { background: var(--blue); }
 
-        .levels-row { display: flex; gap: 10px; margin: 15px 0; }
-        .level-box { flex: 1; background: #000; padding: 10px; border-radius: 2px; text-align: center; border: 1px solid #333; }
-        .level-label { font-size: 0.6rem; color: var(--dim); text-transform: uppercase; display: block; margin-bottom: 5px; }
-        .level-price { font-size: 1.1rem; font-weight: bold; font-family: monospace; }
+        .price-display { font-size: 2rem; font-weight: bold; margin: 10px 0; }
+        .signal-text { font-size: 2.5rem; font-weight: 900; text-transform: uppercase; margin: 10px 0; letter-spacing: 2px; }
+        .confidence-box { 
+            background: #222; 
+            border-radius: 8px; 
+            padding: 10px; 
+            margin-top: 15px; 
+        }
+        .progress-bg { background: #333; height: 8px; border-radius: 4px; overflow: hidden; margin-top: 5px; }
+        .progress-fill { height: 100%; width: 0%; transition: width 1s ease, background 0.5s; }
 
-        .metrics-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; margin-top: 10px; padding-top: 10px; border-top: 1px solid #222; }
-        .metric-box { text-align: center; } 
-        .metric-label { font-size: 0.55rem; color: var(--dim); display: block; text-transform: uppercase; } 
-        .metric-val { font-size: 0.9rem; font-weight: bold; color: var(--text); }
+        /* Indicateurs Grid */
+        .indicators-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            width: 100%;
+            max-width: 400px;
+            margin-bottom: 20px;
+        }
+        .ind-card {
+            background: var(--card);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            border: 1px solid #222;
+        }
+        .ind-label { font-size: 0.7rem; color: var(--gray); text-transform: uppercase; }
+        .ind-value { font-size: 1.2rem; font-weight: bold; margin-top: 5px; }
 
-        .algo-reasoning-box { margin-top: 15px; padding: 12px; background: rgba(0, 243, 255, 0.03); border: 1px solid rgba(0, 243, 255, 0.2); border-radius: 2px; font-size: 0.75rem; line-height: 1.5; color: #ddd; }
-        .algo-reasoning-box strong { color: var(--primary); display: block; margin-bottom: 6px; text-transform: uppercase; font-size: 0.65rem; }
+        /* Graphique */
+        .chart-container {
+            width: 100%;
+            max-width: 400px;
+            height: 250px;
+            background: var(--card);
+            border-radius: 10px;
+            padding: 10px;
+            margin-bottom: 20px;
+        }
+
+        /* Logs */
+        .logs {
+            width: 100%;
+            max-width: 400px;
+            background: #0a0a0a;
+            border-radius: 8px;
+            padding: 10px;
+            height: 150px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 0.7rem;
+            color: var(--gray);
+            border: 1px solid #222;
+        }
+        .log-item { margin-bottom: 4px; border-bottom: 1px solid #111; padding-bottom: 2px; }
+        .log-time { color: var(--blue); }
+
+        /* Bouton Refresh */
+        .btn-refresh {
+            background: var(--blue);
+            color: #000;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            width: 100%;
+            max-width: 400px;
+            margin-top: 10px;
+        }
+        .btn-refresh:active { transform: scale(0.98); }
+
+        .loader {
+            border: 3px solid #333;
+            border-top: 3px solid var(--blue);
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <div class="dashboard">
-        <div class="header">
-            <div class="logo">HACKEN STORE <span style="font-size:0.6em; vertical-align:super;">LOCAL AI</span></div>
-            <div class="status-badge">● SYSTÈME AUTONOME</div>
-        </div>
+    <h1>XAU/USD MOBILE BOT</h1>
+    <div class="subtitle">Algorithme Auto-Hébergé (JS Native)</div>
 
-        <div class="price-hero">
-            <div class="price-label">XAU/USD LIVE PRICE</div>
-            <div class="price-value" id="price-display">0.00</div>
-        </div>
+    <!-- Carte de Décision -->
+    <div id="signal-card" class="signal-card wait">
+        <div style="font-size: 0.9rem; color: #aaa;">PRIX ACTUEL</div>
+        <div id="price" class="price-display">---.--</div>
+        
+        <div id="signal-text" class="signal-text" style="color: var(--gray);">CALCUL...</div>
+        <div id="signal-desc" style="font-size: 0.9rem;">Analyse en cours</div>
 
-        <button class="btn-scan" id="btn-analyze" onclick="runLocalAlgo()">
-            ⚡ LANCER ANALYSE LOCALE
-        </button>
-
-        <div class="console" id="console">
-            <div class="log-line log-info">> Moteur Local Prêt.</div>
-            <div class="log-line log-success">> Aucune connexion externe requise.</div>
-            <div class="log-line log-info">> En attente...</div>
-        </div>
-
-        <div class="result-card" id="result-card">
-            <div class="signal-main" id="signal-text">WAIT</div>
-            
-            <div class="levels-row">
-                <div class="level-box">
-                    <span class="level-label">Stop Loss (SL)</span>
-                    <span class="level-price" style="color:var(--danger)" id="sl-val">---</span>
-                </div>
-                <div class="level-box">
-                    <span class="level-label">Take Profit (TP)</span>
-                    <span class="level-price" style="color:var(--success)" id="tp-val">---</span>
-                </div>
+        <div class="confidence-box">
+            <div style="display:flex; justify-content:space-between; font-size:0.8rem;">
+                <span>Probabilité de succès</span>
+                <span id="conf-val">0%</span>
             </div>
-
-            <div class="metrics-grid">
-                <div class="metric-box"><span class="metric-label">RSI (14)</span><span class="metric-val" id="val-rsi">--</span></div>
-                <div class="metric-box"><span class="metric-label">Bollinger</span><span class="metric-val" id="val-bb">--</span></div>
-                <div class="metric-box"><span class="metric-label">Trend</span><span class="metric-val" id="val-trend">--</span></div>
-            </div>
-
-            <div class="algo-reasoning-box">
-                <strong> Logique Algorithmique :</strong>
-                <span id="algo-reasoning">En attente...</span>
+            <div class="progress-bg">
+                <div id="conf-bar" class="progress-fill"></div>
             </div>
         </div>
     </div>
-</div>
 
-<script>
-    const BINANCE_URL = 'https://api.binance.com/api/v3/klines?symbol=XAUUSDT&interval=1h&limit=100';
-    // Proxy pour contourner CORS sur mobile si nécessaire
-    const PROXY = "https://api.allorigins.win/raw?url=";
+    <!-- Indicateurs Techniques -->
+    <div class="indicators-grid">
+        <div class="ind-card">
+            <div class="ind-label">RSI (14)</div>
+            <div id="rsi-val" class="ind-value">--</div>
+        </div>
+        <div class="ind-card">
+            <div class="ind-label">Tendance (EMA)</div>
+            <div id="ema-val" class="ind-value">--</div>
+        </div>
+        <div class="ind-card">
+            <div class="ind-label">Volatilité</div>
+            <div id="vol-val" class="ind-value">--</div>
+        </div>
+        <div class="ind-card">
+            <div class="ind-label">Momentum</div>
+            <div id="mom-val" class="ind-value">--</div>
+        </div>
+    </div>
 
-    function log(msg, type = 'info') {
-        const consoleEl = document.getElementById('console');
-        const div = document.createElement('div');
-        div.className = `log-line log-${type}`;
-        div.innerText = `[${new Date().toLocaleTimeString()}] ${msg}`;
-        consoleEl.appendChild(div);
-        consoleEl.scrollTop = consoleEl.scrollHeight;
-    }
+    <!-- Graphique -->
+    <div class="chart-container">
+        <canvas id="priceChart"></canvas>
+    </div>
 
-    async function runLocalAlgo() {
-        const btn = document.getElementById('btn-analyze');
-        const resultCard = document.getElementById('result-card');
+    <!-- Logs -->
+    <div id="logs" class="logs"></div>
+
+    <button class="btn-refresh" onclick="startAnalysis()">
+        <span id="btn-text">LANCER L'ANALYSE</span>
+    </button>
+
+    <script>
+        // --- CONFIGURATION ---
+        // Utilisation de l'API Binance pour XAUUSDT (Or spot) car c'est gratuit et sans clé API
+        // Note: Le prix peut varier légèrement du Forex classique (OANDA), mais la tendance est la même.
+        const API_URL = 'https://api.binance.com/api/v3/klines?symbol=XAUUSDT&interval=15m&limit=100';
         
-        btn.disabled = true;
-        btn.innerText = "CALCUL EN COURS...";
-        resultCard.style.display = 'none';
-        
-        log("Récupération des données marché...", "info");
+        let chartInstance = null;
+        let priceData = [];
+        let closePrices = [];
 
-        try {
-            // Fetch Data via Proxy pour éviter erreur CORS
-            const res = await fetch(PROXY + encodeURIComponent(BINANCE_URL));
-            if(!res.ok) throw new Error("Erreur Réseau");
-            const data = await res.json();
-            
-            const candles = data.map(d => ({
-                close: parseFloat(d[4]), 
-                high: parseFloat(d[2]), 
-                low: parseFloat(d[3])
-            }));
+        // --- MOTEUR D'ANALYSE (Mathématiques Pures) ---
 
-            const currentPrice = candles[candles.length - 1].close;
-            document.getElementById('price-display').innerText = currentPrice.toFixed(2);
-            
-            const prevClose = candles[candles.length - 2].close;
-            const priceEl = document.getElementById('price-display');
-            priceEl.className = `price-value ${currentPrice >= prevClose ? 'price-up' : 'price-down'}`;
+        function log(msg) {
+            const logsDiv = document.getElementById('logs');
+            const time = new Date().toLocaleTimeString();
+            const item = document.createElement('div');
+            item.className = 'log-item';
+            item.innerHTML = `<span class="log-time">[${time}]</span> ${msg}`;
+            logsDiv.prepend(item);
+        }
 
-            log("Données reçues. Calcul des indicateurs...", "success");
-
-            // --- CERVEAU DE L'ALGO LOCAL ---
-            
-            // 1. RSI
-            const rsi = calculateRSI(candles, 14);
-            
-            // 2. Bandes de Bollinger (20, 2)
-            const bb = calculateBollinger(candles, 20, 2);
-            const upperBand = bb.upper;
-            const lowerBand = bb.lower;
-            const middleBand = bb.middle;
-            
-            let bbStatus = "NEUTRE";
-            if (currentPrice > upperBand) bbStatus = "SURACHAT (HAUT)";
-            else if (currentPrice < lowerBand) bbStatus = "SURVENTE (BAS)";
-
-            // 3. Tendance (Moyenne Mobile 50)
-            const sma50 = calculateSMA(candles, 50);
-            const trend = currentPrice > sma50 ? "HAUSSIER" : "BAISSIER";
-
-            // Affichage Métriques
-            document.getElementById('val-rsi').innerText = rsi.toFixed(1);
-            document.getElementById('val-bb').innerText = bbStatus;
-            document.getElementById('val-trend').innerText = trend;
-
-            // --- PRISE DE DÉCISION (LOGIQUE STRICTE) ---
-            let signal = "WAIT";
-            let reasoning = "";
-            let sl = 0;
-            let tp = 0;
-            const atr = calculateATR(candles, 14); // Volatilité pour SL/TP
-
-            // Condition ACHAT : RSI < 30 (Survente) ET Prix proche ou sous Bande Inférieure
-            if (rsi < 30 && currentPrice <= lowerBand * 1.002) {
-                signal = "BUY";
-                reasoning = `Confluence Haussière détectée : RSI en survente (${rsi.toFixed(1)}) et prix touchant la bande de Bollinger inférieure. Rebond technique probable.`;
-                sl = currentPrice - (atr * 1.5);
-                tp = currentPrice + (atr * 3.0);
-            } 
-            // Condition VENTE : RSI > 70 (Surachat) ET Prix proche ou au-dessus Bande Supérieure
-            else if (rsi > 70 && currentPrice >= upperBand * 0.998) {
-                signal = "SELL";
-                reasoning = `Confluence Baissière détectée : RSI en surachat (${rsi.toFixed(1)}) et prix touchant la bande de Bollinger supérieure. Correction attendue.`;
-                sl = currentPrice + (atr * 1.5);
-                tp = currentPrice - (atr * 3.0);
+        // Calcul du RSI (Relative Strength Index)
+        function calculateRSI(prices, period = 14) {
+            if (prices.length < period + 1) return 50;
+            let gains = 0, losses = 0;
+            for (let i = prices.length - period; i < prices.length; i++) {
+                const diff = prices[i] - prices[i - 1];
+                if (diff >= 0) gains += diff;
+                else losses -= diff;
             }
-            // Condition Tendance Lourde (Breakout)
-            else if (trend === "HAUSSIER" && rsi > 50 && rsi < 70) {
-                signal = "BUY";
-                reasoning = `Tendance de fond haussière confirmée (Prix > SMA50). Momentum positif sans être en surachat extrême.`;
-                sl = currentPrice - (atr * 2.0);
-                tp = currentPrice + (atr * 4.0);
+            const rs = (gains / period) / (losses / period || 1);
+            return 100 - (100 / (1 + rs));
+        }
+
+        // Calcul de la Moyenne Mobile Exponentielle (EMA)
+        function calculateEMA(prices, period) {
+            if (prices.length < period) return prices[prices.length - 1];
+            const k = 2 / (period + 1);
+            let ema = prices[0];
+            for (let i = 1; i < prices.length; i++) {
+                ema = prices[i] * k + ema * (1 - k);
             }
-            else if (trend === "BAISSIER" && rsi < 50 && rsi > 30) {
-                signal = "SELL";
-                reasoning = `Tendance de fond baissière confirmée (Prix < SMA50). Pression vendeuse dominante.`;
-                sl = currentPrice + (atr * 2.0);
-                tp = currentPrice - (atr * 4.0);
+            return ema;
+        }
+
+        // Calcul de la Volatilité (Écart Type simple sur les 10 dernières bougies)
+        function calculateVolatility(prices) {
+            const slice = prices.slice(-10);
+            const mean = slice.reduce((a, b) => a + b) / slice.length;
+            const variance = slice.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / slice.length;
+            return Math.sqrt(variance);
+        }
+
+        // --- LOGIQUE DE DÉCISION (Le "Cerveau") ---
+        function analyzeMarket(data) {
+            // Extraction des prix de clôture
+            closePrices = data.map(d => parseFloat(d[4])); 
+            const currentPrice = closePrices[closePrices.length - 1];
+            
+            // Calcul des indicateurs
+            const rsi = calculateRSI(closePrices);
+            const emaShort = calculateEMA(closePrices, 9);
+            const emaLong = calculateEMA(closePrices, 21);
+            const volatility = calculateVolatility(closePrices);
+            const momentum = currentPrice - closePrices[closePrices.length - 5]; // Diff sur 5 périodes
+
+            // Mise à jour de l'UI des indicateurs
+            document.getElementById('rsi-val').innerText = rsi.toFixed(2);
+            document.getElementById('rsi-val').style.color = rsi > 70 ? 'var(--red)' : (rsi < 30 ? 'var(--green)' : '#fff');
+            
+            document.getElementById('ema-val').innerText = emaShort > emaLong ? 'HAUSSIERE' : 'BAISSIERE';
+            document.getElementById('ema-val').style.color = emaShort > emaLong ? 'var(--green)' : 'var(--red)';
+            
+            document.getElementById('vol-val').innerText = volatility.toFixed(2);
+            document.getElementById('mom-val').innerText = momentum > 0 ? 'POSITIF' : 'NÉGATIF';
+            document.getElementById('mom-val').style.color = momentum > 0 ? 'var(--green)' : 'var(--red)';
+
+            document.getElementById('price').innerText = currentPrice.toFixed(2);
+
+            // ALGORITHME DE DÉCISION
+            let signal = "ATTENDRE";
+            let confidence = 0;
+            let reason = "";
+            let cardClass = "wait";
+            let barColor = "#555";
+
+            // Stratégie de Confluence
+            const isBullish = emaShort > emaLong && momentum > 0;
+            const isBearish = emaShort < emaLong && momentum < 0;
+            const isOverbought = rsi > 70;
+            const isOversold = rsi < 30;
+
+            if (isBullish && !isOverbought) {
+                signal = "ACHETER";
+                cardClass = "buy";
+                barColor = "var(--green)";
+                reason = "Tendance + Momentum Positif";
+                confidence = 60 + (isOversold ? 20 : 0) + ((100-rsi)/2); 
+            } else if (isBearish && !isOversold) {
+                signal = "VENDRE";
+                cardClass = "sell";
+                barColor = "var(--red)";
+                reason = "Tendance + Momentum Négatif";
+                confidence = 60 + (isOverbought ? 20 : 0) + (rsi/2);
+            } else if (isOverbought && !isBullish) {
+                signal = "VENDRE (Rejet)";
+                cardClass = "sell";
+                barColor = "var(--red)";
+                reason = "RSI Surchauffé";
+                confidence = 75;
+            } else if (isOversold && !isBearish) {
+                signal = "ACHETER (Rebond)";
+                cardClass = "buy";
+                barColor = "var(--green)";
+                reason = "RSI Survendu";
+                confidence = 75;
+            } else {
+                signal = "ATTENDRE";
+                reason = "Marché Indécis / Bruit";
+                confidence = 40;
             }
-            else {
-                signal = "WAIT";
-                reasoning = `Aucune configuration à haute probabilité détectée. RSI (${rsi.toFixed(1)}) et Bandes de Bollinger indiquent un marché neutre ou incertain. Attente recommandée.`;
+
+            // Limitation de la confiance à 95%
+            confidence = Math.min(confidence, 95);
+
+            // Mise à jour UI Signal
+            const signalEl = document.getElementById('signal-text');
+            const cardEl = document.getElementById('signal-card');
+            const descEl = document.getElementById('signal-desc');
+            const confBar = document.getElementById('conf-bar');
+            const confVal = document.getElementById('conf-val');
+
+            signalEl.innerText = signal.split(' ')[0];
+            signalEl.style.color = cardClass === 'buy' ? 'var(--green)' : (cardClass === 'sell' ? 'var(--red)' : 'var(--gray)');
+            
+            cardEl.className = `signal-card ${cardClass}`;
+            descEl.innerText = reason;
+            
+            confBar.style.width = `${confidence}%`;
+            confBar.style.background = barColor;
+            confVal.innerText = `${Math.floor(confidence)}%`;
+
+            log(`Analyse terminée. Signal: ${signal} (${Math.floor(confidence)}%)`);
+            updateChart(closePrices);
+        }
+
+        // --- GESTION DU GRAPHIQUE ---
+        function updateChart(prices) {
+            const ctx = document.getElementById('priceChart').getContext('2d');
+            const labels = prices.map((_, i) => i); // Labels simples 0, 1, 2...
+
+            if (chartInstance) {
+                chartInstance.destroy();
             }
 
-            // Affichage Résultat
-            displayResult(signal, reasoning, sl, tp);
-            log("Analyse locale terminée.", "success");
-
-        } catch (error) {
-            log(`ERREUR: ${error.message}`, "error");
-            alert("Erreur de connexion aux données marché. Vérifie ta connexion internet.");
-        } finally {
-            btn.disabled = false;
-            btn.innerText = "⚡ LANCER ANALYSE LOCALE";
+            chartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Prix XAU/USD',
+                        data: prices,
+                        borderColor: '#00ccff',
+                        backgroundColor: 'rgba(0, 204, 255, 0.1)',
+                        borderWidth: 2,
+                        pointRadius: 0,
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { display: false },
+                        y: { 
+                            display: true, 
+                            grid: { color: '#222' },
+                            ticks: { color: '#888' }
+                        }
+                    },
+                    animation: { duration: 0 }
+                }
+            });
         }
-    }
 
-    function displayResult(signal, reasoning, sl, tp) {
-        const card = document.getElementById('result-card');
-        card.style.display = 'block';
-        card.className = `result-card ${signal.toLowerCase()}`;
-        
-        const sigEl = document.getElementById('signal-text');
-        sigEl.innerText = signal === 'BUY' ? 'ACHETER' : (signal === 'SELL' ? 'VENDRE' : 'ATTENDRE');
-        sigEl.className = `signal-main ${signal === 'BUY' ? 'signal-buy' : (signal === 'SELL' ? 'signal-sell' : 'signal-wait')}`;
+        // --- FONCTION PRINCIPALE ---
+        async function startAnalysis() {
+            const btnText = document.getElementById('btn-text');
+            const originalText = btnText.innerText;
+            btnText.innerHTML = '<div class="loader"></div> CHARGEMENT...';
+            
+            log("Connexion à l'API Binance (XAUUSDT)...");
 
-        if(signal !== 'WAIT') {
-            document.getElementById('sl-val').innerText = sl.toFixed(2);
-            document.getElementById('tp-val').innerText = tp.toFixed(2);
-        } else {
-            document.getElementById('sl-val').innerText = "---";
-            document.getElementById('tp-val').innerText = "---";
+            try {
+                const response = await fetch(API_URL);
+                if (!response.ok) throw new Error("Erreur API");
+                const data = await response.json();
+                
+                log(`Données reçues: ${data.length} bougies.`);
+                analyzeMarket(data);
+                
+            } catch (error) {
+                log("ERREUR: Impossible de charger les données. Vérifiez internet.");
+                console.error(error);
+                alert("Erreur de connexion. Vérifiez votre réseau mobile/WiFi.");
+            } finally {
+                btnText.innerText = "REFRAÎCHIR L'ANALYSE";
+            }
         }
-        
-        document.getElementById('algo-reasoning').innerText = reasoning;
-    }
 
-    // --- MOTEURS DE CALCUL MATHÉMATIQUE ---
-
-    function calculateRSI(data, period) {
-        let gains = 0, losses = 0;
-        for (let i = data.length - period; i < data.length; i++) {
-            const change = data[i].close - data[i-1].close;
-            if (change > 0) gains += change; else losses += Math.abs(change);
-        }
-        if (losses === 0) return 100;
-        const avgGain = gains / period;
-        const avgLoss = losses / period;
-        return 100 - (100 / (1 + (avgGain / avgLoss)));
-    }
-
-    function calculateSMA(data, period) {
-        let sum = 0;
-        for (let i = data.length - period; i < data.length; i++) {
-            sum += data[i].close;
-        }
-        return sum / period;
-    }
-
-    function calculateBollinger(data, period, multiplier) {
-        const sma = calculateSMA(data, period);
-        let sumSq = 0;
-        for (let i = data.length - period; i < data.length; i++) {
-            sumSq += Math.pow(data[i].close - sma, 2);
-        }
-        const stdDev = Math.sqrt(sumSq / period);
-        return {
-            upper: sma + (stdDev * multiplier),
-            middle: sma,
-            lower: sma - (stdDev * multiplier)
+        // Démarrage automatique au chargement
+        window.onload = () => {
+            log("Bot Mobile Initialisé.");
+            startAnalysis();
+            // Auto-refresh toutes les 60 secondes
+            setInterval(startAnalysis, 60000);
         };
-    }
-
-    function calculateATR(data, period) {
-        let trSum = 0;
-        for(let i = data.length - period; i < data.length; i++) {
-            const h = data[i].high, l = data[i].low, c = data[i-1].close;
-            const tr = Math.max(h - l, Math.abs(h - c), Math.abs(l - c));
-            trSum += tr;
-        }
-        return trSum / period;
-    }
-</script>
+    </script>
 </body>
-</html>
+    </html>
