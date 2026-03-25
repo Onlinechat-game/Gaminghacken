@@ -3,62 +3,82 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>XAU/USD Mobile Bot v2</title>
+    <title>XAU/USD Bot Mobile</title>
+    <!-- Chargement de Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
-            --bg: #050505;
-            --card: #111111;
+            --bg: #000000;
+            --card: #121212;
             --text: #ffffff;
             --green: #00ff88;
             --red: #ff3333;
             --blue: #00ccff;
-            --gray: #666666;
+            --gray: #888888;
         }
 
         body {
             background-color: var(--bg);
             color: var(--text);
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             margin: 0;
-            padding: 20px;
+            padding: 15px;
             display: flex;
             flex-direction: column;
             align-items: center;
             min-height: 100vh;
         }
 
-        h1 { font-size: 1.4rem; margin: 0 0 5px 0; text-align: center; color: var(--blue); }
-        .subtitle { font-size: 0.75rem; color: var(--gray); margin-bottom: 20px; text-align: center; }
+        h1 { font-size: 1.3rem; margin-bottom: 5px; text-align: center; color: var(--blue); }
+        .subtitle { font-size: 0.8rem; color: var(--gray); margin-bottom: 20px; text-align: center; }
 
+        /* Carte Principale */
         .signal-card {
-            background: #1a1a1a;
-            border-radius: 16px;
+            background: linear-gradient(145deg, #1a1a1a, #0d0d0d);
+            border: 1px solid #333;
+            border-radius: 15px;
             width: 100%;
             max-width: 400px;
             padding: 25px;
             text-align: center;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
             margin-bottom: 20px;
-            border: 1px solid #333;
-            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
         }
 
-        .price-display { font-size: 2.2rem; font-weight: 800; margin: 10px 0; letter-spacing: -1px; }
-        .signal-text { font-size: 2.8rem; font-weight: 900; text-transform: uppercase; margin: 10px 0; line-height: 1; }
+        .signal-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; height: 4px;
+            background: var(--gray);
+            transition: background 0.5s;
+        }
+        .signal-card.buy::before { background: var(--green); box-shadow: 0 0 15px var(--green); }
+        .signal-card.sell::before { background: var(--red); box-shadow: 0 0 15px var(--red); }
+        .signal-card.wait::before { background: var(--blue); }
+
+        .price-display { font-size: 2rem; font-weight: bold; margin: 10px 0; letter-spacing: -1px; }
+        .signal-text { font-size: 2.5rem; font-weight: 900; text-transform: uppercase; margin: 10px 0; letter-spacing: 2px; line-height: 1.1; }
         
-        .buy { color: var(--green); text-shadow: 0 0 20px rgba(0, 255, 136, 0.3); }
-        .sell { color: var(--red); text-shadow: 0 0 20px rgba(255, 51, 51, 0.3); }
-        .wait { color: var(--gray); }
+        .buy-text { color: var(--green); }
+        .sell-text { color: var(--red); }
+        .wait-text { color: var(--gray); }
 
-        .confidence-box { background: #222; border-radius: 8px; padding: 12px; margin-top: 15px; }
-        .progress-bg { background: #333; height: 6px; border-radius: 3px; overflow: hidden; margin-top: 8px; }
-        .progress-fill { height: 100%; width: 0%; transition: width 1s cubic-bezier(0.4, 0, 0.2, 1); }
+        .confidence-box { 
+            background: #222; 
+            border-radius: 8px; 
+            padding: 10px; 
+            margin-top: 15px; 
+        }
+        .progress-bg { background: #333; height: 8px; border-radius: 4px; overflow: hidden; margin-top: 5px; }
+        .progress-fill { height: 100%; width: 0%; transition: width 1s ease, background 0.5s; }
 
+        /* Grille Indicateurs */
         .indicators-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 12px;
+            gap: 10px;
             width: 100%;
             max-width: 400px;
             margin-bottom: 20px;
@@ -66,65 +86,67 @@
         .ind-card {
             background: var(--card);
             padding: 15px;
-            border-radius: 12px;
+            border-radius: 10px;
             text-align: center;
             border: 1px solid #222;
         }
-        .ind-label { font-size: 0.7rem; color: var(--gray); text-transform: uppercase; margin-bottom: 5px; }
-        .ind-value { font-size: 1.1rem; font-weight: 700; }
+        .ind-label { font-size: 0.7rem; color: var(--gray); text-transform: uppercase; }
+        .ind-value { font-size: 1.2rem; font-weight: bold; margin-top: 5px; }
 
+        /* Graphique */
         .chart-container {
             width: 100%;
             max-width: 400px;
-            height: 220px;
+            height: 250px;
             background: var(--card);
-            border-radius: 12px;
+            border-radius: 10px;
             padding: 10px;
             margin-bottom: 20px;
             border: 1px solid #222;
         }
 
+        /* Logs */
         .logs {
             width: 100%;
             max-width: 400px;
-            background: #080808;
+            background: #0a0a0a;
             border-radius: 8px;
             padding: 10px;
-            height: 120px;
+            height: 150px;
             overflow-y: auto;
             font-family: 'Courier New', monospace;
-            font-size: 0.65rem;
-            color: #888;
+            font-size: 0.7rem;
+            color: var(--gray);
             border: 1px solid #222;
             margin-bottom: 20px;
         }
         .log-item { margin-bottom: 4px; border-bottom: 1px solid #111; padding-bottom: 2px; }
+        .log-time { color: var(--blue); margin-right: 5px; }
         .log-error { color: var(--red); }
-        .log-success { color: var(--green); }
 
+        /* Bouton */
         .btn-refresh {
-            background: linear-gradient(90deg, var(--blue), #0099cc);
+            background: var(--blue);
             color: #000;
             border: none;
-            padding: 15px 30px;
-            border-radius: 30px;
-            font-weight: 800;
+            padding: 15px 25px;
+            border-radius: 25px;
+            font-weight: bold;
             font-size: 1rem;
             cursor: pointer;
             width: 100%;
             max-width: 400px;
-            box-shadow: 0 4px 15px rgba(0, 204, 255, 0.3);
-            transition: transform 0.1s;
+            box-shadow: 0 4px 15px rgba(0, 204, 255, 0.2);
         }
-        .btn-refresh:active { transform: scale(0.96); }
-        .btn-refresh:disabled { opacity: 0.7; cursor: not-allowed; }
+        .btn-refresh:active { transform: scale(0.98); opacity: 0.9; }
+        .btn-refresh:disabled { background: #333; color: #666; cursor: not-allowed; }
 
         .loader {
-            border: 3px solid rgba(255,255,255,0.3);
+            border: 3px solid #333;
             border-top: 3px solid #000;
             border-radius: 50%;
-            width: 18px;
-            height: 18px;
+            width: 20px;
+            height: 20px;
             animation: spin 1s linear infinite;
             display: inline-block;
             margin-right: 10px;
@@ -135,27 +157,29 @@
 </head>
 <body>
 
-    <h1>XAU/USD AI BOT</h1>
-    <div class="subtitle">Version Mobile Directe (No Server)</div>
+    <h1>XAU/USD BOT</h1>
+    <div class="subtitle">Analyse Technique Automatisée</div>
 
-    <div id="signal-card" class="signal-card">
-        <div style="font-size: 0.8rem; color: #888; text-transform: uppercase;">Prix Actuel (Or)</div>
-        <div id="price" class="price-display">Chargement...</div>
+    <!-- Carte de Décision -->
+    <div id="signal-card" class="signal-card wait">
+        <div style="font-size: 0.9rem; color: #aaa;">PRIX ACTUEL</div>
+        <div id="price" class="price-display">---.--</div>
         
-        <div id="signal-text" class="signal-text wait">ANALYSE</div>
-        <div id="signal-desc" style="font-size: 0.9rem; color: #aaa; margin-bottom: 10px;">Initialisation du moteur...</div>
+        <div id="signal-text" class="signal-text wait-text">CALCUL...</div>
+        <div id="signal-desc" style="font-size: 0.9rem; color: #ccc;">Initialisation...</div>
 
         <div class="confidence-box">
-            <div style="display:flex; justify-content:space-between; font-size:0.75rem; font-weight:bold;">
-                <span>CONFIANCE IA</span>
+            <div style="display:flex; justify-content:space-between; font-size:0.8rem;">
+                <span>Probabilité</span>
                 <span id="conf-val">0%</span>
             </div>
             <div class="progress-bg">
-                <div id="conf-bar" class="progress-fill" style="background: var(--gray);"></div>
+                <div id="conf-bar" class="progress-fill"></div>
             </div>
         </div>
     </div>
 
+    <!-- Indicateurs Techniques -->
     <div class="indicators-grid">
         <div class="ind-card">
             <div class="ind-label">RSI (14)</div>
@@ -175,10 +199,12 @@
         </div>
     </div>
 
+    <!-- Graphique -->
     <div class="chart-container">
         <canvas id="priceChart"></canvas>
     </div>
 
+    <!-- Logs -->
     <div id="logs" class="logs"></div>
 
     <button id="btn-action" class="btn-refresh" onclick="startAnalysis()">
@@ -186,26 +212,25 @@
     </button>
 
     <script>
-        // CONFIGURATION
-        // Utilisation d'un proxy CORS gratuit (allorigins) pour contourner les blocages navigateur vers Binance
+        // --- CONFIGURATION ---
         const BINANCE_URL = 'https://api.binance.com/api/v3/klines?symbol=XAUUSDT&interval=15m&limit=100';
         const PROXY_URL = 'https://api.allorigins.win/get?url='; 
         
         let chartInstance = null;
         let closePrices = [];
 
+        // Fonction de Log
         function log(msg, type = 'normal') {
             const logsDiv = document.getElementById('logs');
             const time = new Date().toLocaleTimeString();
             const item = document.createElement('div');
             item.className = 'log-item';
             if(type === 'error') item.classList.add('log-error');
-            if(type === 'success') item.classList.add('log-success');
-            item.innerHTML = `<span style="color:#555">[${time}]</span> ${msg}`;
+            item.innerHTML = `<span class="log-time">[${time}]</span> ${msg}`;
             logsDiv.prepend(item);
         }
 
-        // --- MOTEUR MATHÉMATIQUE ---
+        // --- MOTEUR DE CALCUL ---
 
         function calculateRSI(prices, period = 14) {
             if (prices.length < period + 1) return 50;
@@ -237,16 +262,18 @@
         }
 
         function analyzeMarket(data) {
+            // Extraction des prix de clôture (index 4 dans la réponse Binance)
             closePrices = data.map(d => parseFloat(d[4])); 
             const currentPrice = closePrices[closePrices.length - 1];
             
+            // Calculs
             const rsi = calculateRSI(closePrices);
             const emaShort = calculateEMA(closePrices, 9);
             const emaLong = calculateEMA(closePrices, 21);
             const volatility = calculateVolatility(closePrices);
             const momentum = currentPrice - closePrices[closePrices.length - 5];
 
-            // Update UI Indicators
+            // Mise à jour UI Indicateurs
             document.getElementById('rsi-val').innerText = rsi.toFixed(2);
             document.getElementById('rsi-val').style.color = rsi > 70 ? 'var(--red)' : (rsi < 30 ? 'var(--green)' : '#fff');
             
@@ -255,98 +282,119 @@
             document.getElementById('trend-val').style.color = emaShort > emaLong ? 'var(--green)' : 'var(--red)';
             
             document.getElementById('vol-val').innerText = volatility.toFixed(2);
-            document.getElementById('mom-val').innerText = momentum > 0 ? '+' : '-';
+            document.getElementById('mom-val').innerText = momentum > 0 ? 'POSITIF' : 'NÉGATIF';
             document.getElementById('mom-val').style.color = momentum > 0 ? 'var(--green)' : 'var(--red)';
+            
             document.getElementById('price').innerText = currentPrice.toFixed(2);
 
-            // LOGIQUE DE DÉCISION
+            // --- LOGIQUE DE DÉCISION ---
             let signal = "ATTENDRE";
             let confidence = 40;
-            let reason = "Marché indécis";
+            let reason = "Marché indécis / Bruit";
             let cardClass = "wait";
-            let barColor = "#666";
+            let barColor = "#555";
+            let textColorClass = "wait-text";
 
             const isBullish = emaShort > emaLong && momentum > 0;
             const isBearish = emaShort < emaLong && momentum < 0;
+            const isOverbought = rsi > 70;
+            const isOversold = rsi < 30;
 
-            if (isBullish && rsi < 70) {
+            if (isBullish && !isOverbought) {
                 signal = "ACHETER";
                 cardClass = "buy";
                 barColor = "var(--green)";
-                reason = "Tendance Haussière Confirmée";
-                confidence = 65 + ((70-rsi)/2);
-            } else if (isBearish && rsi > 30) {
+                textColorClass = "buy-text";
+                reason = "Tendance + Momentum Positif";
+                confidence = 60 + ((70-rsi)/2); 
+            } else if (isBearish && !isOversold) {
                 signal = "VENDRE";
                 cardClass = "sell";
                 barColor = "var(--red)";
-                reason = "Tendance Baissière Confirmée";
-                confidence = 65 + (rsi/2);
-            } else if (rsi > 75) {
+                textColorClass = "sell-text";
+                reason = "Tendance + Momentum Négatif";
+                confidence = 60 + (rsi/2);
+            } else if (isOverbought) {
                 signal = "VENDRE";
                 cardClass = "sell";
                 barColor = "var(--red)";
-                reason = "Surachat Extrême (Rejet probable)";
-                confidence = 80;
-            } else if (rsi < 25) {
+                textColorClass = "sell-text";
+                reason = "RSI Surchauffé (Correction)";
+                confidence = 75;
+            } else if (isOversold) {
                 signal = "ACHETER";
                 cardClass = "buy";
                 barColor = "var(--green)";
-                reason = "Survente Extrême (Rebond probable)";
-                confidence = 80;
+                textColorClass = "buy-text";
+                reason = "RSI Survendu (Rebond)";
+                confidence = 75;
             }
 
-            confidence = Math.min(Math.max(confidence, 10), 98); // Clamp between 10 and 98
+            // Limiter la confiance entre 10 et 95
+            confidence = Math.min(Math.max(confidence, 10), 95);
 
-            // Update UI Signal
+            // Mise à jour UI Signal
             const signalEl = document.getElementById('signal-text');
             const cardEl = document.getElementById('signal-card');
-            
-            signalEl.innerText = signal;
-            signalEl.className = `signal-text ${cardClass}`;
-            
-            document.getElementById('signal-desc').innerText = reason;
-            document.getElementById('conf-val').innerText = Math.floor(confidence) + "%";
-            
+            const descEl = document.getElementById('signal-desc');
             const confBar = document.getElementById('conf-bar');
+            const confVal = document.getElementById('conf-val');
+
+            signalEl.innerText = signal;
+            signalEl.className = `signal-text ${textColorClass}`;
+            
+            // Reset classes
+            cardEl.classList.remove('buy', 'sell', 'wait');
+            cardEl.classList.add(cardClass);
+            
+            descEl.innerText = reason;
+            
             confBar.style.width = `${confidence}%`;
             confBar.style.background = barColor;
+            confVal.innerText = `${Math.floor(confidence)}%`;
 
-            log(`Analyse terminée : ${signal} (${Math.floor(confidence)}%)`, 'success');
+            log(`Analyse terminée. Signal: ${signal} (${Math.floor(confidence)}%)`);
             updateChart(closePrices);
         }
 
+        // --- GESTION DU GRAPHIQUE (CORRIGÉ) ---
         function updateChart(prices) {
             const ctx = document.getElementById('priceChart').getContext('2d');
-            const labels = prices.map((_, i) => i);
+            const labels = prices.map((_, i) => i); 
 
-            if (chartInstance) chartInstance.destroy();
+            if (chartInstance) {
+                chartInstance.destroy();
+            }
 
-            // Correction de la syntaxe Chart.js ici
+            // CORRECTION ICI : Ajout de "data:" manquant
             chartInstance = new Chart(ctx, {
                 type: 'line',
-                data: { // <--- AJOUT DE "data:" MANQUANT DANS L'ANCIEN CODE
+                data: {  // <--- C'était ici l'erreur "Unexpected token {"
                     labels: labels,
                     datasets: [{
-                        label: 'Prix',
+                        label: 'Prix XAU/USD',
                         data: prices,
                         borderColor: '#00ccff',
                         backgroundColor: 'rgba(0, 204, 255, 0.1)',
                         borderWidth: 2,
                         pointRadius: 0,
                         fill: true,
-                        tension: 0.3
+                        tension: 0.4
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    plugins: { legend: { display: false }, tooltip: { enabled: false } },
+                    plugins: { 
+                        legend: { display: false },
+                        tooltip: { enabled: false }
+                    },
                     scales: {
                         x: { display: false },
                         y: { 
                             display: true, 
                             grid: { color: '#222' },
-                            ticks: { color: '#555', font: {size: 10} }
+                            ticks: { color: '#666', font: {size: 10} }
                         }
                     },
                     animation: { duration: 0 }
@@ -354,50 +402,52 @@
             });
         }
 
+        // --- FONCTION PRINCIPALE ---
         async function startAnalysis() {
             const btn = document.getElementById('btn-action');
             const originalText = btn.innerText;
+            
             btn.disabled = true;
-            btn.innerHTML = '<div class="loader"></div> CONNEXION...';
-            log("Tentative de connexion à l'API...");
+            btn.innerHTML = '<div class="loader"></div> CHARGEMENT...';
+            
+            log("Connexion à l'API Binance via Proxy...");
 
             try {
-                // Utilisation du proxy allorigins pour éviter l'erreur CORS sur GitHub Pages
+                // Utilisation du proxy pour éviter les erreurs CORS
                 const response = await fetch(PROXY_URL + encodeURIComponent(BINANCE_URL));
                 
                 if (!response.ok) throw new Error("Erreur Réseau");
                 
                 const jsonData = await response.json();
                 
-                // AllOrigins renvoie les données dans la propriété "contents" sous forme de string JSON
-                if (!jsonData.contents) throw new Error("Format de réponse invalide");
+                if (!jsonData.contents) throw new Error("Réponse vide du proxy");
                 
                 const data = JSON.parse(jsonData.contents);
                 
                 if (!Array.isArray(data) || data.length === 0) {
-                    throw new Error("Aucune donnée reçue");
+                    throw new Error("Données invalides");
                 }
 
-                log(`Données reçues : ${data.length} bougies. Analyse en cours...`);
+                log(`Données reçues: ${data.length} bougies.`);
                 analyzeMarket(data);
-
+                
             } catch (error) {
                 console.error(error);
                 log("ERREUR: " + error.message, 'error');
-                alert("Échec de la connexion.\n\n1. Vérifiez votre internet.\n2. Attendez 10s et réessayez.\n3. Si cela persiste, l'API Binance peut être temporairement inaccessible depuis votre réseau.");
+                alert("Échec de connexion.\nVérifiez votre internet ou réessayez dans 10s.");
                 document.getElementById('signal-text').innerText = "ERREUR";
-                document.getElementById('signal-desc').innerText = "Impossible de charger les données";
+                document.getElementById('signal-desc').innerText = "Problème de connexion";
             } finally {
                 btn.disabled = false;
                 btn.innerText = "REFRAÎCHIR";
             }
         }
 
+        // Démarrage automatique
         window.onload = () => {
-            log("Système prêt.");
-            // Démarrage automatique
+            log("Bot initialisé. Prêt.");
             setTimeout(startAnalysis, 500);
         };
     </script>
 </body>
-    </html>
+</html>
