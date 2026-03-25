@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>XAU/USD Bot Mobile</title>
-    <!-- Chargement de Chart.js -->
+    <title>XAU/USD Bot Direct</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
@@ -32,7 +31,6 @@
         h1 { font-size: 1.3rem; margin-bottom: 5px; text-align: center; color: var(--blue); }
         .subtitle { font-size: 0.8rem; color: var(--gray); margin-bottom: 20px; text-align: center; }
 
-        /* Carte Principale */
         .signal-card {
             background: linear-gradient(145deg, #1a1a1a, #0d0d0d);
             border: 1px solid #333;
@@ -74,7 +72,6 @@
         .progress-bg { background: #333; height: 8px; border-radius: 4px; overflow: hidden; margin-top: 5px; }
         .progress-fill { height: 100%; width: 0%; transition: width 1s ease, background 0.5s; }
 
-        /* Grille Indicateurs */
         .indicators-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -93,7 +90,6 @@
         .ind-label { font-size: 0.7rem; color: var(--gray); text-transform: uppercase; }
         .ind-value { font-size: 1.2rem; font-weight: bold; margin-top: 5px; }
 
-        /* Graphique */
         .chart-container {
             width: 100%;
             max-width: 400px;
@@ -105,7 +101,6 @@
             border: 1px solid #222;
         }
 
-        /* Logs */
         .logs {
             width: 100%;
             max-width: 400px;
@@ -124,7 +119,6 @@
         .log-time { color: var(--blue); margin-right: 5px; }
         .log-error { color: var(--red); }
 
-        /* Bouton */
         .btn-refresh {
             background: var(--blue);
             color: #000;
@@ -157,10 +151,9 @@
 </head>
 <body>
 
-    <h1>XAU/USD BOT</h1>
-    <div class="subtitle">Analyse Technique Automatisée</div>
+    <h1>XAU/USD BOT DIRECT</h1>
+    <div class="subtitle">Connexion API Native (Sans Proxy)</div>
 
-    <!-- Carte de Décision -->
     <div id="signal-card" class="signal-card wait">
         <div style="font-size: 0.9rem; color: #aaa;">PRIX ACTUEL</div>
         <div id="price" class="price-display">---.--</div>
@@ -179,7 +172,6 @@
         </div>
     </div>
 
-    <!-- Indicateurs Techniques -->
     <div class="indicators-grid">
         <div class="ind-card">
             <div class="ind-label">RSI (14)</div>
@@ -199,12 +191,10 @@
         </div>
     </div>
 
-    <!-- Graphique -->
     <div class="chart-container">
         <canvas id="priceChart"></canvas>
     </div>
 
-    <!-- Logs -->
     <div id="logs" class="logs"></div>
 
     <button id="btn-action" class="btn-refresh" onclick="startAnalysis()">
@@ -212,14 +202,12 @@
     </button>
 
     <script>
-        // --- CONFIGURATION ---
-        const BINANCE_URL = 'https://api.binance.com/api/v3/klines?symbol=XAUUSDT&interval=15m&limit=100';
-        const PROXY_URL = 'https://api.allorigins.win/get?url='; 
+        // --- CONFIGURATION SANS PROXY ---
+        const API_URL = 'https://api.binance.com/api/v3/klines?symbol=XAUUSDT&interval=15m&limit=100';
         
         let chartInstance = null;
         let closePrices = [];
 
-        // Fonction de Log
         function log(msg, type = 'normal') {
             const logsDiv = document.getElementById('logs');
             const time = new Date().toLocaleTimeString();
@@ -229,8 +217,6 @@
             item.innerHTML = `<span class="log-time">[${time}]</span> ${msg}`;
             logsDiv.prepend(item);
         }
-
-        // --- MOTEUR DE CALCUL ---
 
         function calculateRSI(prices, period = 14) {
             if (prices.length < period + 1) return 50;
@@ -262,18 +248,15 @@
         }
 
         function analyzeMarket(data) {
-            // Extraction des prix de clôture (index 4 dans la réponse Binance)
             closePrices = data.map(d => parseFloat(d[4])); 
             const currentPrice = closePrices[closePrices.length - 1];
             
-            // Calculs
             const rsi = calculateRSI(closePrices);
             const emaShort = calculateEMA(closePrices, 9);
             const emaLong = calculateEMA(closePrices, 21);
             const volatility = calculateVolatility(closePrices);
             const momentum = currentPrice - closePrices[closePrices.length - 5];
 
-            // Mise à jour UI Indicateurs
             document.getElementById('rsi-val').innerText = rsi.toFixed(2);
             document.getElementById('rsi-val').style.color = rsi > 70 ? 'var(--red)' : (rsi < 30 ? 'var(--green)' : '#fff');
             
@@ -287,7 +270,6 @@
             
             document.getElementById('price').innerText = currentPrice.toFixed(2);
 
-            // --- LOGIQUE DE DÉCISION ---
             let signal = "ATTENDRE";
             let confidence = 40;
             let reason = "Marché indécis / Bruit";
@@ -330,10 +312,8 @@
                 confidence = 75;
             }
 
-            // Limiter la confiance entre 10 et 95
             confidence = Math.min(Math.max(confidence, 10), 95);
 
-            // Mise à jour UI Signal
             const signalEl = document.getElementById('signal-text');
             const cardEl = document.getElementById('signal-card');
             const descEl = document.getElementById('signal-desc');
@@ -343,7 +323,6 @@
             signalEl.innerText = signal;
             signalEl.className = `signal-text ${textColorClass}`;
             
-            // Reset classes
             cardEl.classList.remove('buy', 'sell', 'wait');
             cardEl.classList.add(cardClass);
             
@@ -357,7 +336,6 @@
             updateChart(closePrices);
         }
 
-        // --- GESTION DU GRAPHIQUE (CORRIGÉ) ---
         function updateChart(prices) {
             const ctx = document.getElementById('priceChart').getContext('2d');
             const labels = prices.map((_, i) => i); 
@@ -366,10 +344,9 @@
                 chartInstance.destroy();
             }
 
-            // CORRECTION ICI : Ajout de "data:" manquant
             chartInstance = new Chart(ctx, {
                 type: 'line',
-                data: {  // <--- C'était ici l'erreur "Unexpected token {"
+                data: {
                     labels: labels,
                     datasets: [{
                         label: 'Prix XAU/USD',
@@ -402,50 +379,53 @@
             });
         }
 
-        // --- FONCTION PRINCIPALE ---
         async function startAnalysis() {
             const btn = document.getElementById('btn-action');
-            const originalText = btn.innerText;
             
             btn.disabled = true;
-            btn.innerHTML = '<div class="loader"></div> CHARGEMENT...';
+            btn.innerHTML = '<div class="loader"></div> CONNEXION DIRECTE...';
             
-            log("Connexion à l'API Binance via Proxy...");
+            log("Tentative de connexion directe à Binance API...");
 
             try {
-                // Utilisation du proxy pour éviter les erreurs CORS
-                const response = await fetch(PROXY_URL + encodeURIComponent(BINANCE_URL));
+                // CONNEXION DIRECTE SANS PROXY
+                const response = await fetch(API_URL);
                 
-                if (!response.ok) throw new Error("Erreur Réseau");
+                if (!response.ok) {
+                    throw new Error(`Erreur HTTP: ${response.status}`);
+                }
                 
-                const jsonData = await response.json();
-                
-                if (!jsonData.contents) throw new Error("Réponse vide du proxy");
-                
-                const data = JSON.parse(jsonData.contents);
+                const data = await response.json();
                 
                 if (!Array.isArray(data) || data.length === 0) {
-                    throw new Error("Données invalides");
+                    throw new Error("Données invalides reçues");
                 }
 
-                log(`Données reçues: ${data.length} bougies.`);
+                log(`Données reçues directement: ${data.length} bougies.`);
                 analyzeMarket(data);
                 
             } catch (error) {
                 console.error(error);
-                log("ERREUR: " + error.message, 'error');
-                alert("Échec de connexion.\nVérifiez votre internet ou réessayez dans 10s.");
+                log("ERREUR CONNEXION: " + error.message, 'error');
+                
+                let msgErreur = "Échec de connexion directe.\n\n";
+                if (error.message.includes("Failed to fetch")) {
+                    msgErreur += "Le navigateur a bloqué la requête (CORS).\nEssayez avec un autre navigateur ou réactivez le proxy dans le code.";
+                } else {
+                    msgErreur += "Vérifiez votre connexion internet.";
+                }
+                
+                alert(msgErreur);
                 document.getElementById('signal-text').innerText = "ERREUR";
-                document.getElementById('signal-desc').innerText = "Problème de connexion";
+                document.getElementById('signal-desc').innerText = "Connexion échouée";
             } finally {
                 btn.disabled = false;
                 btn.innerText = "REFRAÎCHIR";
             }
         }
 
-        // Démarrage automatique
         window.onload = () => {
-            log("Bot initialisé. Prêt.");
+            log("Bot initialisé (Mode Direct).");
             setTimeout(startAnalysis, 500);
         };
     </script>
