@@ -2,433 +2,355 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>HackenStore Gold Bot - Auto</title>
-    <!-- Importation de Chart.js pour les graphiques -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HACKEN TRADE - Flux Membres</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
-        /* --- STYLE DE L'APPLICATION (CSS) --- */
+        :root {
+            --neon-green: #00ff9d;
+            --neon-blue: #00f3ff;
+            --dark-bg: #050510;
+            --card-bg: rgba(15, 17, 35, 0.7);
+        }
+
         body {
-            background-color: #0b0f19;
-            color: #e0e6ed;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            padding: 20px;
-            text-align: center;
-            overflow-x: hidden; /* Empêche le scroll horizontal */
-        }
-
-        h1 {
-            color: #00d2ff;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            font-size: 22px;
-            margin-bottom: 5px;
-        }
-
-        .subtitle {
-            color: #8899a6;
-            font-size: 12px;
-            margin-bottom: 15px;
-        }
-
-        .status-bar {
-            font-size: 10px;
-            color: #00ff88;
-            margin-bottom: 10px;
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0% { opacity: 0.5; }
-            50% { opacity: 1; }
-            100% { opacity: 0.5; }
-        }
-
-        /* Zone du Signal Principal */
-        .signal-box {
-            background: linear-gradient(145deg, #161b29, #1f2638);
-            border-radius: 15px;
-            padding: 15px;
-            margin-bottom: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-            border: 1px solid #2a3447;
-        }
-
-        .signal-title {
-            font-size: 14px;
-            color: #8899a6;
-            text-transform: uppercase;
-        }
-
-        .signal-value {
-            font-size: 28px;
-            font-weight: bold;
-            margin: 10px 0;
-            text-shadow: 0 0 10px rgba(0,0,0,0.5);
-            transition: color 0.3s ease;
-        }
-
-        .buy { color: #00ff88; text-shadow: 0 0 15px rgba(0, 255, 136, 0.4); }
-        .sell { color: #ff3355; text-shadow: 0 0 15px rgba(255, 51, 85, 0.4); }
-        .wait { color: #ffd700; }
-
-        /* Indicateurs Techniques */
-        .indicators-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-
-        .card {
-            background-color: #161b29;
-            padding: 12px;
-            border-radius: 10px;
-            border-left: 4px solid #00d2ff;
-        }
-
-        .card h3 { margin: 0 0 8px 0; font-size: 12px; color: #8899a6; text-transform: uppercase; }
-        .card p { margin: 0; font-size: 18px; font-weight: bold; }
-
-        /* Graphique */
-        .chart-container {
-            position: relative;
-            height: 250px;
-            width: 100%;
-            background-color: #161b29;
-            border-radius: 10px;
-            padding: 10px;
-            margin-bottom: 15px;
-            box-sizing: border-box;
-        }
-
-        /* News & Sentiment */
-        .news-section {
-            background-color: #161b29;
-            padding: 15px;
-            border-radius: 10px;
-            text-align: left;
-            margin-bottom: 20px;
-            max-height: 150px;
-            overflow-y: auto;
-        }
-        .news-item {
-            border-bottom: 1px solid #2a3447;
-            padding: 8px 0;
-            font-size: 12px;
-            display: flex;
-            align-items: center;
-        }
-        .news-item:last-child { border-bottom: none; }
-        .news-positive { color: #00ff88; margin-right: 8px; font-weight: bold;}
-        .news-negative { color: #ff3355; margin-right: 8px; font-weight: bold;}
-        .news-neutral { color: #8899a6; margin-right: 8px; font-weight: bold;}
-
-        /* Bouton d'action */
-        button {
-            background: linear-gradient(90deg, #00d2ff, #3a7bd5);
-            border: none;
+            font-family: 'Rajdhani', sans-serif;
+            background-color: var(--dark-bg);
             color: white;
-            padding: 12px 20px;
-            font-size: 14px;
-            font-weight: bold;
-            border-radius: 50px;
-            cursor: pointer;
-            width: 100%;
-            box-shadow: 0 4px 15px rgba(0, 210, 255, 0.3);
-            transition: transform 0.1s;
-            text-transform: uppercase;
+            background-image: url('https://image.qwenlm.ai/public_source/dae9e998-e149-4c37-9ddb-78d569f0984f/13a949f72-c658-43e8-85e2-5dec7f554651.png');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            overflow-x: hidden;
         }
-        button:active { transform: scale(0.95); }
 
-        .footer {
-            margin-top: 25px;
-            font-size: 10px;
-            color: #4a5568;
-            letter-spacing: 1px;
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(5, 5, 16, 0.90); /* Plus sombre pour mieux voir les posts */
+            z-index: -1;
         }
-        .hackenstore-logo {
-            font-weight: bold;
-            color: #00d2ff;
-            font-size: 14px;
-            margin-top: 5px;
-            display: block;
-            text-shadow: 0 0 5px rgba(0, 210, 255, 0.5);
+
+        .font-orbitron { font-family: 'Orbitron', sans-serif; }
+
+        /* Header Neon */
+        .header-glow {
+            text-shadow: 0 0 10px rgba(0, 255, 157, 0.5);
         }
+
+        /* Glassmorphism Card */
+        .trade-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-top: 1px solid rgba(0, 255, 157, 0.3);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .trade-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 255, 157, 0.15);
+            border-color: rgba(0, 255, 157, 0.6);
+        }
+
+        /* Animations */
+        .fade-in { animation: fadeIn 0.5s ease-out forwards; opacity: 0; }
+        @keyframes fadeIn { to { opacity: 1; } }
+
+        .like-btn.liked i {
+            color: #ff4757;
+            animation: heartPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        
+        @keyframes heartPop {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.5); }
+            100% { transform: scale(1); }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #0a0a1a; }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--neon-green); }
+
+        .loader {
+            border: 4px solid rgba(255,255,255,0.1);
+            border-left-color: var(--neon-green);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
     </style>
 </head>
-<body>
+<body class="min-h-screen flex flex-col">
 
-    <h1>Analyse XAUUSD</h1>
-    <div class="subtitle">Bot Auto HackenStore • Mise à jour 1s</div>
-    
-    <!-- Indicateur de statut -->
-    <div class="status-bar">● SYSTÈME EN LIGNE - SCANNING...</div>
-
-    <!-- ZONE DE SIGNAL -->
-    <div class="signal-box">
-        <div class="signal-title">Signal Actuel (Auto)</div>
-        <div id="mainSignal" class="signal-value wait">INITIALISATION...</div>
-        <div id="signalReason" style="font-size: 12px; color: #ccc; min-height: 15px;">Chargement des algorithmes...</div>
+    <!-- ENTRY SCREEN (Simple Welcome) -->
+    <div id="entryScreen" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black bg-opacity-95 backdrop-blur-sm transition-opacity duration-500">
+        <div class="text-center p-8 animate-bounce">
+            <i class="fas fa-satellite-dish text-6xl text-green-400 mb-4"></i>
+            <h1 class="text-4xl md:text-6xl font-orbitron font-black text-white mb-2 header-glow">HACKEN TRADE</h1>
+            <p class="text-green-400 tracking-[0.5em] text-sm uppercase">Espace Membres</p>
+        </div>
+        <button onclick="enterApp()" class="mt-8 px-8 py-3 border border-green-500 text-green-400 hover:bg-green-500 hover:text-black font-bold rounded-full transition-all duration-300 font-orbitron">
+            ACCÉDER AU FLUX
+        </button>
     </div>
 
-    <!-- INDICATEURS -->
-    <div class="indicators-grid">
-        <div class="card">
-            <h3>Prix Or</h3>
-            <p id="priceDisplay">---</p>
-        </div>
-        <div class="card" style="border-left-color: #ffd700;">
-            <h3>RSI (14)</h3>
-            <p id="rsiDisplay">---</p>
-        </div>
-        <div class="card" style="border-left-color: #ff3355;">
-            <h3>MM20</h3>
-            <p id="mm20Display">---</p>
-        </div>
-        <div class="card" style="border-left-color: #00ff88;">
-            <h3>Sentiment</h3>
-            <p id="newsDisplay">---</p>
-        </div>
+    <!-- MAIN APP INTERFACE -->
+    <div id="mainApp" class="hidden flex-col min-h-screen">
+        
+        <!-- Navigation -->
+        <nav class="sticky top-0 z-40 glass-panel border-b border-gray-800 bg-black/80 backdrop-blur-md">
+            <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 rounded bg-gradient-to-br from-green-400 to-blue-600 flex items-center justify-center">
+                        <i class="fas fa-chart-line text-black text-xs"></i>
+                    </div>
+                    <span class="text-xl font-orbitron font-bold text-white tracking-wide">ESPACE <span class="text-green-400">HACKEN</span></span>
+                </div>
+                <div class="flex items-center gap-4">
+                    <div class="hidden md:flex items-center gap-2 text-xs text-gray-400 bg-gray-900 px-3 py-1 rounded-full border border-gray-800">
+                        <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                        <span id="userCount">Chargement...</span> membres en ligne
+                    </div>
+                    <button class="text-gray-400 hover:text-white transition"><i class="far fa-bell"></i></button>
+                    <button class="text-gray-400 hover:text-white transition"><i class="far fa-user-circle text-xl"></i></button>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Content Feed -->
+        <main class="container mx-auto px-4 py-6 flex-grow max-w-3xl">
+            
+            <!-- Feed Header -->
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-orbitron font-bold text-white">Derniers Signaux</h2>
+                <select class="bg-gray-900 border border-gray-700 text-xs text-gray-300 rounded px-3 py-1 outline-none focus:border-green-500">
+                    <option>Tous les signaux</option>
+                    <option>Crypto</option>
+                    <option>Forex</option>
+                    <option>Actions</option>
+                </select>
+            </div>
+
+            <!-- Posts Container -->
+            <div id="feedContainer" class="space-y-6 pb-10">
+                <!-- Loader -->
+                <div class="flex justify-center py-20">
+                    <div class="loader"></div>
+                </div>
+            </div>
+
+        </main>
+
+        <!-- Footer -->
+        <footer class="border-t border-gray-800 bg-black/90 py-6 mt-auto">
+            <div class="container mx-auto text-center">
+                <p class="text-gray-500 text-xs font-orbitron">© 2023 HACKEN TRADE SYSTEM</p>
+                <p class="text-gray-600 text-[10px] mt-1">Le trading comporte des risques. Les signaux sont fournis à titre informatif.</p>
+            </div>
+        </footer>
+
+        <!-- Floating Action Button (Mobile Only - Just for show or contact) -->
+        <button class="md:hidden fixed bottom-6 right-6 w-14 h-14 bg-green-600 rounded-full shadow-lg shadow-green-900/50 flex items-center justify-center text-white text-xl z-50 hover:bg-green-500 transition">
+            <i class="fas fa-comments"></i>
+        </button>
     </div>
 
-    <!-- GRAPHIQUE -->
-    <div class="chart-container">
-        <canvas id="goldChart"></canvas>
-    </div>
-
-    <!-- NEWS SIMULÉES -->
-    <div class="news-section">
-        <h3 style="color:#00d2ff; margin:0 0 10px 0; font-size:14px;">📰 Flash Info & Sentiment</h3>
-        <div id="newsFeed">
-            <!-- Les news s'afficheront ici -->
-        </div>
-    </div>
-
-    <button onclick="runAnalysis()">🔄 FORCER MISE À JOUR</button>
-
-    <div class="footer">
-        POWERED BY HACKENSTORE<br>
-        <span class="hackenstore-logo">HACKENSTORE</span>
-    </div>
+    <!-- FIREBASE SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 
     <script>
-        /* --- LOGIQUE DU BOT (JAVASCRIPT) --- */
-
-        let myChart = null;
-        let priceHistory = [];
-        let mm20History = [];
-        let labelsHistory = [];
-        let maxDataPoints = 20; // Nombre de points sur le graphique
-
-        // Initialisation des historiques
-        for(let i=0; i<maxDataPoints; i++) {
-            let basePrice = 2030 + (Math.random() * 10 - 5);
-            priceHistory.push(basePrice);
-            mm20History.push(basePrice - 2);
-            labelsHistory.push('');
-        }
-
-        // Fonction principale
-        function runAnalysis() {
-            generateDataAndAnalyze();
-        }
-
-        function generateDataAndAnalyze() {
-            // 1. GÉNÉRATION DE DONNÉES SIMULÉES (Mouvement réaliste)
-            const lastPrice = priceHistory[priceHistory.length - 1];
-            // Le prix bouge légèrement par rapport au précédent (marche aléatoire)
-            const change = (Math.random() * 4) - 2; 
-            const currentPrice = lastPrice + change;
-            
-            // Calcul RSI et MM20 simulés basés sur le prix
-            const rsi = 30 + (Math.random() * 40) + (change > 0 ? 5 : -5); 
-            const mm20 = currentPrice - (Math.random() * 5 - 2.5);
-            
-            // Mise à jour des historiques pour le graphique
-            priceHistory.push(currentPrice);
-            mm20History.push(mm20);
-            if(priceHistory.length > maxDataPoints) {
-                priceHistory.shift();
-                mm20History.shift();
-            }
-            
-            // Heure actuelle pour le label
-            const now = new Date();
-            const timeLabel = now.getHours() + ":" + String(now.getMinutes()).padStart(2, '0') + ":" + String(now.getSeconds()).padStart(2, '0');
-            labelsHistory.push(timeLabel);
-            if(labelsHistory.length > maxDataPoints) labelsHistory.shift();
-
-            // Mise à jour de l'affichage des chiffres
-            document.getElementById('priceDisplay').innerText = currentPrice.toFixed(2) + " $";
-            document.getElementById('rsiDisplay').innerText = rsi.toFixed(1);
-            document.getElementById('mm20Display').innerText = mm20.toFixed(2) + " $";
-
-            // 2. ANALYSE TECHNIQUE (La logique du Bot)
-            let signal = "ATTENTE";
-            let reason = "";
-            let sentimentScore = 0; 
-
-            // Logique RSI
-            if (rsi > 70) reason += "RSI Surachat. ";
-            else if (rsi < 30) reason += "RSI Survente. ";
-            else if (rsi > 50) reason += "Momentum Haussier. ";
-            else reason += "Momentum Baissier. ";
-
-            // Logique Prix vs MM20
-            if (currentPrice > mm20) {
-                reason += "Prix > MM20. ";
-                sentimentScore += 0.5;
-            } else {
-                reason += "Prix < MM20. ";
-                sentimentScore -= 0.5;
-            }
-
-            // Logique News Simulée (Change moins souvent que le prix)
-            // On simule un changement de news toutes les 5 secondes environ pour la démo
-            if (Math.random() > 0.8) { 
-                updateNewsFeed();
-            }
-            
-            // Récupérer le sentiment actuel affiché
-            const currentSentimentText = document.getElementById('newsDisplay').innerText;
-            if(currentSentimentText.includes("HAUSSIER")) sentimentScore += 0.3;
-            if(currentSentimentText.includes("BAISSIER")) sentimentScore -= 0.3;
-
-            // Affichage Sentiment Global
-            const sentimentEl = document.getElementById('newsDisplay');
-            if (sentimentScore > 0.2) {
-                sentimentEl.innerText = "HAUSSIER 🐂";
-                sentimentEl.style.color = "#00ff88";
-            } else if (sentimentScore < -0.2) {
-                sentimentEl.innerText = "BAISSIER 🐻";
-                sentimentEl.style.color = "#ff3355";
-            } else {
-                sentimentEl.innerText = "NEUTRE ⚖️";
-                sentimentEl.style.color = "#ffd700";
-            }
-
-            // 3. DÉCISION FINALE
-            const signalEl = document.getElementById('mainSignal');
-            if (sentimentScore > 0.6 && rsi < 75) {
-                signal = "ACHAT (BUY) 🚀";
-                signalEl.className = "signal-value buy";
-            } else if (sentimentScore < -0.6 && rsi > 25) {
-                signal = "VENTE (SELL) 📉";
-                signalEl.className = "signal-value sell";
-            } else {
-                signal = "ATTENTE / NEUTRE ⚠️";
-                signalEl.className = "signal-value wait";
-            }
-
-            signalEl.innerText = signal;
-            document.getElementById('signalReason').innerText = reason;
-
-            // 4. DESSINER LE GRAPHIQUE
-            drawChart();
-        }
-
-        function updateNewsFeed() {
-            const newsPool = [
-                { text: "Fed : Discours de Powell attendu.", impact: "neutre" },
-                { text: "Tensions géopolitiques en hausse.", impact: "positive" },
-                { text: "Dollar Index (DXY) en forte hausse.", impact: "negative" },
-                { text: "Données inflation US meilleures que prévu.", impact: "positive" },
-                { text: "Banques centrales achètent de l'or.", impact: "positive" },
-                { text: "Résistance technique majeure touchée.", impact: "negative" }
-            ];
-            
-            // Choisir 3 news aléatoires
-            const selectedNews = [];
-            for(let i=0; i<3; i++) {
-                selectedNews.push(newsPool[Math.floor(Math.random() * newsPool.length)]);
-            }
-
-            let newsHtml = "";
-            let totalImpact = 0;
-
-            selectedNews.forEach(news => {
-                let iconClass = "";
-                let iconChar = "";
-                if(news.impact === "positive") { iconClass = "news-positive"; iconChar = "🟢"; totalImpact += 1; }
-                else if(news.impact === "negative") { iconClass = "news-negative"; iconChar = "🔴"; totalImpact -= 1; }
-                else { iconClass = "news-neutral"; iconChar = "⚪"; }
-
-                newsHtml += `<div class="news-item"><span class="${iconClass}">${iconChar}</span> ${news.text}</div>`;
-            });
-            
-            document.getElementById('newsFeed').innerHTML = newsHtml;
-            
-            // Mettre à jour le résumé sentiment basé sur ces news spécifiques
-            const sentimentEl = document.getElementById('newsDisplay');
-            if(totalImpact > 0) { sentimentEl.innerText = "HAUSSIER 🐂"; sentimentEl.style.color = "#00ff88"; }
-            else if(totalImpact < 0) { sentimentEl.innerText = "BAISSIER 🐻"; sentimentEl.style.color = "#ff3355"; }
-            else { sentimentEl.innerText = "NEUTRE ⚖️"; sentimentEl.style.color = "#ffd700"; }
-        }
-
-        function drawChart() {
-            const ctx = document.getElementById('goldChart').getContext('2d');
-            
-            if (myChart) {
-                // Mise à jour des données existantes (plus fluide que de recréer)
-                myChart.data.labels = labelsHistory;
-                myChart.data.datasets[0].data = priceHistory;
-                myChart.data.datasets[1].data = mm20History;
-                myChart.update('none'); // 'none' pour pas d'animation lourde à chaque frame
-            } else {
-                // Création initiale
-                myChart = new Chart(ctx, {
-                    type: 'line',
-                    data: {
-                        labels: labelsHistory,
-                        datasets: [{
-                            label: 'Prix XAUUSD',
-                            data: priceHistory,
-                            borderColor: '#00d2ff',
-                            backgroundColor: 'rgba(0, 210, 255, 0.1)',
-                            borderWidth: 2,
-                            fill: true,
-                            tension: 0.4,
-                            pointRadius: 0
-                        },
-                        {
-                            label: 'MM20',
-                            data: mm20History,
-                            borderColor: '#ffd700',
-                            borderWidth: 1,
-                            borderDash: [5, 5],
-                            pointRadius: 0,
-                            tension: 0.4
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        animation: false, // Désactiver animation pour performance 1s
-                        plugins: { legend: { display: false } },
-                        scales: {
-                            x: { display: false }, // Cacher les labels X pour propreté
-                            y: { 
-                                grid: { color: '#2a3447' }, 
-                                ticks: { color: '#8899a6', font: {size: 10} } 
-                            }
-                        }
-                    }
-                });
-            }
-        }
-
-        // --- AUTOMATISATION ---
-        // Lance l'analyse immédiatement au chargement
-        window.onload = function() {
-            updateNewsFeed(); // Init news
-            runAnalysis();    // Init chart & signal
-            
-            // Configure la boucle automatique toutes les 1000ms (1 seconde)
-            setInterval(runAnalysis, 1000);
+        // --- CONFIGURATION FIREBASE ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyCtHXCyNu4psPE-O0KwcGtbbc05wTGzv3A",
+            authDomain: "hacken-a39e0.firebaseapp.com",
+            databaseURL: "https://hacken-a39e0-default-rtdb.firebaseio.com",
+            projectId: "hacken-a39e0",
+            storageBucket: "hacken-a39e0.firebasestorage.app",
+            messagingSenderId: "443590830785",
+            appId: "1:443590830785:web:fe1d1d9be93ccf98220240"
         };
 
+        // Init Firebase
+        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
+        // --- STATE ---
+        // Generate a unique ID for this visitor session to handle likes
+        const visitorId = 'visitor_' + Math.random().toString(36).substr(2, 9);
+
+        // --- UI FUNCTIONS ---
+        function enterApp() {
+            const screen = document.getElementById('entryScreen');
+            screen.style.opacity = '0';
+            setTimeout(() => {
+                screen.style.display = 'none';
+                document.getElementById('mainApp').classList.remove('hidden');
+                document.getElementById('mainApp').classList.add('flex');
+                loadPosts();
+                simulateUserCount();
+            }, 500);
+        }
+
+        function formatTime(timestamp) {
+            const date = new Date(timestamp);
+            const now = new Date();
+            const diff = (now - date) / 1000; // seconds
+
+            if (diff < 60) return "À l'instant";
+            if (diff < 3600) return `Il y a ${Math.floor(diff/60)} min`;
+            if (diff < 86400) return `Il y a ${Math.floor(diff/3600)} h`;
+            return date.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' });
+        }
+
+        function simulateUserCount() {
+            // Fake live counter for visual effect
+            const el = document.getElementById('userCount');
+            let count = 1240;
+            setInterval(() => {
+                count += Math.floor(Math.random() * 5) - 2;
+                el.innerText = count.toLocaleString();
+            }, 3000);
+        }
+
+        // --- CORE: LOAD POSTS ---
+        function loadPosts() {
+            const container = document.getElementById('feedContainer');
+            const postsRef = db.ref('posts');
+
+            postsRef.orderByChild('timestamp').on('value', (snapshot) => {
+                container.innerHTML = "";
+                const posts = [];
+                
+                snapshot.forEach((childSnapshot) => {
+                    posts.push({
+                        key: childSnapshot.key,
+                        ...childSnapshot.val()
+                    });
+                });
+
+                // Reverse to show newest first
+                posts.reverse();
+
+                if (posts.length === 0) {
+                    container.innerHTML = `
+                        <div class="text-center py-20 fade-in">
+                            <i class="fas fa-wifi text-4xl text-gray-600 mb-4"></i>
+                            <p class="text-gray-400">En attente de nouveaux signaux...</p>
+                        </div>`;
+                    return;
+                }
+
+                posts.forEach(post => {
+                    const hasImage = post.image ? `
+                        <div class="mt-4 rounded-lg overflow-hidden border border-gray-700 relative group">
+                            <img src="${post.image}" alt="Chart" class="w-full h-auto max-h-[500px] object-contain bg-black/50">
+                            <a href="${post.image}" target="_blank" class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+                                <span class="bg-white/20 backdrop-blur text-white px-4 py-2 rounded-full text-sm font-bold"><i class="fas fa-expand mr-2"></i>Agrandir</span>
+                            </a>
+                        </div>
+                    ` : '';
+
+                    // Check if current visitor liked this post
+                    const isLiked = post.likedBy && post.likedBy[visitorId];
+                    const likeClass = isLiked ? 'liked' : '';
+                    const likeIcon = isLiked ? 'fas fa-heart' : 'far fa-heart';
+
+                    const html = `
+                        <article class="trade-card rounded-2xl p-0 overflow-hidden fade-in relative">
+                            <!-- Header -->
+                            <div class="p-5 flex items-start justify-between border-b border-gray-800/50 bg-gray-900/30">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-full bg-gradient-to-r from-green-500 to-emerald-700 flex items-center justify-center text-black font-bold text-lg shadow-lg shadow-green-900/20">
+                                        ${post.author.charAt(0)}
+                                    </div>
+                                    <div>
+                                        <h3 class="font-bold text-white font-orbitron text-sm">${post.author}</h3>
+                                        <div class="flex items-center gap-2">
+                                            <span class="text-[10px] uppercase tracking-wider text-green-400 font-bold bg-green-900/20 px-2 py-0.5 rounded">Admin Signal</span>
+                                            <span class="text-xs text-gray-500">${formatTime(post.timestamp)}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button class="text-gray-500 hover:text-white"><i class="fas fa-ellipsis-h"></i></button>
+                            </div>
+
+                            <!-- Body -->
+                            <div class="p-5">
+                                <p class="text-gray-200 text-lg leading-relaxed whitespace-pre-wrap font-light">${post.content}</p>
+                                ${hasImage}
+                            </div>
+
+                            <!-- Footer Actions -->
+                            <div class="px-5 py-3 bg-gray-900/40 border-t border-gray-800/50 flex items-center justify-between">
+                                <button onclick="toggleLike('${post.key}', ${post.likes})" class="like-btn ${likeClass} flex items-center gap-2 text-gray-400 hover:text-red-500 transition-colors group">
+                                    <i class="${likeIcon} text-xl group-hover:scale-110 transition-transform"></i>
+                                    <span class="font-bold text-sm" id="like-count-${post.key}">${post.likes}</span>
+                                    <span class="text-xs ml-1 opacity-0 group-hover:opacity-100 transition-opacity hidden sm:inline">J'aime</span>
+                                </button>
+
+                                <button class="flex items-center gap-2 text-gray-400 hover:text-blue-400 transition-colors group">
+                                    <i class="far fa-comment-dots text-xl group-hover:scale-110 transition-transform"></i>
+                                    <span class="text-xs opacity-0 group-hover:opacity-100 transition-opacity hidden sm:inline">Commenter</span>
+                                </button>
+
+                                <button class="flex items-center gap-2 text-gray-400 hover:text-green-400 transition-colors group">
+                                    <i class="fas fa-share-alt text-xl group-hover:scale-110 transition-transform"></i>
+                                    <span class="text-xs opacity-0 group-hover:opacity-100 transition-opacity hidden sm:inline">Partager</span>
+                                </button>
+                            </div>
+                        </article>
+                    `;
+                    container.insertAdjacentHTML('beforeend', html);
+                });
+            });
+        }
+
+        // --- CORE: LIKE FUNCTIONALITY (FIXED) ---
+        function toggleLike(postKey, currentLikes) {
+            const postRef = db.ref(`posts/${postKey}`);
+            
+            // Fetch current state to ensure we don't double count or error out
+            postRef.once('value').then((snapshot) => {
+                const postData = snapshot.val();
+                const likedBy = postData.likedBy || {};
+                
+                let newLikeCount = currentLikes;
+                
+                if (likedBy[visitorId]) {
+                    // Unlike
+                    delete likedBy[visitorId];
+                    newLikeCount = Math.max(0, currentLikes - 1);
+                } else {
+                    // Like
+                    likedBy[visitorId] = true;
+                    newLikeCount = currentLikes + 1;
+                }
+
+                // Update DB
+                postRef.update({
+                    likes: newLikeCount,
+                    likedBy: likedBy
+                }).catch(err => {
+                    console.error("Erreur Like:", err);
+                    alert("Impossible de liker. Vérifiez votre connexion ou les règles Firebase.");
+                });
+            });
+        }
     </script>
 </body>
 </html>
