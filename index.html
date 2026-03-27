@@ -1,356 +1,201 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HACKEN TRADE - Flux Membres</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
-    <!-- Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <style>
-        :root {
-            --neon-green: #00ff9d;
-            --neon-blue: #00f3ff;
-            --dark-bg: #050510;
-            --card-bg: rgba(15, 17, 35, 0.7);
-        }
+<meta charset="UTF-8">
+<title>HACKEN STORE PRO BOT</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-        body {
-            font-family: 'Rajdhani', sans-serif;
-            background-color: var(--dark-bg);
-            color: white;
-            background-image: url('https://image.qwenlm.ai/public_source/dae9e998-e149-4c37-9ddb-78d569f0984f/13a949f72-c658-43e8-85e2-5dec7f554651.png');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-            overflow-x: hidden;
-        }
+<style>
+body {
+    background: #050505;
+    color: #00ffcc;
+    font-family: Arial;
+    text-align: center;
+}
 
-        body::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(5, 5, 16, 0.90); /* Plus sombre pour mieux voir les posts */
-            z-index: -1;
-        }
+h1 { color: #00ffcc; }
 
-        .font-orbitron { font-family: 'Orbitron', sans-serif; }
+.box {
+    display: inline-block;
+    border: 1px solid #00ffcc;
+    padding: 10px;
+    margin: 5px;
+    border-radius: 10px;
+}
 
-        /* Header Neon */
-        .header-glow {
-            text-shadow: 0 0 10px rgba(0, 255, 157, 0.5);
-        }
+.buy { color: #00ff00; }
+.sell { color: red; }
+.neutral { color: orange; }
 
-        /* Glassmorphism Card */
-        .trade-card {
-            background: var(--card-bg);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-top: 1px solid rgba(0, 255, 157, 0.3);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
+canvas {
+    max-width: 95%;
+}
 
-        .trade-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 40px rgba(0, 255, 157, 0.15);
-            border-color: rgba(0, 255, 157, 0.6);
-        }
-
-        /* Animations */
-        .fade-in { animation: fadeIn 0.5s ease-out forwards; opacity: 0; }
-        @keyframes fadeIn { to { opacity: 1; } }
-
-        .like-btn.liked i {
-            color: #ff4757;
-            animation: heartPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        
-        @keyframes heartPop {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.5); }
-            100% { transform: scale(1); }
-        }
-
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: #0a0a1a; }
-        ::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
-        ::-webkit-scrollbar-thumb:hover { background: var(--neon-green); }
-
-        .loader {
-            border: 4px solid rgba(255,255,255,0.1);
-            border-left-color: var(--neon-green);
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-        }
-        @keyframes spin { 100% { transform: rotate(360deg); } }
-    </style>
+footer {
+    margin-top: 20px;
+    opacity: 0.4;
+}
+</style>
 </head>
-<body class="min-h-screen flex flex-col">
 
-    <!-- ENTRY SCREEN (Simple Welcome) -->
-    <div id="entryScreen" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black bg-opacity-95 backdrop-blur-sm transition-opacity duration-500">
-        <div class="text-center p-8 animate-bounce">
-            <i class="fas fa-satellite-dish text-6xl text-green-400 mb-4"></i>
-            <h1 class="text-4xl md:text-6xl font-orbitron font-black text-white mb-2 header-glow">HACKEN TRADE</h1>
-            <p class="text-green-400 tracking-[0.5em] text-sm uppercase">Espace Membres</p>
-        </div>
-        <button onclick="enterApp()" class="mt-8 px-8 py-3 border border-green-500 text-green-400 hover:bg-green-500 hover:text-black font-bold rounded-full transition-all duration-300 font-orbitron">
-            ACCÉDER AU FLUX
-        </button>
-    </div>
+<body>
 
-    <!-- MAIN APP INTERFACE -->
-    <div id="mainApp" class="hidden flex-col min-h-screen">
-        
-        <!-- Navigation -->
-        <nav class="sticky top-0 z-40 glass-panel border-b border-gray-800 bg-black/80 backdrop-blur-md">
-            <div class="container mx-auto px-4 py-3 flex justify-between items-center">
-                <div class="flex items-center gap-2">
-                    <div class="w-8 h-8 rounded bg-gradient-to-br from-green-400 to-blue-600 flex items-center justify-center">
-                        <i class="fas fa-chart-line text-black text-xs"></i>
-                    </div>
-                    <span class="text-xl font-orbitron font-bold text-white tracking-wide">ESPACE <span class="text-green-400">HACKEN</span></span>
-                </div>
-                <div class="flex items-center gap-4">
-                    <div class="hidden md:flex items-center gap-2 text-xs text-gray-400 bg-gray-900 px-3 py-1 rounded-full border border-gray-800">
-                        <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-                        <span id="userCount">Chargement...</span> membres en ligne
-                    </div>
-                    <button class="text-gray-400 hover:text-white transition"><i class="far fa-bell"></i></button>
-                    <button class="text-gray-400 hover:text-white transition"><i class="far fa-user-circle text-xl"></i></button>
-                </div>
-            </div>
-        </nav>
+<h1>⚡ HACKEN STORE - BOT PRO</h1>
 
-        <!-- Content Feed -->
-        <main class="container mx-auto px-4 py-6 flex-grow max-w-3xl">
-            
-            <!-- Feed Header -->
-            <div class="flex justify-between items-center mb-6">
-                <h2 class="text-2xl font-orbitron font-bold text-white">Derniers Signaux</h2>
-                <select class="bg-gray-900 border border-gray-700 text-xs text-gray-300 rounded px-3 py-1 outline-none focus:border-green-500">
-                    <option>Tous les signaux</option>
-                    <option>Crypto</option>
-                    <option>Forex</option>
-                    <option>Actions</option>
-                </select>
-            </div>
+<div id="indicators"></div>
+<h2 id="signal">Connexion...</h2>
 
-            <!-- Posts Container -->
-            <div id="feedContainer" class="space-y-6 pb-10">
-                <!-- Loader -->
-                <div class="flex justify-center py-20">
-                    <div class="loader"></div>
-                </div>
-            </div>
+<canvas id="chart"></canvas>
 
-        </main>
+<footer>HACKEN STORE 🚀</footer>
 
-        <!-- Footer -->
-        <footer class="border-t border-gray-800 bg-black/90 py-6 mt-auto">
-            <div class="container mx-auto text-center">
-                <p class="text-gray-500 text-xs font-orbitron">© 2023 HACKEN TRADE SYSTEM</p>
-                <p class="text-gray-600 text-[10px] mt-1">Le trading comporte des risques. Les signaux sont fournis à titre informatif.</p>
-            </div>
-        </footer>
+<script>
+let prices = [];
+let volumes = [];
 
-        <!-- Floating Action Button (Mobile Only - Just for show or contact) -->
-        <button class="md:hidden fixed bottom-6 right-6 w-14 h-14 bg-green-600 rounded-full shadow-lg shadow-green-900/50 flex items-center justify-center text-white text-xl z-50 hover:bg-green-500 transition">
-            <i class="fas fa-comments"></i>
-        </button>
-    </div>
+// BINANCE API
+async function fetchData() {
+    let res = await fetch("https://api.binance.com/api/v3/klines?symbol=BTCUSDT&interval=1m&limit=100");
+    let data = await res.json();
 
-    <!-- FIREBASE SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    prices = data.map(c => parseFloat(c[4]));
+    volumes = data.map(c => parseFloat(c[5]));
+}
 
-    <script>
-        // --- CONFIGURATION FIREBASE ---
-        const firebaseConfig = {
-            apiKey: "AIzaSyCtHXCyNu4psPE-O0KwcGtbbc05wTGzv3A",
-            authDomain: "hacken-a39e0.firebaseapp.com",
-            databaseURL: "https://hacken-a39e0-default-rtdb.firebaseio.com",
-            projectId: "hacken-a39e0",
-            storageBucket: "hacken-a39e0.firebasestorage.app",
-            messagingSenderId: "443590830785",
-            appId: "1:443590830785:web:fe1d1d9be93ccf98220240"
-        };
+// EMA
+function EMA(data, period) {
+    let k = 2 / (period + 1);
+    let ema = [data[0]];
+    for (let i = 1; i < data.length; i++) {
+        ema.push(data[i] * k + ema[i-1] * (1 - k));
+    }
+    return ema;
+}
 
-        // Init Firebase
-        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
-        const db = firebase.database();
+// RSI
+function RSI(data, period = 14) {
+    let gains = 0, losses = 0;
+    for (let i = data.length - period; i < data.length - 1; i++) {
+        let diff = data[i+1] - data[i];
+        if (diff > 0) gains += diff;
+        else losses -= diff;
+    }
+    let rs = gains / (losses || 1);
+    return 100 - (100 / (1 + rs));
+}
 
-        // --- STATE ---
-        // Generate a unique ID for this visitor session to handle likes
-        const visitorId = 'visitor_' + Math.random().toString(36).substr(2, 9);
+// MACD
+function MACD(data) {
+    let ema12 = EMA(data, 12);
+    let ema26 = EMA(data, 26);
+    let macd = ema12.map((v, i) => v - ema26[i]);
+    let signal = EMA(macd, 9);
+    return { macd, signal };
+}
 
-        // --- UI FUNCTIONS ---
-        function enterApp() {
-            const screen = document.getElementById('entryScreen');
-            screen.style.opacity = '0';
-            setTimeout(() => {
-                screen.style.display = 'none';
-                document.getElementById('mainApp').classList.remove('hidden');
-                document.getElementById('mainApp').classList.add('flex');
-                loadPosts();
-                simulateUserCount();
-            }, 500);
+// Bollinger
+function Bollinger(data, period = 20) {
+    let ma = EMA(data, period);
+    let std = [];
+
+    for (let i = 0; i < data.length; i++) {
+        if (i < period) std.push(null);
+        else {
+            let mean = ma[i];
+            let sum = 0;
+            for (let j = i - period; j < i; j++) {
+                sum += Math.pow(data[j] - mean, 2);
+            }
+            std.push(Math.sqrt(sum / period));
         }
+    }
 
-        function formatTime(timestamp) {
-            const date = new Date(timestamp);
-            const now = new Date();
-            const diff = (now - date) / 1000; // seconds
+    return {
+        upper: ma.map((m, i) => m ? m + 2 * std[i] : null),
+        lower: ma.map((m, i) => m ? m - 2 * std[i] : null),
+        mid: ma
+    };
+}
 
-            if (diff < 60) return "À l'instant";
-            if (diff < 3600) return `Il y a ${Math.floor(diff/60)} min`;
-            if (diff < 86400) return `Il y a ${Math.floor(diff/3600)} h`;
-            return date.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' });
-        }
+// Support / Résistance
+function supportResistance(data) {
+    return {
+        support: Math.min(...data.slice(-20)),
+        resistance: Math.max(...data.slice(-20))
+    };
+}
 
-        function simulateUserCount() {
-            // Fake live counter for visual effect
-            const el = document.getElementById('userCount');
-            let count = 1240;
-            setInterval(() => {
-                count += Math.floor(Math.random() * 5) - 2;
-                el.innerText = count.toLocaleString();
-            }, 3000);
-        }
+// Volume Spike (ajout pro)
+function volumeSignal(volumes) {
+    let avg = volumes.slice(-20).reduce((a,b)=>a+b,0)/20;
+    let current = volumes[volumes.length-1];
+    return current > avg * 1.5;
+}
 
-        // --- CORE: LOAD POSTS ---
-        function loadPosts() {
-            const container = document.getElementById('feedContainer');
-            const postsRef = db.ref('posts');
+// CHART
+let ctx = document.getElementById("chart").getContext("2d");
 
-            postsRef.orderByChild('timestamp').on('value', (snapshot) => {
-                container.innerHTML = "";
-                const posts = [];
-                
-                snapshot.forEach((childSnapshot) => {
-                    posts.push({
-                        key: childSnapshot.key,
-                        ...childSnapshot.val()
-                    });
-                });
+let chart = new Chart(ctx, {
+    type: "line",
+    data: {
+        labels: [],
+        datasets: [
+            { label: "Prix", data: [], borderColor: "#00ffcc" },
+            { label: "Bollinger Haut", data: [], borderColor: "red" },
+            { label: "Bollinger Bas", data: [], borderColor: "green" }
+        ]
+    }
+});
 
-                // Reverse to show newest first
-                posts.reverse();
+async function update() {
+    await fetchData();
 
-                if (posts.length === 0) {
-                    container.innerHTML = `
-                        <div class="text-center py-20 fade-in">
-                            <i class="fas fa-wifi text-4xl text-gray-600 mb-4"></i>
-                            <p class="text-gray-400">En attente de nouveaux signaux...</p>
-                        </div>`;
-                    return;
-                }
+    let rsi = RSI(prices);
+    let macd = MACD(prices);
+    let bb = Bollinger(prices);
+    let sr = supportResistance(prices);
+    let volSpike = volumeSignal(volumes);
 
-                posts.forEach(post => {
-                    const hasImage = post.image ? `
-                        <div class="mt-4 rounded-lg overflow-hidden border border-gray-700 relative group">
-                            <img src="${post.image}" alt="Chart" class="w-full h-auto max-h-[500px] object-contain bg-black/50">
-                            <a href="${post.image}" target="_blank" class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
-                                <span class="bg-white/20 backdrop-blur text-white px-4 py-2 rounded-full text-sm font-bold"><i class="fas fa-expand mr-2"></i>Agrandir</span>
-                            </a>
-                        </div>
-                    ` : '';
+    // UPDATE CHART
+    chart.data.labels = prices.map(() => "");
+    chart.data.datasets[0].data = prices;
+    chart.data.datasets[1].data = bb.upper;
+    chart.data.datasets[2].data = bb.lower;
+    chart.update();
 
-                    // Check if current visitor liked this post
-                    const isLiked = post.likedBy && post.likedBy[visitorId];
-                    const likeClass = isLiked ? 'liked' : '';
-                    const likeIcon = isLiked ? 'fas fa-heart' : 'far fa-heart';
+    // STRATÉGIE PRO
+    let signal = "NEUTRE";
+    let className = "neutral";
 
-                    const html = `
-                        <article class="trade-card rounded-2xl p-0 overflow-hidden fade-in relative">
-                            <!-- Header -->
-                            <div class="p-5 flex items-start justify-between border-b border-gray-800/50 bg-gray-900/30">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-10 h-10 rounded-full bg-gradient-to-r from-green-500 to-emerald-700 flex items-center justify-center text-black font-bold text-lg shadow-lg shadow-green-900/20">
-                                        ${post.author.charAt(0)}
-                                    </div>
-                                    <div>
-                                        <h3 class="font-bold text-white font-orbitron text-sm">${post.author}</h3>
-                                        <div class="flex items-center gap-2">
-                                            <span class="text-[10px] uppercase tracking-wider text-green-400 font-bold bg-green-900/20 px-2 py-0.5 rounded">Admin Signal</span>
-                                            <span class="text-xs text-gray-500">${formatTime(post.timestamp)}</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <button class="text-gray-500 hover:text-white"><i class="fas fa-ellipsis-h"></i></button>
-                            </div>
+    let lastPrice = prices[prices.length-1];
+    let lastMACD = macd.macd.slice(-1)[0];
+    let lastSignal = macd.signal.slice(-1)[0];
 
-                            <!-- Body -->
-                            <div class="p-5">
-                                <p class="text-gray-200 text-lg leading-relaxed whitespace-pre-wrap font-light">${post.content}</p>
-                                ${hasImage}
-                            </div>
+    if (rsi < 30 && lastMACD > lastSignal && volSpike) {
+        signal = "ACHAT FORT 🚀";
+        className = "buy";
+    } 
+    else if (rsi > 70 && lastMACD < lastSignal && volSpike) {
+        signal = "VENTE FORTE 🔻";
+        className = "sell";
+    }
 
-                            <!-- Footer Actions -->
-                            <div class="px-5 py-3 bg-gray-900/40 border-t border-gray-800/50 flex items-center justify-between">
-                                <button onclick="toggleLike('${post.key}', ${post.likes})" class="like-btn ${likeClass} flex items-center gap-2 text-gray-400 hover:text-red-500 transition-colors group">
-                                    <i class="${likeIcon} text-xl group-hover:scale-110 transition-transform"></i>
-                                    <span class="font-bold text-sm" id="like-count-${post.key}">${post.likes}</span>
-                                    <span class="text-xs ml-1 opacity-0 group-hover:opacity-100 transition-opacity hidden sm:inline">J'aime</span>
-                                </button>
+    document.getElementById("signal").innerHTML =
+        `<span class="${className}">${signal}</span>`;
 
-                                <button class="flex items-center gap-2 text-gray-400 hover:text-blue-400 transition-colors group">
-                                    <i class="far fa-comment-dots text-xl group-hover:scale-110 transition-transform"></i>
-                                    <span class="text-xs opacity-0 group-hover:opacity-100 transition-opacity hidden sm:inline">Commenter</span>
-                                </button>
+    document.getElementById("indicators").innerHTML = `
+        <div class="box">RSI: ${rsi.toFixed(2)}</div>
+        <div class="box">Support: ${sr.support.toFixed(2)}</div>
+        <div class="box">Résistance: ${sr.resistance.toFixed(2)}</div>
+        <div class="box">MACD: ${lastMACD.toFixed(2)}</div>
+        <div class="box">Volume Spike: ${volSpike ? "OUI" : "NON"}</div>
+    `;
+}
 
-                                <button class="flex items-center gap-2 text-gray-400 hover:text-green-400 transition-colors group">
-                                    <i class="fas fa-share-alt text-xl group-hover:scale-110 transition-transform"></i>
-                                    <span class="text-xs opacity-0 group-hover:opacity-100 transition-opacity hidden sm:inline">Partager</span>
-                                </button>
-                            </div>
-                        </article>
-                    `;
-                    container.insertAdjacentHTML('beforeend', html);
-                });
-            });
-        }
+// LOOP RAPIDE
+setInterval(update, 3000);
 
-        // --- CORE: LIKE FUNCTIONALITY (FIXED) ---
-        function toggleLike(postKey, currentLikes) {
-            const postRef = db.ref(`posts/${postKey}`);
-            
-            // Fetch current state to ensure we don't double count or error out
-            postRef.once('value').then((snapshot) => {
-                const postData = snapshot.val();
-                const likedBy = postData.likedBy || {};
-                
-                let newLikeCount = currentLikes;
-                
-                if (likedBy[visitorId]) {
-                    // Unlike
-                    delete likedBy[visitorId];
-                    newLikeCount = Math.max(0, currentLikes - 1);
-                } else {
-                    // Like
-                    likedBy[visitorId] = true;
-                    newLikeCount = currentLikes + 1;
-                }
+</script>
 
-                // Update DB
-                postRef.update({
-                    likes: newLikeCount,
-                    likedBy: likedBy
-                }).catch(err => {
-                    console.error("Erreur Like:", err);
-                    alert("Impossible de liker. Vérifiez votre connexion ou les règles Firebase.");
-                });
-            });
-        }
-    </script>
 </body>
 </html>
