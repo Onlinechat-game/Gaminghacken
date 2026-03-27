@@ -2,22 +2,22 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<title>HACKEN STORE PRO BOT</title>
+<title>HACKEN STORE PRO BOT - XAUUSD</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
 body {
     background: #050505;
-    color: #00ffcc;
+    color: #ffd700;
     font-family: Arial;
     text-align: center;
 }
 
-h1 { color: #00ffcc; }
+h1 { color: gold; }
 
 .box {
     display: inline-block;
-    border: 1px solid #00ffcc;
+    border: 1px solid gold;
     padding: 10px;
     margin: 5px;
     border-radius: 10px;
@@ -40,7 +40,7 @@ footer {
 
 <body>
 
-<h1>⚡ HACKEN STORE - BOT PRO</h1>
+<h1>🟡 HACKEN STORE - XAUUSD BOT</h1>
 
 <div id="indicators"></div>
 <h2 id="signal">Connexion...</h2>
@@ -50,16 +50,21 @@ footer {
 <footer>HACKEN STORE 🚀</footer>
 
 <script>
+
+const API_KEY = "a4186ccd7b4843cc9fa11f095aecf159";
+
 let prices = [];
 let volumes = [];
 
-// BINANCE API
+// XAUUSD API
 async function fetchData() {
-    let res = await fetch("https://api.binance.com/api/v3/klines?symbol=BTCUSDT&interval=1m&limit=100");
+    let res = await fetch(`https://api.twelvedata.com/time_series?symbol=XAU/USD&interval=1min&outputsize=100&apikey=${API_KEY}`);
     let data = await res.json();
 
-    prices = data.map(c => parseFloat(c[4]));
-    volumes = data.map(c => parseFloat(c[5]));
+    let values = data.values.reverse();
+
+    prices = values.map(c => parseFloat(c.close));
+    volumes = values.map(c => parseFloat(c.volume || 1)); // parfois vide
 }
 
 // EMA
@@ -125,11 +130,11 @@ function supportResistance(data) {
     };
 }
 
-// Volume Spike (ajout pro)
+// Volume Spike (moins fiable sur gold)
 function volumeSignal(volumes) {
     let avg = volumes.slice(-20).reduce((a,b)=>a+b,0)/20;
     let current = volumes[volumes.length-1];
-    return current > avg * 1.5;
+    return current > avg * 1.2;
 }
 
 // CHART
@@ -140,7 +145,7 @@ let chart = new Chart(ctx, {
     data: {
         labels: [],
         datasets: [
-            { label: "Prix", data: [], borderColor: "#00ffcc" },
+            { label: "XAUUSD", data: [], borderColor: "gold" },
             { label: "Bollinger Haut", data: [], borderColor: "red" },
             { label: "Bollinger Bas", data: [], borderColor: "green" }
         ]
@@ -156,14 +161,12 @@ async function update() {
     let sr = supportResistance(prices);
     let volSpike = volumeSignal(volumes);
 
-    // UPDATE CHART
     chart.data.labels = prices.map(() => "");
     chart.data.datasets[0].data = prices;
     chart.data.datasets[1].data = bb.upper;
     chart.data.datasets[2].data = bb.lower;
     chart.update();
 
-    // STRATÉGIE PRO
     let signal = "NEUTRE";
     let className = "neutral";
 
@@ -171,12 +174,12 @@ async function update() {
     let lastMACD = macd.macd.slice(-1)[0];
     let lastSignal = macd.signal.slice(-1)[0];
 
-    if (rsi < 30 && lastMACD > lastSignal && volSpike) {
-        signal = "ACHAT FORT 🚀";
+    if (rsi < 30 && lastMACD > lastSignal) {
+        signal = "ACHAT OR 🟢";
         className = "buy";
     } 
-    else if (rsi > 70 && lastMACD < lastSignal && volSpike) {
-        signal = "VENTE FORTE 🔻";
+    else if (rsi > 70 && lastMACD < lastSignal) {
+        signal = "VENTE OR 🔴";
         className = "sell";
     }
 
@@ -184,16 +187,16 @@ async function update() {
         `<span class="${className}">${signal}</span>`;
 
     document.getElementById("indicators").innerHTML = `
+        <div class="box">XAUUSD: ${lastPrice.toFixed(2)}</div>
         <div class="box">RSI: ${rsi.toFixed(2)}</div>
         <div class="box">Support: ${sr.support.toFixed(2)}</div>
         <div class="box">Résistance: ${sr.resistance.toFixed(2)}</div>
         <div class="box">MACD: ${lastMACD.toFixed(2)}</div>
-        <div class="box">Volume Spike: ${volSpike ? "OUI" : "NON"}</div>
     `;
 }
 
-// LOOP RAPIDE
-setInterval(update, 3000);
+// LOOP
+setInterval(update, 5000);
 
 </script>
 
