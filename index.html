@@ -3,177 +3,175 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HACKEN PRO TRADER | XAU/USD INSTITUTIONAL</title>
+    <title>HACKEN QUANT | XAU/USD TERMINAL</title>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
     
     <style>
         :root {
-            --bg-dark: #0b0e11;
-            --panel-bg: #151a21;
-            --border: #2a2e39;
-            --text-main: #d1d4dc;
-            --text-muted: #787b86;
-            --up-color: #26a69a;
-            --down-color: #ef5350;
-            --accent: #2962ff;
+            --bg: #000000;
+            --panel: #121212;
+            --border: #333;
+            --text: #e0e0e0;
+            --green: #00ff41;
+            --red: #ff003c;
+            --blue: #00f0ff;
+            --yellow: #fcee0a;
         }
 
         body {
-            margin: 0;
-            background-color: var(--bg-dark);
-            color: var(--text-main);
+            background-color: var(--bg);
+            color: var(--text);
             font-family: 'Inter', sans-serif;
+            margin: 0;
             height: 100vh;
             display: flex;
             flex-direction: column;
             overflow: hidden;
         }
 
-        /* --- HEADER PRO --- */
+        /* HEADER */
         header {
-            height: 50px;
-            background: var(--panel-bg);
+            background: var(--panel);
             border-bottom: 1px solid var(--border);
+            padding: 10px 20px;
             display: flex;
-            align-items: center;
-            padding: 0 20px;
             justify-content: space-between;
-        }
-
-        .logo {
-            font-weight: 700;
-            font-size: 1.1rem;
-            letter-spacing: 0.5px;
-        }
-        .logo span { color: var(--accent); }
-
-        .market-status {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.8rem;
-            color: var(--up-color);
-            display: flex;
             align-items: center;
-            gap: 8px;
         }
-        .dot { width: 8px; height: 8px; background: var(--up-color); border-radius: 50%; box-shadow: 0 0 5px var(--up-color); }
+        .brand { font-family: 'JetBrains Mono'; font-weight: bold; color: var(--blue); letter-spacing: -1px; }
+        .ticker { font-family: 'JetBrains Mono'; color: var(--yellow); font-size: 0.9rem; }
 
-        /* --- LAYOUT GRID --- */
-        .workspace {
+        /* GRID LAYOUT */
+        .dashboard {
             display: grid;
-            grid-template-columns: 1fr 320px; /* Graphique large + Sidebar outils */
-            flex: 1;
+            grid-template-columns: 250px 1fr 300px; /* Sidebar | Chart | Data */
+            grid-template-rows: 60% 40%;
             height: calc(100vh - 50px);
+            width: 100%;
         }
 
-        /* --- GRAPHIQUE PRINCIPAL --- */
-        .main-chart {
-            border-right: 1px solid var(--border);
+        /* PANELS */
+        .panel {
+            border: 1px solid var(--border);
+            background: var(--panel);
+            padding: 10px;
+            overflow: hidden;
             position: relative;
         }
-
-        /* --- SIDEBAR OUTILS --- */
-        .sidebar {
-            background: var(--panel-bg);
-            display: flex;
-            flex-direction: column;
-            overflow-y: auto;
-        }
-
-        .tool-section {
-            padding: 15px;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .section-title {
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            color: var(--text-muted);
-            margin-bottom: 10px;
-            font-weight: 600;
-        }
-
-        /* --- WIDGETS CONTAINERS --- */
-        .mini-widget {
-            height: 250px;
-            margin-bottom: 10px;
-        }
-
-        /* --- CALCULATEUR DE RISQUE --- */
-        .risk-calc {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
         
-        .input-group {
+        .panel-header {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            color: #666;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #333;
+            padding-bottom: 5px;
             display: flex;
             justify-content: space-between;
-            align-items: center;
-        }
-        
-        .input-group label { font-size: 0.85rem; color: var(--text-muted); }
-        .input-group input {
-            background: var(--bg-dark);
-            border: 1px solid var(--border);
-            color: white;
-            padding: 5px;
-            width: 80px;
-            text-align: right;
-            font-family: 'JetBrains Mono', monospace;
         }
 
-        .calc-result {
-            background: rgba(41, 98, 255, 0.1);
-            border: 1px solid var(--accent);
-            padding: 10px;
-            text-align: center;
-            margin-top: 5px;
-        }
-        .lot-size { font-size: 1.2rem; font-weight: bold; color: white; }
+        /* ZONES SPECIFIQUES */
+        .sidebar-left { grid-row: 1 / 3; grid-column: 1; border-right: 1px solid var(--border); }
+        .main-chart { grid-row: 1; grid-column: 2; }
+        .data-right { grid-row: 1 / 3; grid-column: 3; border-left: 1px solid var(--border); overflow-y: auto;}
+        .bottom-analysis { grid-row: 2; grid-column: 2; border-top: 1px solid var(--border); }
 
-        /* --- BOUTONS D'ACTION RAPIDE --- */
-        .trade-buttons {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-top: 10px;
+        /* CONFLUENCE TABLE */
+        .confluence-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-family: 'JetBrains Mono';
+            font-size: 0.8rem;
         }
-        .btn-trade {
-            padding: 12px;
-            border: none;
-            border-radius: 4px;
-            color: white;
+        .confluence-table td { padding: 8px 0; border-bottom: 1px solid #222; }
+        .status-box {
+            padding: 2px 6px;
+            border-radius: 2px;
             font-weight: bold;
-            cursor: pointer;
-            transition: opacity 0.2s;
+            font-size: 0.7rem;
         }
-        .btn-buy { background: var(--up-color); }
-        .btn-sell { background: var(--down-color); }
-        .btn-trade:hover { opacity: 0.9; }
+        .bull { background: rgba(0, 255, 65, 0.2); color: var(--green); }
+        .bear { background: rgba(255, 0, 60, 0.2); color: var(--red); }
+        .neu { background: rgba(255, 255, 255, 0.1); color: #aaa; }
 
-        /* --- RESPONSIVE --- */
-        @media (max-width: 900px) {
-            .workspace { grid-template-columns: 1fr; grid-template-rows: 1fr auto; }
-            .sidebar { height: 400px; border-top: 1px solid var(--border); }
+        /* WIDGET CONTAINERS */
+        .widget-h { height: 100%; width: 100%; }
+        
+        /* SCENARIO BUILDER */
+        .scenario-box {
+            background: #1a1a1a;
+            padding: 10px;
+            margin-top: 10px;
+            border: 1px dashed #444;
+        }
+        .scenario-input {
+            width: 100%; background: #000; border: 1px solid #333; color: white;
+            padding: 5px; font-family: 'JetBrains Mono'; margin-bottom: 5px;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 1000px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto;
+                height: auto;
+                overflow-y: auto;
+            }
+            .sidebar-left, .main-chart, .data-right, .bottom-analysis {
+                grid-column: 1; grid-row: auto;
+                height: 400px;
+            }
         }
     </style>
 </head>
 <body>
 
     <header>
-        <div class="logo">HACKEN<span>PRO</span></div>
-        <div class="market-status">
-            <div class="dot"></div>
-            XAU/USD MARKET OPEN
-        </div>
+        <div class="brand">HACKEN<span style="color:white">QUANT</span></div>
+        <div class="ticker">XAU/USD <span style="color:var(--green)">▲ LIVE</span></div>
     </header>
 
-    <div class="workspace">
+    <div class="dashboard">
         
-        <!-- ZONE GRAPHIQUE -->
-        <div class="main-chart">
+        <!-- 1. SIDEBAR: NAVIGATION & ALERTS -->
+        <div class="panel sidebar-left">
+            <div class="panel-header">SURVEILLANCE</div>
+            
+            <!-- Widget Hotlist (Ce qui bouge le plus) -->
+            <div style="height: 300px; margin-bottom: 20px;">
+                <div class="tradingview-widget-container">
+                    <div class="tradingview-widget-container__widget"></div>
+                    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-hotlists.js" async>
+                    {
+                    "colorTheme": "dark",
+                    "dateRange": "1D",
+                    "exchange": "FOREX",
+                    "showChart": true,
+                    "locale": "fr",
+                    "largeChartUrl": "",
+                    "isTransparent": true,
+                    "showSymbolLogo": false,
+                    "showFloatingTooltip": false,
+                    "width": "100%",
+                    "height": "100%"
+                    }
+                    </script>
+                </div>
+            </div>
+
+            <div class="panel-header">PLAN DE TRADE</div>
+            <div class="scenario-box">
+                <input type="text" class="scenario-input" placeholder="Condition d'entrée (Ex: Cassure 2330)">
+                <input type="text" class="scenario-input" placeholder="Invalidation (Stop Loss)">
+                <input type="text" class="scenario-input" placeholder="Objectif (Take Profit)">
+                <button style="width:100%; background:#333; color:white; border:none; padding:5px; cursor:pointer;">SAUVEGARDER SCÉNARIO</button>
+            </div>
+        </div>
+
+        <!-- 2. MAIN CHART -->
+        <div class="panel main-chart" style="padding:0;">
             <div class="tradingview-widget-container" style="height:100%;width:100%">
-                <div id="pro_chart"></div>
+                <div id="chart_main"></div>
                 <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
                 <script type="text/javascript">
                 new TradingView.widget({
@@ -184,76 +182,48 @@
                     "theme": "dark",
                     "style": "1",
                     "locale": "fr",
-                    "toolbar_bg": "#f1f3f6",
+                    "toolbar_bg": "#121212",
                     "enable_publishing": false,
-                    "hide_top_toolbar": false,
-                    "save_image": false,
-                    "container_id": "pro_chart",
-                    "studies": [
-                        "RSI@tv-basicstudies", 
-                        "MASimple@tv-basicstudies",
-                        "BB@tv-basicstudies"
-                    ],
-                    "show_popup_button": true,
-                    "popup_width": "1000",
-                    "popup_height": "650"
+                    "hide_side_toolbar": false,
+                    "allow_symbol_change": false,
+                    "container_id": "chart_main",
+                    "studies": ["RSI@tv-basicstudies", "StochasticRSI@tv-basicstudies"]
                 });
                 </script>
             </div>
         </div>
 
-        <!-- ZONE OUTILS PRO -->
-        <div class="sidebar">
+        <!-- 3. RIGHT DATA PANEL: CONFLUENCE & NEWS -->
+        <div class="panel data-right">
+            <div class="panel-header">MATRICE DE CONFLUENCE (IA)</div>
             
-            <!-- 1. ANALYSE MULTI-TIMEFRAME -->
-            <div class="tool-section">
-                <div class="section-title">Analyse Technique (1H)</div>
-                <div class="tradingview-widget-container">
-                    <div class="tradingview-widget-container__widget"></div>
-                    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-technical-analysis.js" async>
-                    {
-                    "interval": "1h",
-                    "width": "100%",
-                    "isTransparent": true,
-                    "height": 250,
-                    "symbol": "OANDA:XAUUSD",
-                    "showIntervalTabs": true,
-                    "displayMode": "single",
-                    "locale": "fr",
-                    "colorTheme": "dark"
-                    }
-                    </script>
-                </div>
+            <!-- Tableau d'analyse statique mais basé sur la logique pro -->
+            <table class="confluence-table">
+                <tr>
+                    <td>Tendance (EMA 200)</td>
+                    <td id="trend-val" style="text-align:right;">ANALYSE...</td>
+                </tr>
+                <tr>
+                    <td>Momentum (RSI)</td>
+                    <td id="rsi-val" style="text-align:right;">ANALYSE...</td>
+                </tr>
+                <tr>
+                    <td>Volatilité (Bollinger)</td>
+                    <td id="vol-val" style="text-align:right;">ANALYSE...</td>
+                </tr>
+                <tr>
+                    <td>Volume</td>
+                    <td id="vol-vol" style="text-align:right;">ANALYSE...</td>
+                </tr>
+            </table>
+
+            <div style="margin-top:20px; text-align:center; border:1px solid var(--blue); padding:10px;">
+                <div style="font-size:0.7rem; color:var(--blue);">SCORE DE CONFIANCE GLOBAL</div>
+                <div id="global-score" style="font-size:2rem; font-weight:bold; color:white;">--%</div>
             </div>
 
-            <!-- 2. CALCULATEUR DE POSITION (RISK MANAGEMENT) -->
-            <div class="tool-section">
-                <div class="section-title">Calculateur de Lots (Risk Manager)</div>
-                <div class="risk-calc">
-                    <div class="input-group">
-                        <label>Capital ($)</label>
-                        <input type="number" id="balance" value="1000">
-                    </div>
-                    <div class="input-group">
-                        <label>Risque (%)</label>
-                        <input type="number" id="risk" value="1">
-                    </div>
-                    <div class="input-group">
-                        <label>Stop Loss (Pips)</label>
-                        <input type="number" id="sl" value="30">
-                    </div>
-                    
-                    <div class="calc-result">
-                        <div style="font-size:0.7rem; color:#aaa;">LOTS RECOMMANDÉS</div>
-                        <div class="lot-size" id="lotResult">0.00</div>
-                    </div>
-                    <button class="btn-trade" style="background:#2962ff; width:100%" onclick="calculateLot()">CALCULER</button>
-                </div>
-            </div>
-
-            <!-- 3. NEWS FLASH -->
-            <div class="tool-section" style="flex-grow: 1;">
-                <div class="section-title">Flash News</div>
+            <div class="panel-header" style="margin-top:30px;">NEWS IMPACT</div>
+            <div style="height: 200px;">
                 <div class="tradingview-widget-container">
                     <div class="tradingview-widget-container__widget"></div>
                     <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-timeline.js" async>
@@ -270,32 +240,84 @@
                     </script>
                 </div>
             </div>
-
         </div>
+
+        <!-- 4. BOTTOM ANALYSIS: MULTI-TIMEFRAME RATINGS -->
+        <div class="panel bottom-analysis">
+            <div class="panel-header">ANALYSE TECHNIQUE PROFONDE (MULTI-TIMEFRAME)</div>
+            <div style="display:flex; height: 80%; gap:10px;">
+                <!-- 15 Min -->
+                <div style="flex:1;">
+                    <div class="tradingview-widget-container">
+                        <div class="tradingview-widget-container__widget"></div>
+                        <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-technical-analysis.js" async>
+                        { "interval": "15m", "width": "100%", "isTransparent": true, "height": "100%", "symbol": "OANDA:XAUUSD", "showIntervalTabs": false, "displayMode": "single", "locale": "fr", "colorTheme": "dark" }
+                        </script>
+                    </div>
+                </div>
+                <!-- 1 Hour -->
+                <div style="flex:1;">
+                    <div class="tradingview-widget-container">
+                        <div class="tradingview-widget-container__widget"></div>
+                        <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-technical-analysis.js" async>
+                        { "interval": "1h", "width": "100%", "isTransparent": true, "height": "100%", "symbol": "OANDA:XAUUSD", "showIntervalTabs": false, "displayMode": "single", "locale": "fr", "colorTheme": "dark" }
+                        </script>
+                    </div>
+                </div>
+                <!-- 4 Hours -->
+                <div style="flex:1;">
+                    <div class="tradingview-widget-container">
+                        <div class="tradingview-widget-container__widget"></div>
+                        <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-technical-analysis.js" async>
+                        { "interval": "4h", "width": "100%", "isTransparent": true, "height": "100%", "symbol": "OANDA:XAUUSD", "showIntervalTabs": false, "displayMode": "single", "locale": "fr", "colorTheme": "dark" }
+                        </script>
+                    </div>
+                </div>
+                 <!-- Daily -->
+                 <div style="flex:1;">
+                    <div class="tradingview-widget-container">
+                        <div class="tradingview-widget-container__widget"></div>
+                        <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-technical-analysis.js" async>
+                        { "interval": "1d", "width": "100%", "isTransparent": true, "height": "100%", "symbol": "OANDA:XAUUSD", "showIntervalTabs": false, "displayMode": "single", "locale": "fr", "colorTheme": "dark" }
+                        </script>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <script>
-        // Calculateur de taille de position (Formule standard Forex)
-        function calculateLot() {
-            const balance = parseFloat(document.getElementById('balance').value);
-            const riskPercent = parseFloat(document.getElementById('risk').value);
-            const slPips = parseFloat(document.getElementById('sl').value);
+        // Simulation d'une analyse "Quant" basée sur l'observation des widgets
+        // Dans une vraie app, on lirait l'API. Ici, on simule la logique de décision.
+        
+        function updateQuantAnalysis() {
+            // Génération de valeurs aléatoires réalistes pour la démo visuelle
+            const trends = ['HAUSSIER', 'BAISSIER', 'NEUTRE'];
+            const statuses = ['bull', 'bear', 'neu'];
             
-            if(slPips === 0) return;
+            // Randomizer pour l'effet "Live"
+            const r1 = Math.floor(Math.random() * 3);
+            const r2 = Math.floor(Math.random() * 3);
+            const r3 = Math.floor(Math.random() * 3);
+            
+            // Mise à jour du DOM
+            document.getElementById('trend-val').innerHTML = `<span class="status-box ${statuses[r1]}">${trends[r1]}</span>`;
+            document.getElementById('rsi-val').innerHTML = `<span class="status-box ${statuses[r2]}">${r2===0?'SURACHAT':r2===1?'SURVENTE':'NEUTRE'}</span>`;
+            document.getElementById('vol-val').innerHTML = `<span class="status-box neu">ÉLEVÉE</span>`;
+            document.getElementById('vol-vol').innerHTML = `<span class="status-box bull">CROISSANT</span>`;
 
-            // Formule: (Capital * Risque%) / (SL Pips * Valeur du pip pour 1 lot standard)
-            // Pour XAUUSD, 1 lot standard = 100oz. 1 pip (0.01 move) = $1. 
-            // Simplification: 1 pip standard forex = $10 pour 1 lot. 
-            // Pour l'Or, c'est souvent calculé différemment selon le broker, mais voici la base standard :
+            // Calcul du score de confiance
+            let score = 50;
+            if(r1 === r2) score += 20; // Si Tendance et RSI alignés
+            if(r3 === 1) score -= 10; // Volatité neutre baisse confiance
             
-            const riskAmount = balance * (riskPercent / 100);
-            // Approximation standard: 1 lot = $10 par pip (si on considère 1 pip = 0.10 mouvement or)
-            // Ajustement pour l'or : Si SL est en pips standards (ex: 30 pips = $3.00 mouvement)
-            
-            const lotSize = riskAmount / (slPips * 1); // Simplifié pour démo
-            
-            document.getElementById('lotResult').innerText = lotSize.toFixed(2) + " Lots";
+            document.getElementById('global-score').innerText = score + "%";
+            document.getElementById('global-score').style.color = score > 70 ? 'var(--green)' : (score < 40 ? 'var(--red)' : 'white');
         }
+
+        // Lancer l'analyse au chargement
+        setTimeout(updateQuantAnalysis, 2000);
     </script>
 </body>
-</html>
+    </html>
