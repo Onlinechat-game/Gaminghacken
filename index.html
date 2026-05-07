@@ -3,9 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HACKEN STORE - Plateforme d'Analyse de Marché</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+    <title>HACKEN STORE - Book d'Analyse de Marché</title>
     <style>
         * {
             margin: 0;
@@ -14,804 +12,1302 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            color: #fff;
-            overflow-x: hidden;
+            font-family: 'Georgia', 'Serif', serif;
+            background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%);
+            color: #333;
+            line-height: 1.8;
         }
 
         /* Header */
         header {
-            background: rgba(10, 10, 20, 0.95);
-            border-bottom: 2px solid #00d4ff;
-            padding: 20px 40px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 4px 15px rgba(0, 212, 255, 0.2);
-            position: sticky;
-            top: 0;
-            z-index: 100;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #00d4ff;
+            padding: 50px 40px;
+            text-align: center;
+            border-bottom: 5px solid #00d4ff;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
         }
 
-        .logo {
-            font-size: 28px;
+        .header-title {
+            font-size: 48px;
             font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 15px;
             background: linear-gradient(135deg, #00d4ff, #0099ff);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            text-transform: uppercase;
-            letter-spacing: 2px;
         }
 
-        .creator {
-            font-size: 12px;
+        .subtitle {
+            font-size: 24px;
             color: #00d4ff;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            margin-bottom: 20px;
+            font-style: italic;
         }
 
-        .container {
-            max-width: 1600px;
-            margin: 0 auto;
-            padding: 30px 20px;
-        }
-
-        /* Navigation */
-        nav {
-            display: flex;
-            gap: 20px;
-            justify-content: center;
-            margin-bottom: 30px;
-            flex-wrap: wrap;
-        }
-
-        nav button {
-            padding: 10px 25px;
-            background: rgba(0, 212, 255, 0.1);
-            border: 2px solid #00d4ff;
-            color: #00d4ff;
-            border-radius: 25px;
-            cursor: pointer;
+        .creator-info {
             font-size: 14px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-        }
-
-        nav button:hover {
-            background: #00d4ff;
-            color: #1a1a2e;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(0, 212, 255, 0.4);
-        }
-
-        nav button.active {
-            background: #00d4ff;
-            color: #1a1a2e;
-        }
-
-        /* Stats Row */
-        .stats-row {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .stat-card {
-            background: rgba(0, 212, 255, 0.05);
-            border: 2px solid #00d4ff;
-            border-radius: 15px;
-            padding: 20px;
-            text-align: center;
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-
-        .stat-card:hover {
-            background: rgba(0, 212, 255, 0.15);
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.2);
-        }
-
-        .stat-label {
-            font-size: 12px;
             color: #aaa;
             text-transform: uppercase;
-            margin-bottom: 10px;
+            letter-spacing: 2px;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 2px solid #00d4ff;
+        }
+
+        /* Table of Contents */
+        .toc-container {
+            background: white;
+            max-width: 900px;
+            margin: 50px auto;
+            padding: 40px;
+            border-left: 8px solid #00d4ff;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+
+        .toc-title {
+            font-size: 32px;
+            color: #1a1a2e;
+            margin-bottom: 30px;
+            text-align: center;
+            border-bottom: 3px solid #00d4ff;
+            padding-bottom: 20px;
+        }
+
+        .toc-list {
+            list-style: none;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .toc-list li {
+            padding: 15px;
+            background: #f9f9f9;
+            border-left: 4px solid #00d4ff;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .toc-list li:hover {
+            background: #f0f8ff;
+            transform: translateX(10px);
+            box-shadow: 0 3px 10px rgba(0, 212, 255, 0.2);
+        }
+
+        .toc-list a {
+            text-decoration: none;
+            color: #00d4ff;
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        /* Main Content */
+        .book-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            box-shadow: 0 0 50px rgba(0, 0, 0, 0.2);
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .book-sidebar {
+            width: 250px;
+            background: #1a1a2e;
+            padding: 30px 20px;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+            border-right: 3px solid #00d4ff;
+        }
+
+        .sidebar-title {
+            color: #00d4ff;
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-transform: uppercase;
             letter-spacing: 1px;
         }
 
-        .stat-value {
-            font-size: 28px;
-            font-weight: bold;
+        .sidebar-menu {
+            list-style: none;
+        }
+
+        .sidebar-menu li {
+            margin-bottom: 15px;
+        }
+
+        .sidebar-menu a {
+            color: #aaa;
+            text-decoration: none;
+            font-size: 13px;
+            transition: all 0.3s ease;
+            display: block;
+            padding: 8px 12px;
+            border-radius: 5px;
+        }
+
+        .sidebar-menu a:hover,
+        .sidebar-menu a.active {
             color: #00d4ff;
-            margin-bottom: 10px;
+            background: rgba(0, 212, 255, 0.1);
+            padding-left: 18px;
         }
 
-        .stat-change {
-            font-size: 12px;
-            color: #00ff88;
+        .book-content {
+            flex: 1;
+            padding: 60px 50px;
+            background: #fafafa;
         }
 
-        .stat-change.negative {
-            color: #ff0055;
+        .chapter {
+            display: none;
+            animation: fadeIn 0.5s ease-in;
         }
 
-        /* Main Grid */
-        .main-grid {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 25px;
-            margin-bottom: 30px;
+        .chapter.active {
+            display: block;
         }
 
-        @media (max-width: 1200px) {
-            .main-grid {
-                grid-template-columns: 1fr;
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
             }
         }
 
-        /* Chart Container */
-        .card {
-            background: rgba(10, 10, 20, 0.6);
-            border: 2px solid #00d4ff;
-            border-radius: 15px;
-            padding: 25px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-            transition: all 0.3s ease;
+        .chapter-title {
+            font-size: 42px;
+            color: #1a1a2e;
+            margin-bottom: 15px;
+            border-bottom: 4px solid #00d4ff;
+            padding-bottom: 20px;
         }
 
-        .card:hover {
-            border-color: #0099ff;
-            box-shadow: 0 12px 40px rgba(0, 212, 255, 0.2);
-        }
-
-        .card-title {
+        .chapter-number {
+            color: #00d4ff;
             font-size: 18px;
-            font-weight: 600;
-            color: #00d4ff;
-            margin-bottom: 20px;
             text-transform: uppercase;
-            letter-spacing: 1px;
-            border-bottom: 2px solid #00d4ff;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+        }
+
+        .section-subtitle {
+            font-size: 28px;
+            color: #00d4ff;
+            margin-top: 40px;
+            margin-bottom: 20px;
             padding-bottom: 10px;
-        }
-
-        .chart-container {
-            position: relative;
-            height: 400px;
-            margin-bottom: 20px;
-        }
-
-        /* Candlestick Table */
-        .candlestick-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 13px;
-        }
-
-        .candlestick-table th {
-            background: rgba(0, 212, 255, 0.1);
-            padding: 12px;
-            text-align: left;
-            color: #00d4ff;
-            font-weight: 600;
-            text-transform: uppercase;
             border-bottom: 2px solid #00d4ff;
         }
 
-        .candlestick-table td {
-            padding: 12px;
-            border-bottom: 1px solid rgba(0, 212, 255, 0.1);
-        }
-
-        .candlestick-table tr:hover {
-            background: rgba(0, 212, 255, 0.05);
-        }
-
-        .candle {
-            display: inline-block;
-            width: 30px;
-            height: 60px;
-            position: relative;
-            margin: 0 2px;
-        }
-
-        .candle.bullish .body {
-            background: #00ff88;
-        }
-
-        .candle.bearish .body {
-            background: #ff0055;
-        }
-
-        .candle .wick {
-            position: absolute;
-            width: 2px;
-            background: currentColor;
-            left: 50%;
-            transform: translateX(-50%);
-        }
-
-        .candle .body {
-            position: absolute;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 20px;
-            border: 1px solid currentColor;
-        }
-
-        /* Indicators Panel */
-        .indicators-panel {
-            display: grid;
-            gap: 15px;
-        }
-
-        .indicator {
-            background: rgba(0, 212, 255, 0.05);
-            border: 1px solid #00d4ff;
-            padding: 15px;
-            border-radius: 10px;
-            font-size: 12px;
-        }
-
-        .indicator-title {
-            font-weight: 600;
-            color: #00d4ff;
-            margin-bottom: 8px;
-            text-transform: uppercase;
-        }
-
-        .indicator-value {
+        .text-content {
             font-size: 16px;
-            font-weight: bold;
-            color: #fff;
-        }
-
-        .indicator-status {
-            font-size: 11px;
-            margin-top: 5px;
-            color: #aaa;
-        }
-
-        /* Settings */
-        .settings-panel {
-            background: rgba(0, 212, 255, 0.05);
-            border: 2px solid #00d4ff;
-            border-radius: 15px;
-            padding: 20px;
+            line-height: 2;
+            color: #444;
             margin-bottom: 30px;
         }
 
-        .settings-grid {
+        /* Images et Illustrations */
+        .image-container {
+            margin: 30px 0;
+            text-align: center;
+            background: #f0f8ff;
+            padding: 30px;
+            border-radius: 10px;
+            border: 3px solid #00d4ff;
+        }
+
+        .image-container img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 5px 20px rgba(0, 212, 255, 0.2);
+        }
+
+        .image-caption {
+            font-size: 14px;
+            color: #00d4ff;
+            margin-top: 15px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        /* Candlestick Examples */
+        .candlestick-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
+            gap: 30px;
+            margin: 40px 0;
         }
 
-        .select-group {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .select-group label {
-            font-size: 12px;
-            text-transform: uppercase;
-            color: #00d4ff;
-            font-weight: 600;
-            letter-spacing: 1px;
-        }
-
-        .select-group select,
-        .select-group input {
-            padding: 10px 15px;
-            background: rgba(0, 212, 255, 0.1);
+        .candle-box {
+            background: #f9f9f9;
             border: 2px solid #00d4ff;
-            color: #fff;
-            border-radius: 8px;
-            font-size: 13px;
+            border-radius: 10px;
+            padding: 25px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
             transition: all 0.3s ease;
         }
 
-        .select-group select:focus,
-        .select-group input:focus {
-            outline: none;
-            border-color: #0099ff;
-            background: rgba(0, 212, 255, 0.15);
-            box-shadow: 0 0 10px rgba(0, 212, 255, 0.3);
+        .candle-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 212, 255, 0.2);
+        }
+
+        .candle-title {
+            font-size: 18px;
+            color: #1a1a2e;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .candle-visual {
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            height: 150px;
+            margin: 20px 0;
+            gap: 15px;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        .candle {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+        }
+
+        .wick {
+            width: 2px;
+            background: #333;
+            min-height: 30px;
+        }
+
+        .body {
+            width: 25px;
+            border: 2px solid #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 10px;
+        }
+
+        .body.bullish {
+            background: #00ff88;
+            color: black;
+        }
+
+        .body.bearish {
+            background: #ff0055;
+            color: white;
+        }
+
+        .candle-description {
+            font-size: 13px;
+            color: #666;
+            line-height: 1.6;
+            text-align: left;
+        }
+
+        /* Analysis Boxes */
+        .analysis-box {
+            background: #f0f8ff;
+            border-left: 5px solid #00d4ff;
+            padding: 25px;
+            margin: 30px 0;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 212, 255, 0.1);
+        }
+
+        .analysis-title {
+            color: #00d4ff;
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+        }
+
+        .analysis-content {
+            font-size: 15px;
+            color: #444;
+            line-height: 1.8;
+        }
+
+        /* Key Points */
+        .key-points {
+            background: white;
+            border: 2px solid #00d4ff;
+            border-radius: 8px;
+            padding: 25px;
+            margin: 30px 0;
+        }
+
+        .key-points-title {
+            color: #00d4ff;
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+        }
+
+        .key-points ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .key-points li {
+            padding: 12px 0;
+            padding-left: 30px;
+            position: relative;
+            color: #444;
+            font-size: 15px;
+        }
+
+        .key-points li:before {
+            content: "★";
+            position: absolute;
+            left: 0;
+            color: #00d4ff;
+            font-weight: bold;
+        }
+
+        /* Comparison Table */
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 30px 0;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .comparison-table th {
+            background: #1a1a2e;
+            color: #00d4ff;
+            padding: 18px;
+            text-align: left;
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 13px;
+        }
+
+        .comparison-table td {
+            padding: 18px;
+            border-bottom: 2px solid #f0f0f0;
+            color: #444;
+        }
+
+        .comparison-table tr:hover {
+            background: #f9f9f9;
         }
 
         /* Footer */
         footer {
-            text-align: center;
-            padding: 30px;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
             color: #00d4ff;
-            font-size: 13px;
-            border-top: 2px solid #00d4ff;
-            margin-top: 50px;
+            text-align: center;
+            padding: 40px;
+            border-top: 5px solid #00d4ff;
+            margin-top: 60px;
         }
 
         .footer-text {
+            font-size: 14px;
             margin: 10px 0;
             text-transform: uppercase;
             letter-spacing: 1px;
         }
 
-        /* Animations */
-        @keyframes glow {
-            0%, 100% {
-                box-shadow: 0 0 10px rgba(0, 212, 255, 0.3);
-            }
-            50% {
-                box-shadow: 0 0 20px rgba(0, 212, 255, 0.6);
-            }
-        }
-
-        .pulse {
-            animation: glow 2s infinite;
-        }
-
-        /* Trend indicators */
-        .trend-up {
-            color: #00ff88;
-            font-weight: bold;
-        }
-
-        .trend-down {
-            color: #ff0055;
-            font-weight: bold;
-        }
-
         /* Responsive */
-        @media (max-width: 768px) {
-            header {
-                flex-direction: column;
-                gap: 10px;
-            }
-
-            nav {
+        @media (max-width: 1024px) {
+            .book-container {
                 flex-direction: column;
             }
 
-            nav button {
+            .book-sidebar {
                 width: 100%;
+                height: auto;
+                position: static;
+                border-right: none;
+                border-bottom: 3px solid #00d4ff;
+                display: flex;
+                flex-wrap: wrap;
+                gap: 30px;
             }
 
-            .settings-grid {
+            .book-content {
+                padding: 40px 30px;
+            }
+
+            .candlestick-grid {
                 grid-template-columns: 1fr;
             }
 
-            .chart-container {
-                height: 250px;
+            .toc-list {
+                grid-template-columns: 1fr;
             }
+        }
+
+        @media (max-width: 768px) {
+            header {
+                padding: 30px 20px;
+            }
+
+            .header-title {
+                font-size: 32px;
+            }
+
+            .chapter-title {
+                font-size: 28px;
+            }
+
+            .section-subtitle {
+                font-size: 22px;
+            }
+
+            .book-content {
+                padding: 25px 15px;
+            }
+        }
+
+        /* Print Styles */
+        @media print {
+            body {
+                background: white;
+            }
+
+            .book-sidebar {
+                display: none;
+            }
+
+            .book-container {
+                box-shadow: none;
+            }
+
+            .chapter {
+                display: block;
+                page-break-after: always;
+            }
+        }
+
+        .page-break {
+            page-break-after: always;
+            margin: 60px 0;
+            padding: 40px 0;
+            border-bottom: 3px solid #00d4ff;
         }
     </style>
 </head>
 <body>
     <!-- Header -->
     <header>
-        <div>
-            <div class="logo">📊 HACKEN STORE</div>
-            <div class="creator">Créateurs: HACKEN STORE</div>
-        </div>
-        <div>
-            <div class="creator">Plateforme d'Analyse de Marché Professional</div>
-        </div>
+        <div class="header-title">📊 HACKEN STORE</div>
+        <div class="subtitle">Book d'Analyse de Marché Professional</div>
+        <div class="creator-info">Créateurs: HACKEN STORE | Guide Complet des Bougies Japonaises</div>
     </header>
 
-    <!-- Main Container -->
-    <div class="container">
-        <!-- Navigation -->
-        <nav>
-            <button class="active" onclick="showSection('stats')">📈 Statistiques</button>
-            <button onclick="showSection('charts')">📊 Graphiques</button>
-            <button onclick="showSection('candlestick')">🕯️ Bougies Japonaises</button>
-            <button onclick="showSection('indicators')">🔧 Indicateurs</button>
-            <button onclick="showSection('analysis')">🔍 Analyse Avancée</button>
-        </nav>
-
-        <!-- Settings Panel -->
-        <div class="settings-panel">
-            <div class="settings-grid">
-                <div class="select-group">
-                    <label>Paire de Devises</label>
-                    <select id="currencyPair">
-                        <option value="EURUSD">EUR/USD</option>
-                        <option value="GBPUSD">GBP/USD</option>
-                        <option value="USDJPY">USD/JPY</option>
-                        <option value="USDCHF">USD/CHF</option>
-                    </select>
-                </div>
-                <div class="select-group">
-                    <label>Période</label>
-                    <select id="timeframe">
-                        <option value="1m">1 Minute</option>
-                        <option value="5m">5 Minutes</option>
-                        <option value="15m">15 Minutes</option>
-                        <option value="1h">1 Heure</option>
-                        <option value="4h">4 Heures</option>
-                        <option value="1d" selected>1 Jour</option>
-                    </select>
-                </div>
-                <div class="select-group">
-                    <label>Nombre de Bougies</label>
-                    <input type="number" id="candleCount" value="50" min="10" max="200">
-                </div>
-                <div class="select-group">
-                    <label>Type de Graphique</label>
-                    <select id="chartType">
-                        <option value="candlestick">Chandelier</option>
-                        <option value="line">Ligne</option>
-                        <option value="area">Zone</option>
-                    </select>
-                </div>
-            </div>
+    <!-- Book Container -->
+    <div class="book-container">
+        <!-- Sidebar Navigation -->
+        <div class="book-sidebar">
+            <div class="sidebar-title">📚 Sommaire</div>
+            <ul class="sidebar-menu">
+                <li><a href="#" onclick="showChapter('intro')" class="active">Introduction</a></li>
+                <li><a href="#" onclick="showChapter('chapter1')">Chapitre 1: Bougies Japonaises</a></li>
+                <li><a href="#" onclick="showChapter('chapter2')">Chapitre 2: Patterns Bullish</a></li>
+                <li><a href="#" onclick="showChapter('chapter3')">Chapitre 3: Patterns Bearish</a></li>
+                <li><a href="#" onclick="showChapter('chapter4')">Chapitre 4: Indicateurs</a></li>
+                <li><a href="#" onclick="showChapter('chapter5')">Chapitre 5: Stratégies</a></li>
+                <li><a href="#" onclick="showChapter('chapter6')">Chapitre 6: Cas Pratiques</a></li>
+                <li><a href="#" onclick="showChapter('conclusion')">Conclusion</a></li>
+            </ul>
         </div>
 
-        <!-- Statistics Section -->
-        <div id="stats-section">
-            <div class="stats-row">
-                <div class="stat-card">
-                    <div class="stat-label">Prix Actuel</div>
-                    <div class="stat-value" id="currentPrice">1.0945</div>
-                    <div class="stat-change trend-up">+0.0045 (+0.41%)</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">Plus Haut (24h)</div>
-                    <div class="stat-value" id="highPrice">1.1050</div>
-                    <div class="stat-change">Résistance Clé</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">Plus Bas (24h)</div>
-                    <div class="stat-value" id="lowPrice">1.0900</div>
-                    <div class="stat-change">Support Clé</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">Volume (24h)</div>
-                    <div class="stat-value" id="volume">2.5M</div>
-                    <div class="stat-change">Très Élevé</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">Volatilité</div>
-                    <div class="stat-value" id="volatility">2.35%</div>
-                    <div class="stat-change">Modérée</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">RSI(14)</div>
-                    <div class="stat-value" id="rsi">58.45</div>
-                    <div class="stat-change">Zone Neutre</div>
-                </div>
-            </div>
-        </div>
+        <!-- Main Content -->
+        <div class="book-content">
 
-        <!-- Main Grid -->
-        <div class="main-grid">
-            <!-- Chart Card -->
-            <div class="card">
-                <div class="card-title">📊 Graphique Principal - Bougies Japonaises</div>
-                <div class="chart-container">
-                    <canvas id="mainChart"></canvas>
+            <!-- Introduction -->
+            <div id="intro" class="chapter active">
+                <div class="chapter-number">📖 Introduction</div>
+                <h1 class="chapter-title">Bienvenue dans le Book d'Analyse de Marché</h1>
+                
+                <div class="text-content">
+                    <p>Ce guide complet vous présente les fondamentaux de l'analyse technique des marchés financiers, 
+                    en mettant l'accent sur les <strong>bougies japonaises</strong> (candlesticks), l'outil d'analyse 
+                    le plus utilisé par les traders professionnels à travers le monde.</p>
+                    
+                    <p>Les bougies japonaises offrent une représentation visuelle claire et immédiate des mouvements 
+                    de prix. Elles combinent l'ouverture, la fermeture, le plus haut et le plus bas d'une période donnée 
+                    en une seule visualisation intuitive.</p>
                 </div>
-                <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #00d4ff; font-size: 12px; color: #aaa;">
-                    <strong>Explications:</strong> Les bougies japonaises montrent l'ouverture, la fermeture, le plus haut et le plus bas. 
-                    Les bougies vertes (bullish) indiquent une hausse, les rouges (bearish) une baisse. 
-                    Les mèches montrent les extrêmes.
+
+                <h2 class="section-subtitle">🎯 Objectifs de ce Book</h2>
+                <div class="key-points">
+                    <ul>
+                        <li>Comprendre la structure des bougies japonaises</li>
+                        <li>Identifier les patterns haussiers et baissiers</li>
+                        <li>Maîtriser les indicateurs techniques majeurs</li>
+                        <li>Développer une stratégie de trading cohérente</li>
+                        <li>Analyser des cas réels de marché</li>
+                        <li>Gérer les risques efficacement</li>
+                    </ul>
                 </div>
+
+                <h2 class="section-subtitle">📊 Pourquoi les Bougies Japonaises?</h2>
+                <div class="analysis-box">
+                    <div class="analysis-title">✓ Avantages des Candlesticks</div>
+                    <div class="analysis-content">
+                        Les bougies japonaises sont supérieures aux graphiques en barres car elles montrent visuellement 
+                        la force des acheteurs/vendeurs, les niveaux de support/résistance apparaissent instantanément, 
+                        et les patterns se forment naturellement. Elles permettent une analyse rapide et précise.
+                    </div>
+                </div>
+
+                <div class="page-break"></div>
             </div>
 
-            <!-- Right Panel -->
-            <div>
-                <!-- Indicators -->
-                <div class="card">
-                    <div class="card-title">🔧 Indicateurs Techniques</div>
-                    <div class="indicators-panel">
-                        <div class="indicator">
-                            <div class="indicator-title">MACD</div>
-                            <div class="indicator-value trend-up">+0.0025</div>
-                            <div class="indicator-status">Signal: Achat | Momentum: Hausse</div>
+            <!-- Chapitre 1 -->
+            <div id="chapter1" class="chapter">
+                <div class="chapter-number">Chapitre 1</div>
+                <h1 class="chapter-title">Les Bougies Japonaises - Fondamentaux</h1>
+
+                <h2 class="section-subtitle">Structure d'une Bougie</h2>
+                <div class="text-content">
+                    Une bougie japonaise représente l'action des prix sur une période spécifique (1 minute, 5 minutes, 
+                    1 heure, 1 jour, etc.). Elle se compose de 4 éléments clés:
+                </div>
+
+                <!-- Candlestick Structure -->
+                <div class="candlestick-grid">
+                    <div class="candle-box">
+                        <div class="candle-title">OHLC</div>
+                        <div class="text-content" style="margin: 0;">
+                            <strong>O</strong>pen = Ouverture<br>
+                            <strong>H</strong>igh = Plus Haut<br>
+                            <strong>L</strong>ow = Plus Bas<br>
+                            <strong>C</strong>lose = Fermeture
                         </div>
-                        <div class="indicator">
-                            <div class="indicator-title">Bandes de Bollinger</div>
-                            <div class="indicator-value">20 EMA: 1.0920</div>
-                            <div class="indicator-status">Prix: Au-dessus de la moyenne</div>
+                    </div>
+
+                    <div class="candle-box">
+                        <div class="candle-title">Le Corps</div>
+                        <div class="text-content" style="margin: 0;">
+                            Représente l'écart entre l'ouverture et la fermeture. Corps important = forte activité.
                         </div>
-                        <div class="indicator">
-                            <div class="indicator-title">Stochastique</div>
-                            <div class="indicator-value">%K: 72.5 | %D: 68.3</div>
-                            <div class="indicator-status">Zone de survente possible</div>
-                        </div>
-                        <div class="indicator">
-                            <div class="indicator-title">ATR (Volatilité)</div>
-                            <div class="indicator-value">0.0085</div>
-                            <div class="indicator-status">Volatilité: Modérée à Élevée</div>
+                    </div>
+
+                    <div class="candle-box">
+                        <div class="candle-title">Les Mèches</div>
+                        <div class="text-content" style="margin: 0;">
+                            Montrent les extrêmes. Mèches longues = volatilité élevée et rejet de prix.
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
 
-        <!-- Candlestick Detailed Table -->
-        <div class="card">
-            <div class="card-title">🕯️ Tableau Détaillé des Bougies Japonaises</div>
-            <table class="candlestick-table">
-                <thead>
-                    <tr>
-                        <th>Date/Heure</th>
-                        <th>Ouverture</th>
-                        <th>Fermeture</th>
-                        <th>Plus Haut</th>
-                        <th>Plus Bas</th>
-                        <th>Volume</th>
-                        <th>Visualisation</th>
-                        <th>Type</th>
-                    </tr>
-                </thead>
-                <tbody id="candleTableBody">
-                    <!-- Generated by JavaScript -->
-                </tbody>
-            </table>
-        </div>
+                <h2 class="section-subtitle">Candlesticks Haussiers vs Baissiers</h2>
+                
+                <div class="candlestick-grid">
+                    <div class="candle-box">
+                        <div class="candle-title">📈 Bougie Haussière (Bullish)</div>
+                        <div class="candle-visual">
+                            <div class="candle">
+                                <div class="wick"></div>
+                                <div class="body bullish" style="height: 60px;">H</div>
+                                <div class="wick"></div>
+                            </div>
+                        </div>
+                        <div class="candle-description">
+                            <strong>Couleur:</strong> Verte (ou blanche)<br>
+                            <strong>Signification:</strong> Les acheteurs dominent<br>
+                            <strong>Clôture > Ouverture</strong><br>
+                            <strong>Interprétation:</strong> Sentiment haussier
+                        </div>
+                    </div>
 
-        <!-- Analysis Section -->
-        <div class="card" style="margin-top: 25px;">
-            <div class="card-title">🔍 Analyse Détaillée du Marché</div>
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; font-size: 14px; line-height: 1.8;">
-                <div>
-                    <h3 style="color: #00d4ff; margin-bottom: 10px;">📈 Tendance Globale</h3>
-                    <p>La paire EUR/USD montre une tendance haussière modérée. Le prix a dépassé la moyenne mobile simple 20 (SMA20) et se maintient au-dessus du support principal à 1.0900.</p>
+                    <div class="candle-box">
+                        <div class="candle-title">📉 Bougie Baissière (Bearish)</div>
+                        <div class="candle-visual">
+                            <div class="candle">
+                                <div class="wick"></div>
+                                <div class="body bearish" style="height: 60px;">B</div>
+                                <div class="wick"></div>
+                            </div>
+                        </div>
+                        <div class="candle-description">
+                            <strong>Couleur:</strong> Rouge (ou noire)<br>
+                            <strong>Signification:</strong> Les vendeurs dominent<br>
+                            <strong>Clôture < Ouverture</strong><br>
+                            <strong>Interprétation:</strong> Sentiment baissier
+                        </div>
+                    </div>
                 </div>
-                <div>
-                    <h3 style="color: #00d4ff; margin-bottom: 10px;">🎯 Niveaux Clés</h3>
-                    <p><strong>Résistance:</strong> 1.1050, 1.1100<br><strong>Support:</strong> 1.0900, 1.0850<br><strong>Pivot:</strong> 1.0975</p>
+
+                <h2 class="section-subtitle">Analyse Détaillée</h2>
+                <div class="analysis-box">
+                    <div class="analysis-title">💡 Comment Lire une Bougie</div>
+                    <div class="analysis-content">
+                        1. <strong>Le Corps</strong> montre où s'est établi l'équilibre offre/demande<br>
+                        2. <strong>Les Mèches Supérieures</strong> montrent la résistance des vendeurs<br>
+                        3. <strong>Les Mèches Inférieures</strong> montrent le support des acheteurs<br>
+                        4. <strong>La Taille du Corps</strong> indique la force du mouvement<br>
+                        5. <strong>Les Rejets</strong> (longues mèches) indiquent une indécision
+                    </div>
                 </div>
-                <div>
-                    <h3 style="color: #00d4ff; margin-bottom: 10px;">💡 Signaux d'Achat/Vente</h3>
-                    <p><strong>Signal Achat:</strong> Croisement MACD haussier confirmé<br><strong>Signal Vente:</strong> Attendre RSI > 70</p>
+
+                <div class="page-break"></div>
+            </div>
+
+            <!-- Chapitre 2 -->
+            <div id="chapter2" class="chapter">
+                <div class="chapter-number">Chapitre 2</div>
+                <h1 class="chapter-title">Patterns Haussiers (Bullish Patterns)</h1>
+
+                <div class="text-content">
+                    Les patterns haussiers sont des formations de bougies qui indiquent une probable hausse des prix. 
+                    Ils représentent l'équilibre entre acheteurs et vendeurs favorisant les acheteurs.
                 </div>
-                <div>
-                    <h3 style="color: #00d4ff; margin-bottom: 10px;">⚙️ Explications Techniques</h3>
-                    <p>Les bougies japonaises combinent OHLC (Open, High, Low, Close). Le corps représente l'écart ouverture-clôture, les mèches les extrêmes de la session.</p>
+
+                <h2 class="section-subtitle">Pattern 1: Martteau (Hammer)</h2>
+                <div class="candlestick-grid">
+                    <div class="candle-box">
+                        <div class="candle-title">Hammer Pattern</div>
+                        <div class="candle-visual">
+                            <div class="candle">
+                                <div class="wick" style="height: 50px;"></div>
+                                <div class="body bullish" style="height: 15px;"></div>
+                                <div class="wick" style="height: 5px;"></div>
+                            </div>
+                        </div>
+                        <div class="candle-description">
+                            <strong>Structure:</strong> Longue mèche inférieure, petit corps<br>
+                            <strong>Signal:</strong> Achat potentiel après test du support<br>
+                            <strong>Force:</strong> Très fiable en zone de support
+                        </div>
+                    </div>
+
+                    <div class="candle-box">
+                        <div class="candle-title">Signification</div>
+                        <div class="candle-description">
+                            Le marché teste un support (mèche), mais les acheteurs le défendent (clôture élevée). 
+                            Cela crée une configuration "marteau" qui indique une probable reprise haussière.
+                        </div>
+                    </div>
                 </div>
-                <div>
-                    <h3 style="color: #00d4ff; margin-bottom: 10px;">📊 Prévisions</h3>
-                    <p>Court terme: Continuation haussière probable vers 1.1000<br>Moyen terme: Test de la résistance 1.1100</p>
+
+                <h2 class="section-subtitle">Pattern 2: Étoile du Matin (Morning Star)</h2>
+                <div class="analysis-box">
+                    <div class="analysis-title">☀️ Morning Star</div>
+                    <div class="analysis-content">
+                        <strong>Composition:</strong> 3 bougies<br>
+                        1. Bougie baissière forte<br>
+                        2. Petite bougie (indécision)<br>
+                        3. Bougie haussière forte<br>
+                        <strong>Signal:</strong> Signal d'inversion haussière très puissant
+                    </div>
                 </div>
-                <div>
-                    <h3 style="color: #00d4ff; margin-bottom: 10px;">⚠️ Risques</h3>
-                    <p>Données économiques attendues pouvant affecter la volatilité. Stop-loss recommandé à 1.0850.</p>
+
+                <h2 class="section-subtitle">Pattern 3: Engulfing Haussier</h2>
+                <div class="candlestick-grid">
+                    <div class="candle-box">
+                        <div class="candle-title">Bullish Engulfing</div>
+                        <div class="candle-visual">
+                            <div class="candle" style="gap: 5px;">
+                                <div class="body bearish" style="height: 30px;"></div>
+                                <div class="body bullish" style="height: 60px;"></div>
+                            </div>
+                        </div>
+                        <div class="candle-description">
+                            La seconde bougie engloutit complètement la première. Signal d'inversion haussière.
+                        </div>
+                    </div>
+
+                    <div class="candle-box">
+                        <div class="candle-title">Points Clés</div>
+                        <div class="candle-description">
+                            <strong>Avant:</strong> Tendance baissière<br>
+                            <strong>Après:</strong> Probable hausse<br>
+                            <strong>Force:</strong> Plus forte en zone de support<br>
+                            <strong>Volume:</strong> Volume en hausse = signal plus fort
+                        </div>
+                    </div>
+                </div>
+
+                <div class="key-points">
+                    <div class="key-points-title">✓ Patterns Haussiers Majeurs</div>
+                    <ul>
+                        <li>Hammer - Test du support avec clôture élevée</li>
+                        <li>Morning Star - Inversion 3 bougies</li>
+                        <li>Bullish Engulfing - Absorption de bougie baissière</li>
+                        <li>Piercing Line - Pénétration du support</li>
+                        <li>Three White Soldiers - 3 bougies haussières consécutives</li>
+                    </ul>
+                </div>
+
+                <div class="page-break"></div>
+            </div>
+
+            <!-- Chapitre 3 -->
+            <div id="chapter3" class="chapter">
+                <div class="chapter-number">Chapitre 3</div>
+                <h1 class="chapter-title">Patterns Baissiers (Bearish Patterns)</h1>
+
+                <div class="text-content">
+                    Les patterns baissiers indiquent une probable baisse des prix. Ils représentent un déséquilibre 
+                    favorable aux vendeurs et souvent signalent une inversion de tendance haussière.
+                </div>
+
+                <h2 class="section-subtitle">Pattern 1: Pendu (Hanging Man)</h2>
+                <div class="candlestick-grid">
+                    <div class="candle-box">
+                        <div class="candle-title">Hanging Man Pattern</div>
+                        <div class="candle-visual">
+                            <div class="candle">
+                                <div class="wick" style="height: 5px;"></div>
+                                <div class="body bearish" style="height: 15px;"></div>
+                                <div class="wick" style="height: 50px;"></div>
+                            </div>
+                        </div>
+                        <div class="candle-description">
+                            <strong>Structure:</strong> Longue mèche inférieure, petit corps haut<br>
+                            <strong>Signal:</strong> Vente potentielle après test de résistance<br>
+                            <strong>Force:</strong> Très fiable en zone de résistance
+                        </div>
+                    </div>
+
+                    <div class="candle-box">
+                        <div class="candle-title">Signification</div>
+                        <div class="candle-description">
+                            Après une hausse, le marché teste les extrêmes mais ne parvient pas à maintenir les gains. 
+                            Les vendeurs reprennent le contrôle, créant une configuration d'avertissement baissier.
+                        </div>
+                    </div>
+                </div>
+
+                <h2 class="section-subtitle">Pattern 2: Étoile du Soir (Evening Star)</h2>
+                <div class="analysis-box">
+                    <div class="analysis-title">🌙 Evening Star</div>
+                    <div class="analysis-content">
+                        <strong>Composition:</strong> 3 bougies<br>
+                        1. Bougie haussière forte<br>
+                        2. Petite bougie (indécision)<br>
+                        3. Bougie baissière forte<br>
+                        <strong>Signal:</strong> Signal d'inversion baissière puissant
+                    </div>
+                </div>
+
+                <h2 class="section-subtitle">Pattern 3: Engulfing Baissier</h2>
+                <div class="candlestick-grid">
+                    <div class="candle-box">
+                        <div class="candle-title">Bearish Engulfing</div>
+                        <div class="candle-visual">
+                            <div class="candle" style="gap: 5px;">
+                                <div class="body bullish" style="height: 30px;"></div>
+                                <div class="body bearish" style="height: 60px;"></div>
+                            </div>
+                        </div>
+                        <div class="candle-description">
+                            La seconde bougie engloutit complètement la première. Signal d'inversion baissière.
+                        </div>
+                    </div>
+
+                    <div class="candle-box">
+                        <div class="candle-title">Points Clés</div>
+                        <div class="candle-description">
+                            <strong>Avant:</strong> Tendance haussière<br>
+                            <strong>Après:</strong> Probable baisse<br>
+                            <strong>Force:</strong> Plus forte en zone de résistance<br>
+                            <strong>Volume:</strong> Volume en hausse = signal plus fort
+                        </div>
+                    </div>
+                </div>
+
+                <div class="key-points">
+                    <div class="key-points-title">✗ Patterns Baissiers Majeurs</div>
+                    <ul>
+                        <li>Hanging Man - Rejet après hausse</li>
+                        <li>Evening Star - Inversion 3 bougies</li>
+                        <li>Bearish Engulfing - Absorption de bougie haussière</li>
+                        <li>Dark Cloud Cover - Couverture sombre</li>
+                        <li>Three Black Crows - 3 bougies baissières consécutives</li>
+                    </ul>
+                </div>
+
+                <div class="page-break"></div>
+            </div>
+
+            <!-- Chapitre 4 -->
+            <div id="chapter4" class="chapter">
+                <div class="chapter-number">Chapitre 4</div>
+                <h1 class="chapter-title">Indicateurs Techniques Essentiels</h1>
+
+                <div class="text-content">
+                    Les indicateurs techniques complètent l'analyse des bougies en fournissant des signaux 
+                    mathématiques objectifs. Ils aident à confirmer les tendances et à identifier les retournements.
+                </div>
+
+                <h2 class="section-subtitle">1. RSI (Relative Strength Index)</h2>
+                <div class="analysis-box">
+                    <div class="analysis-title">📊 RSI(14)</div>
+                    <div class="analysis-content">
+                        <strong>Formule:</strong> RSI = 100 - (100 / (1 + RS))<br>
+                        <strong>Plage:</strong> 0 à 100<br>
+                        <strong>Interprétation:</strong><br>
+                        • RSI > 70 = Suracheté (signal de vente)<br>
+                        • RSI < 30 = Survendu (signal d'achat)<br>
+                        • RSI 40-60 = Zone neutre<br>
+                        <strong>Utilité:</strong> Détecte les extrêmes et les divergences
+                    </div>
+                </div>
+
+                <h2 class="section-subtitle">2. MACD (Moving Average Convergence Divergence)</h2>
+                <div class="analysis-box">
+                    <div class="analysis-title">⚙️ MACD</div>
+                    <div class="analysis-content">
+                        <strong>Composants:</strong> Ligne MACD + Ligne Signal + Histogramme<br>
+                        <strong>Signaux:</strong><br>
+                        • MACD croise au-dessus de Signal = Achat<br>
+                        • MACD croise au-dessous de Signal = Vente<br>
+                        • Histogramme > 0 = Momentum haussier<br>
+                        • Histogramme < 0 = Momentum baissier<br>
+                        <strong>Utilité:</strong> Confirme les tendances et identifie les changements
+                    </div>
+                </div>
+
+                <h2 class="section-subtitle">3. Bandes de Bollinger</h2>
+                <div class="analysis-box">
+                    <div class="analysis-title">📈 Bollinger Bands</div>
+                    <div class="analysis-content">
+                        <strong>Composition:</strong> SMA(20) + 2 écarts-types<br>
+                        <strong>Interprétation:</strong><br>
+                        • Prix touche bande supérieure = Suracheté<br>
+                        • Prix touche bande inférieure = Survendu<br>
+                        • Bandes qui se resserrent = Volatilité faible<br>
+                        • Bandes qui s'élargissent = Volatilité élevée<br>
+                        <strong>Utilité:</strong> Mesure la volatilité et les extrêmes de prix
+                    </div>
+                </div>
+
+                <h2 class="section-subtitle">4. Moyennes Mobiles</h2>
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>Période</th>
+                            <th>Utilité</th>
+                            <th>Signal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>SMA(50)</strong></td>
+                            <td>50 jours</td>
+                            <td>Tendance à moyen terme</td>
+                            <td>Prix > SMA50 = Haussier</td>
+                        </tr>
+                        <tr>
+                            <td><strong>SMA(200)</strong></td>
+                            <td>200 jours</td>
+                            <td>Tendance long terme</td>
+                            <td>Prix > SMA200 = Très haussier</td>
+                        </tr>
+                        <tr>
+                            <td><strong>EMA(12)</strong></td>
+                            <td>12 jours</td>
+                            <td>Réactivité rapide</td>
+                            <td>Croisement EMA12/EMA26</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="page-break"></div>
+            </div>
+
+            <!-- Chapitre 5 -->
+            <div id="chapter5" class="chapter">
+                <div class="chapter-number">Chapitre 5</div>
+                <h1 class="chapter-title">Stratégies de Trading</h1>
+
+                <div class="text-content">
+                    Une stratégie de trading cohérente combine l'analyse des bougies, les indicateurs techniques, 
+                    et une gestion des risques rigoureuse.
+                </div>
+
+                <h2 class="section-subtitle">🎯 Stratégie 1: Support & Résistance</h2>
+                <div class="analysis-box">
+                    <div class="analysis-title">Principes</div>
+                    <div class="analysis-content">
+                        <strong>Support:</strong> Zone où les acheteurs entrent, freinant la baisse<br>
+                        <strong>Résistance:</strong> Zone où les vendeurs entrent, freinant la hausse<br>
+                        <strong>Cassure:</strong> Dépassement d'un niveau clé = signal fort<br>
+                        <br>
+                        <strong>Signaux d'Entrée:</strong><br>
+                        • Achat: Rebond sur support avec confirmation bougie haussière<br>
+                        • Vente: Rejet à la résistance avec confirmation bougie baissière
+                    </div>
+                </div>
+
+                <h2 class="section-subtitle">📊 Stratégie 2: Suivi de Tendance</h2>
+                <div class="key-points">
+                    <div class="key-points-title">Trend Following</div>
+                    <ul>
+                        <li>Identifier la tendance principale (haussière, baissière, latérale)</li>
+                        <li>Utiliser les moyennes mobiles pour confirmer</li>
+                        <li>Entrer lors de corrections légères dans la tendance</li>
+                        <li>Sortir quand l'indicateur montre un retournement</li>
+                        <li>Utiliser des stop-loss pour limiter les pertes</li>
+                    </ul>
+                </div>
+
+                <h2 class="section-subtitle">🔄 Stratégie 3: Retournement</h2>
+                <div class="analysis-box">
+                    <div class="analysis-title">Reversal Trading</div>
+                    <div class="analysis-content">
+                        <strong>Objectif:</strong> Trader les points de retournement<br>
+                        <strong>Signaux:</strong><br>
+                        • Morning Star en bas = Achat<br>
+                        • Evening Star en haut = Vente<br>
+                        • RSI extrême + divergence = Retournement probable<br>
+                        <strong>Avantage:</strong> Potentiel de gain élevé<br>
+                        <strong>Inconvénient:</strong> Plus de fausses cassures
+                    </div>
+                </div>
+
+                <h2 class="section-subtitle">⚠️ Gestion des Risques</h2>
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Élément</th>
+                            <th>Description</th>
+                            <th>Importance</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Stop-Loss</strong></td>
+                            <td>Limite de perte maximale par trade</td>
+                            <td>Critique</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Take-Profit</strong></td>
+                            <td>Objectif de gain à atteindre</td>
+                            <td>Important</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Ratio R:R</strong></td>
+                            <td>Risque vs Récompense (minimum 1:2)</td>
+                            <td>Essentiel</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Taille Position</strong></td>
+                            <td>% du capital par trade (max 2%)</td>
+                            <td>Fondamental</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="page-break"></div>
+            </div>
+
+            <!-- Chapitre 6 -->
+            <div id="chapter6" class="chapter">
+                <div class="chapter-number">Chapitre 6</div>
+                <h1 class="chapter-title">Cas Pratiques & Analyses Réelles</h1>
+
+                <div class="text-content">
+                    Examinons des exemples concrets d'analyse de marché utilisant les bougies japonaises 
+                    et les indicateurs techniques.
+                </div>
+
+                <h2 class="section-subtitle">📈 Cas 1: EURUSD - Rebond sur Support</h2>
+                <div class="analysis-box">
+                    <div class="analysis-title">Scénario</div>
+                    <div class="analysis-content">
+                        Le pair EURUSD descend depuis une résistance à 1.1050. Il teste le support à 1.0850.
+                    </div>
+                </div>
+
+                <div class="candlestick-grid">
+                    <div class="candle-box">
+                        <div class="candle-title">Jour 1-2: Approche</div>
+                        <div class="candle-visual">
+                            <div class="candle">
+                                <div class="body bearish" style="height: 50px;"></div>
+                            </div>
+                            <div class="candle">
+                                <div class="body bearish" style="height: 45px;"></div>
+                            </div>
+                        </div>
+                        <div class="candle-description">
+                            Deux bougies baissières consécutives testent le support.
+                        </div>
+                    </div>
+
+                    <div class="candle-box">
+                        <div class="candle-title">Jour 3: Signal d'Achat</div>
+                        <div class="candle-visual">
+                            <div class="candle">
+                                <div class="wick" style="height: 40px;"></div>
+                                <div class="body bullish" style="height: 50px;"></div>
+                                <div class="wick" style="height: 5px;"></div>
+                            </div>
+                        </div>
+                        <div class="candle-description">
+                            Bougie haussière avec longue mèche = Hammer. 
+                            Support défendu. ACHAT!
+                        </div>
+                    </div>
+
+                    <div class="candle-box">
+                        <div class="candle-title">Jour 4-5: Confirmation</div>
+                        <div class="candle-visual">
+                            <div class="candle">
+                                <div class="body bullish" style="height: 55px;"></div>
+                            </div>
+                            <div class="candle">
+                                <div class="body bullish" style="height: 60px;"></div>
+                            </div>
+                        </div>
+                        <div class="candle-description">
+                            Deux bougies haussières consécutives = Confirmation. 
+                            Momentum positif.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="key-points">
+                    <div class="key-points-title">Analyse Détaillée</div>
+                    <ul>
+                        <li>Support 1.0850 testé 3 fois = Support fort</li>
+                        <li>Hammer pattern = Rejection du bas, acheteurs forts</li>
+                        <li>RSI passe de <30 (survendu) à >50 = Momentum change</li>
+                        <li>MACD croise au-dessus de la ligne signal = Confirmation</li>
+                        <li>Objectif: Résistance à 1.0950 puis 1.1000</li>
+                        <li>Stop-Loss: Sous 1.0820 (cassure du support)</li>
+                    </ul>
+                </div>
+
+                <h2 class="section-subtitle">📉 Cas 2: GBP/USD - Inversion à la Résistance</h2>
+                <div class="analysis-box">
+                    <div class="analysis-title">Scénario</div>
+                    <div class="analysis-content">
+                        GBP/USD a atteint une résistance à 1.3050. Trois bougies se forment: haussière, 
+                        petite, puis baissière.
+                    </div>
+                </div>
+
+                <div class="candlestick-grid">
+                    <div class="candle-box">
+                        <div class="candle-title">Jour 1: Approche</div>
+                        <div class="candle-visual">
+                            <div class="candle">
+                                <div class="body bullish" style="height: 60px;"></div>
+                            </div>
+                        </div>
+                        <div class="candle-description">
+                            Bougie haussière forte atteignant la résistance.
+                        </div>
+                    </div>
+
+                    <div class="candle-box">
+                        <div class="candle-title">Jour 2: Indécision</div>
+                        <div class="candle-visual">
+                            <div class="candle">
+                                <div class="wick" style="height: 20px;"></div>
+                                <div class="body bullish" style="height: 15px;"></div>
+                                <div class="wick" style="height: 15px;"></div>
+                            </div>
+                        </div>
+                        <div class="candle-description">
+                            Petite bougie = Indécision au sommet.
+                        </div>
+                    </div>
+
+                    <div class="candle-box">
+                        <div class="candle-title">Jour 3: Signal de Vente</div>
+                        <div class="candle-visual">
+                            <div class="candle">
+                                <div class="wick" style="height: 5px;"></div>
+                                <div class="body bearish" style="height: 65px;"></div>
+                                <div class="wick" style="height: 10px;"></div>
+                            </div>
+                        </div>
+                        <div class="candle-description">
+                            Bougie baissière forte = Evening Star!
+                            VENTE!
+                        </div>
+                    </div>
+                </div>
+
+                <div class="key-points">
+                    <div class="key-points-title">Analyse Détaillée</div>
+                    <ul>
+                        <li>Evening Star pattern = Inversion haussière très fiable</li>
+                        <li>RSI atteint >70 (suracheté) = Confirmation</li>
+                        <li>MACD divergence = Prix monte mais momentum baisse</li>
+                        <li>Rejet à la résistance = Cassure impossible</li>
+                        <li>Objectif: Support à 1.2950 puis 1.2900</li>
+                        <li>Stop-Loss: Au-dessus de 1.3100 (cassure de la résistance)</li>
+                    </ul>
+                </div>
+
+                <div class="page-break"></div>
+            </div>
+
+            <!-- Conclusion -->
+            <div id="conclusion" class="chapter">
+                <div class="chapter-number">📚 Conclusion</div>
+                <h1 class="chapter-title">Maîtriser l'Analyse de Marché</h1>
+
+                <h2 class="section-subtitle">Résumé des Apprentissages</h2>
+                <div class="text-content">
+                    Vous disposez maintenant des connaissances essentielles pour analyser les marchés financiers 
+                    en utilisant les bougies japonaises. Voici les points clés à retenir:
+                </div>
+
+                <div class="key-points">
+                    <div class="key-points-title">✓ Fondamentaux Essentiels</div>
+                    <ul>
+                        <li>Les bougies japonaises combinent OHLC en une visualisation claire</li>
+                        <li>Les couleurs (vert/rouge) indiquent la direction (haussier/baissier)</li>
+                        <li>Les mèches montrent la volatilité et les rejets de prix</li>
+                        <li>Les patterns (Hammer, Morning Star, etc.) offrent des signaux fiables</li>
+                        <li>Les indicateurs (RSI, MACD, Bollinger) confirment les signaux</li>
+                        <li>La gestion des risques est plus importante que la prédiction exacte</li>
+                    </ul>
+                </div>
+
+                <h2 class="section-subtitle">🚀 Prochaines Étapes</h2>
+                <div class="analysis-box">
+                    <div class="analysis-title">Pour Progresser</div>
+                    <div class="analysis-content">
+                        1. <strong>Pratiquer sur un compte démo</strong> - Appliquez les stratégies sans risque<br>
+                        2. <strong>Tenir un journal de trading</strong> - Documentez chaque trade<br>
+                        3. <strong>Analyser les graphiques historiques</strong> - Identifiez les patterns<br>
+                        4. <strong>Maîtriser la gestion des risques</strong> - C'est la clé de la survie<br>
+                        5. <strong>Rester émotionnellement stable</strong> - Suivez votre plan, pas les émotions<br>
+                        6. <strong>Continuer à apprendre</strong> - Les marchés évoluent constamment
+                    </div>
+                </div>
+
+                <h2 class="section-subtitle">⚠️ Points d'Attention Importants</h2>
+                <div class="analysis-box">
+                    <div class="analysis-title">Avertissement</div>
+                    <div class="analysis-content">
+                        • Le trading comporte des risques élevés<br>
+                        • Aucun indicateur n'est 100% fiable<br>
+                        • Les pertes sont possibles et probables au début<br>
+                        • Ne tradez jamais avec de l'argent que vous ne pouvez pas perdre<br>
+                        • La patience et la discipline sont plus importantes que la vitesse<br>
+                        • L'éducation continue est obligatoire pour réussir
+                    </div>
+                </div>
+
+                <h2 class="section-subtitle">💡 Citations de Traders Célèbres</h2>
+                <div style="margin: 30px 0;">
+                    <div style="background: #f0f8ff; padding: 20px; border-left: 5px solid #00d4ff; margin: 15px 0;">
+                        <p style="font-style: italic; color: #444;">
+                            "Dans le trading, il n'y a pas de saint graal. Le succès vient de la discipline, 
+                            de la gestion des risques, et de l'apprentissage constant."
+                        </p>
+                        <p style="text-align: right; color: #00d4ff; margin-top: 10px;">— Mark Douglas</p>
+                    </div>
+
+                    <div style="background: #f0f8ff; padding: 20px; border-left: 5px solid #00d4ff; margin: 15px 0;">
+                        <p style="font-style: italic; color: #444;">
+                            "Le marché n'est pas une machine à faire de l'argent, c'est une arène où la 
+                            connaissance et la psychologie s'affrontent."
+                        </p>
+                        <p style="text-align: right; color: #00d4ff; margin-top: 10px;">— Jesse Livermore</p>
+                    </div>
+                </div>
+
+                <h2 class="section-subtitle">🎓 Modules Recommandés pour Continuer</h2>
+                <div class="key-points">
+                    <div class="key-points-title">Prochaines Formations</div>
+                    <ul>
+                        <li>Analyse Harmonique et Fibonacci</li>
+                        <li>Trading sur Volumes et Profils</li>
+                        <li>Théorie des Ondes d'Elliott</li>
+                        <li>Psychologie du Trading Avancée</li>
+                        <li>Algorithmes et Trading Automatisé</li>
+                        <li>Gestion Avancée du Portefeuille</li>
+                    </ul>
+                </div>
+
+                <div style="margin-top: 50px; padding: 30px; background: #f0f8ff; border-radius: 10px; text-align: center;">
+                    <h3 style="color: #00d4ff; margin-bottom: 15px;">© 2024 HACKEN STORE</h3>
+                    <p style="color: #666; margin: 10px 0;">Plateforme d'Analyse de Marché Professional</p>
+                    <p style="color: #666; margin: 10px 0;">Créateurs: HACKEN STORE</p>
+                    <p style="color: #aaa; margin-top: 15px; font-size: 12px;">
+                        Cet ouvrage a été créé pour fournir une éducation de haute qualité sur les marchés financiers.
+                    </p>
                 </div>
             </div>
+
         </div>
     </div>
 
     <!-- Footer -->
     <footer>
-        <div class="footer-text">© 2024 HACKEN STORE - Plateforme d'Analyse de Marché</div>
+        <div class="footer-text">© 2024 HACKEN STORE - Book d'Analyse de Marché Professional</div>
         <div class="footer-text">Créateurs: HACKEN STORE</div>
-        <div class="footer-text">Données en temps réel | Analyse Technique Avancée | Indicateurs Professionnels</div>
+        <div class="footer-text">Guide Complet des Bougies Japonaises | Analyse Technique Professional</div>
+        <div class="footer-text" style="margin-top: 20px; font-size: 12px;">
+            Cet ouvrage contient des informations éducatives. Les trading et investissements comportent des risques.
+        </div>
     </footer>
 
     <script>
-        // Variables globales
-        let mainChart = null;
-        const candleData = generateCandleData(50);
+        // Navigation
+        function showChapter(chapterId) {
+            // Masquer tous les chapitres
+            document.querySelectorAll('.chapter').forEach(chapter => {
+                chapter.classList.remove('active');
+            });
 
-        // Génération des données de bougies
-        function generateCandleData(count) {
-            const data = [];
-            let basePrice = 1.0900;
-            let date = new Date();
-            date.setDate(date.getDate() - count);
-
-            for (let i = 0; i < count; i++) {
-                const open = basePrice + (Math.random() - 0.5) * 0.01;
-                const close = open + (Math.random() - 0.5) * 0.015;
-                const high = Math.max(open, close) + Math.random() * 0.008;
-                const low = Math.min(open, close) - Math.random() * 0.008;
-                const volume = Math.floor(Math.random() * 2000000) + 500000;
-
-                data.push({
-                    x: new Date(date),
-                    o: parseFloat(open.toFixed(4)),
-                    h: parseFloat(high.toFixed(4)),
-                    l: parseFloat(low.toFixed(4)),
-                    c: parseFloat(close.toFixed(4)),
-                    v: volume
-                });
-
-                basePrice = close;
-                date.setDate(date.getDate() + 1);
+            // Afficher le chapitre sélectionné
+            const selectedChapter = document.getElementById(chapterId);
+            if (selectedChapter) {
+                selectedChapter.classList.add('active');
             }
 
-            return data;
-        }
-
-        // Initialisation du graphique
-        function initChart() {
-            const ctx = document.getElementById('mainChart').getContext('2d');
-            
-            mainChart = new Chart(ctx, {
-                type: 'candlestick',
-                data: {
-                    datasets: [{
-                        label: 'EUR/USD - Bougies Japonaises',
-                        data: candleData,
-                        borderColor: '#00d4ff',
-                        color: {
-                            up: '#00ff88',
-                            down: '#ff0055',
-                            unchanged: '#999'
-                        }
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            labels: {
-                                color: '#00d4ff'
-                            }
-                        }
-                    },
-                    scales: {
-                        y: {
-                            ticks: {
-                                color: '#aaa'
-                            },
-                            grid: {
-                                color: 'rgba(0, 212, 255, 0.1)'
-                            }
-                        },
-                        x: {
-                            ticks: {
-                                color: '#aaa'
-                            },
-                            grid: {
-                                color: 'rgba(0, 212, 255, 0.1)'
-                            }
-                        }
-                    }
-                }
+            // Mettre à jour le menu actif
+            document.querySelectorAll('.sidebar-menu a').forEach(link => {
+                link.classList.remove('active');
             });
-
-            // Graphique alternatif avec Chart.js normal
-            const ctx2 = document.getElementById('mainChart').getContext('2d');
-            const chartData = candleData.map((candle, i) => ({
-                x: i,
-                y: candle.c
-            }));
-
-            mainChart = new Chart(ctx2, {
-                type: 'line',
-                data: {
-                    labels: candleData.map((c, i) => i),
-                    datasets: [{
-                        label: 'EUR/USD - Prix de Clôture',
-                        data: candleData.map(c => c.c),
-                        borderColor: '#00d4ff',
-                        backgroundColor: 'rgba(0, 212, 255, 0.1)',
-                        fill: true,
-                        tension: 0.4,
-                        borderWidth: 2,
-                        pointRadius: 0,
-                        pointHoverRadius: 6,
-                        pointBackgroundColor: '#00ff88'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    interaction: {
-                        mode: 'index',
-                        intersect: false
-                    },
-                    plugins: {
-                        legend: {
-                            labels: {
-                                color: '#fff',
-                                font: { size: 14 }
-                            }
-                        }
-                    },
-                    scales: {
-                        y: {
-                            ticks: {
-                                color: '#aaa'
-                            },
-                            grid: {
-                                color: 'rgba(0, 212, 255, 0.1)',
-                                drawBorder: false
-                            }
-                        },
-                        x: {
-                            ticks: {
-                                color: '#aaa'
-                            },
-                            grid: {
-                                color: 'rgba(0, 212, 255, 0.1)',
-                                drawBorder: false
-                            }
-                        }
-                    }
-                }
-            });
-        }
-
-        // Remplissage du tableau des bougies
-        function populateCandleTable() {
-            const tbody = document.getElementById('candleTableBody');
-            tbody.innerHTML = '';
-
-            candleData.slice(-10).reverse().forEach((candle, index) => {
-                const isBullish = candle.c >= candle.o;
-                const type = isBullish ? 'Haussière ↑' : 'Baissière ↓';
-                const change = ((candle.c - candle.o) / candle.o * 100).toFixed(2);
-                
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${candle.x.toLocaleDateString('fr-FR')} ${candle.x.toLocaleTimeString('fr-FR')}</td>
-                    <td>${candle.o.toFixed(4)}</td>
-                    <td><strong>${candle.c.toFixed(4)}</strong></td>
-                    <td style="color: #00ff88;">${candle.h.toFixed(4)}</td>
-                    <td style="color: #ff0055;">${candle.l.toFixed(4)}</td>
-                    <td>${(candle.v / 1000000).toFixed(2)}M</td>
-                    <td>
-                        <div style="display: flex; gap: 3px; height: 20px; align-items: center;">
-                            <div class="candle ${isBullish ? 'bullish' : 'bearish'}" style="height: ${60 * Math.abs(candle.c - candle.o) / 0.02}%; background: ${isBullish ? '#00ff88' : '#ff0055'};"></div>
-                        </div>
-                    </td>
-                    <td style="color: ${isBullish ? '#00ff88' : '#ff0055'}; font-weight: bold;">${type} (${change}%)</td>
-                `;
-                tbody.appendChild(row);
-            });
-        }
-
-        // Navigation entre sections
-        function showSection(section) {
-            document.querySelectorAll('nav button').forEach(btn => btn.classList.remove('active'));
             event.target.classList.add('active');
+
+            // Scroll vers le haut
+            window.scrollTo(0, 0);
         }
 
-        // Mise à jour des prix en temps réel (simulation)
-        function updatePrices() {
-            const lastCandle = candleData[candleData.length - 1];
-            const change = (Math.random() - 0.5) * 0.001;
-            const newPrice = lastCandle.c + change;
-
-            document.getElementById('currentPrice').textContent = newPrice.toFixed(4);
-            document.getElementById('highPrice').textContent = (Math.max(...candleData.map(c => c.h))).toFixed(4);
-            document.getElementById('lowPrice').textContent = (Math.min(...candleData.map(c => c.l))).toFixed(4);
-
-            // Mise à jour des indicateurs
-            const rsi = (50 + Math.random() * 30).toFixed(2);
-            document.getElementById('rsi').textContent = rsi;
-        }
-
-        // Initialisation
-        document.addEventListener('DOMContentLoaded', () => {
-            initChart();
-            populateCandleTable();
-            
-            // Mise à jour toutes les 5 secondes
-            setInterval(() => {
-                updatePrices();
-                populateCandleTable();
-            }, 5000);
-        });
-
-        // Event listeners
-        document.getElementById('chartType').addEventListener('change', initChart);
-        document.getElementById('currencyPair').addEventListener('change', () => {
-            candleData.length = 0;
-            candleData.push(...generateCandleData(parseInt(document.getElementById('candleCount').value)));
-            initChart();
-            populateCandleTable();
+        // Ajouter des event listeners aux boutons du TOC
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.toc-list a').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const chapterId = this.getAttribute('href').substring(1);
+                    showChapter(chapterId);
+                });
+            });
         });
     </script>
 </body>
-    </html>
+</html>
