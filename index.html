@@ -1,1313 +1,605 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HACKEN STORE - Book d'Analyse de Marché</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Georgia', 'Serif', serif;
-            background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%);
-            color: #333;
-            line-height: 1.8;
-        }
-
-        /* Header */
-        header {
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            color: #00d4ff;
-            padding: 50px 40px;
-            text-align: center;
-            border-bottom: 5px solid #00d4ff;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-        }
-
-        .header-title {
-            font-size: 48px;
-            font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            margin-bottom: 15px;
-            background: linear-gradient(135deg, #00d4ff, #0099ff);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .subtitle {
-            font-size: 24px;
-            color: #00d4ff;
-            margin-bottom: 20px;
-            font-style: italic;
-        }
-
-        .creator-info {
-            font-size: 14px;
-            color: #aaa;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            margin-top: 20px;
-            padding-top: 20px;
-            border-top: 2px solid #00d4ff;
-        }
-
-        /* Table of Contents */
-        .toc-container {
-            background: white;
-            max-width: 900px;
-            margin: 50px auto;
-            padding: 40px;
-            border-left: 8px solid #00d4ff;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-            border-radius: 10px;
-        }
-
-        .toc-title {
-            font-size: 32px;
-            color: #1a1a2e;
-            margin-bottom: 30px;
-            text-align: center;
-            border-bottom: 3px solid #00d4ff;
-            padding-bottom: 20px;
-        }
-
-        .toc-list {
-            list-style: none;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-        }
-
-        .toc-list li {
-            padding: 15px;
-            background: #f9f9f9;
-            border-left: 4px solid #00d4ff;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .toc-list li:hover {
-            background: #f0f8ff;
-            transform: translateX(10px);
-            box-shadow: 0 3px 10px rgba(0, 212, 255, 0.2);
-        }
-
-        .toc-list a {
-            text-decoration: none;
-            color: #00d4ff;
-            font-weight: 600;
-            font-size: 16px;
-        }
-
-        /* Main Content */
-        .book-container {
-            max-width: 1000px;
-            margin: 0 auto;
-            background: white;
-            box-shadow: 0 0 50px rgba(0, 0, 0, 0.2);
-            display: flex;
-            min-height: 100vh;
-        }
-
-        .book-sidebar {
-            width: 250px;
-            background: #1a1a2e;
-            padding: 30px 20px;
-            position: sticky;
-            top: 0;
-            height: 100vh;
-            overflow-y: auto;
-            border-right: 3px solid #00d4ff;
-        }
-
-        .sidebar-title {
-            color: #00d4ff;
-            font-size: 18px;
-            font-weight: bold;
-            margin-bottom: 20px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .sidebar-menu {
-            list-style: none;
-        }
-
-        .sidebar-menu li {
-            margin-bottom: 15px;
-        }
-
-        .sidebar-menu a {
-            color: #aaa;
-            text-decoration: none;
-            font-size: 13px;
-            transition: all 0.3s ease;
-            display: block;
-            padding: 8px 12px;
-            border-radius: 5px;
-        }
-
-        .sidebar-menu a:hover,
-        .sidebar-menu a.active {
-            color: #00d4ff;
-            background: rgba(0, 212, 255, 0.1);
-            padding-left: 18px;
-        }
-
-        .book-content {
-            flex: 1;
-            padding: 60px 50px;
-            background: #fafafa;
-        }
-
-        .chapter {
-            display: none;
-            animation: fadeIn 0.5s ease-in;
-        }
-
-        .chapter.active {
-            display: block;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .chapter-title {
-            font-size: 42px;
-            color: #1a1a2e;
-            margin-bottom: 15px;
-            border-bottom: 4px solid #00d4ff;
-            padding-bottom: 20px;
-        }
-
-        .chapter-number {
-            color: #00d4ff;
-            font-size: 18px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            margin-bottom: 10px;
-        }
-
-        .section-subtitle {
-            font-size: 28px;
-            color: #00d4ff;
-            margin-top: 40px;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #00d4ff;
-        }
-
-        .text-content {
-            font-size: 16px;
-            line-height: 2;
-            color: #444;
-            margin-bottom: 30px;
-        }
-
-        /* Images et Illustrations */
-        .image-container {
-            margin: 30px 0;
-            text-align: center;
-            background: #f0f8ff;
-            padding: 30px;
-            border-radius: 10px;
-            border: 3px solid #00d4ff;
-        }
-
-        .image-container img {
-            max-width: 100%;
-            height: auto;
-            border-radius: 8px;
-            box-shadow: 0 5px 20px rgba(0, 212, 255, 0.2);
-        }
-
-        .image-caption {
-            font-size: 14px;
-            color: #00d4ff;
-            margin-top: 15px;
-            font-weight: 600;
-            text-transform: uppercase;
-        }
-
-        /* Candlestick Examples */
-        .candlestick-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 30px;
-            margin: 40px 0;
-        }
-
-        .candle-box {
-            background: #f9f9f9;
-            border: 2px solid #00d4ff;
-            border-radius: 10px;
-            padding: 25px;
-            text-align: center;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease;
-        }
-
-        .candle-box:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0, 212, 255, 0.2);
-        }
-
-        .candle-title {
-            font-size: 18px;
-            color: #1a1a2e;
-            font-weight: bold;
-            margin-bottom: 15px;
-        }
-
-        .candle-visual {
-            display: flex;
-            justify-content: center;
-            align-items: flex-end;
-            height: 150px;
-            margin: 20px 0;
-            gap: 15px;
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-        }
-
-        .candle {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-end;
-        }
-
-        .wick {
-            width: 2px;
-            background: #333;
-            min-height: 30px;
-        }
-
-        .body {
-            width: 25px;
-            border: 2px solid #333;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            font-size: 10px;
-        }
-
-        .body.bullish {
-            background: #00ff88;
-            color: black;
-        }
-
-        .body.bearish {
-            background: #ff0055;
-            color: white;
-        }
-
-        .candle-description {
-            font-size: 13px;
-            color: #666;
-            line-height: 1.6;
-            text-align: left;
-        }
-
-        /* Analysis Boxes */
-        .analysis-box {
-            background: #f0f8ff;
-            border-left: 5px solid #00d4ff;
-            padding: 25px;
-            margin: 30px 0;
-            border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0, 212, 255, 0.1);
-        }
-
-        .analysis-title {
-            color: #00d4ff;
-            font-weight: bold;
-            font-size: 16px;
-            margin-bottom: 12px;
-            text-transform: uppercase;
-        }
-
-        .analysis-content {
-            font-size: 15px;
-            color: #444;
-            line-height: 1.8;
-        }
-
-        /* Key Points */
-        .key-points {
-            background: white;
-            border: 2px solid #00d4ff;
-            border-radius: 8px;
-            padding: 25px;
-            margin: 30px 0;
-        }
-
-        .key-points-title {
-            color: #00d4ff;
-            font-size: 18px;
-            font-weight: bold;
-            margin-bottom: 20px;
-            text-transform: uppercase;
-        }
-
-        .key-points ul {
-            list-style: none;
-            padding: 0;
-        }
-
-        .key-points li {
-            padding: 12px 0;
-            padding-left: 30px;
-            position: relative;
-            color: #444;
-            font-size: 15px;
-        }
-
-        .key-points li:before {
-            content: "★";
-            position: absolute;
-            left: 0;
-            color: #00d4ff;
-            font-weight: bold;
-        }
-
-        /* Comparison Table */
-        .comparison-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 30px 0;
-            background: white;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .comparison-table th {
-            background: #1a1a2e;
-            color: #00d4ff;
-            padding: 18px;
-            text-align: left;
-            font-weight: bold;
-            text-transform: uppercase;
-            font-size: 13px;
-        }
-
-        .comparison-table td {
-            padding: 18px;
-            border-bottom: 2px solid #f0f0f0;
-            color: #444;
-        }
-
-        .comparison-table tr:hover {
-            background: #f9f9f9;
-        }
-
-        /* Footer */
-        footer {
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            color: #00d4ff;
-            text-align: center;
-            padding: 40px;
-            border-top: 5px solid #00d4ff;
-            margin-top: 60px;
-        }
-
-        .footer-text {
-            font-size: 14px;
-            margin: 10px 0;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        /* Responsive */
-        @media (max-width: 1024px) {
-            .book-container {
-                flex-direction: column;
-            }
-
-            .book-sidebar {
-                width: 100%;
-                height: auto;
-                position: static;
-                border-right: none;
-                border-bottom: 3px solid #00d4ff;
-                display: flex;
-                flex-wrap: wrap;
-                gap: 30px;
-            }
-
-            .book-content {
-                padding: 40px 30px;
-            }
-
-            .candlestick-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .toc-list {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        @media (max-width: 768px) {
-            header {
-                padding: 30px 20px;
-            }
-
-            .header-title {
-                font-size: 32px;
-            }
-
-            .chapter-title {
-                font-size: 28px;
-            }
-
-            .section-subtitle {
-                font-size: 22px;
-            }
-
-            .book-content {
-                padding: 25px 15px;
-            }
-        }
-
-        /* Print Styles */
-        @media print {
-            body {
-                background: white;
-            }
-
-            .book-sidebar {
-                display: none;
-            }
-
-            .book-container {
-                box-shadow: none;
-            }
-
-            .chapter {
-                display: block;
-                page-break-after: always;
-            }
-        }
-
-        .page-break {
-            page-break-after: always;
-            margin: 60px 0;
-            padding: 40px 0;
-            border-bottom: 3px solid #00d4ff;
-        }
-    </style>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>HACKEN STORE – Free Fire Diamond Recharge</title>
+  <link rel="stylesheet" href="style.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;600;700&family=Exo+2:wght@300;400;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
 </head>
 <body>
-    <!-- Header -->
-    <header>
-        <div class="header-title">📊 HACKEN STORE</div>
-        <div class="subtitle">Book d'Analyse de Marché Professional</div>
-        <div class="creator-info">Créateurs: HACKEN STORE | Guide Complet des Bougies Japonaises</div>
-    </header>
 
-    <!-- Book Container -->
-    <div class="book-container">
-        <!-- Sidebar Navigation -->
-        <div class="book-sidebar">
-            <div class="sidebar-title">📚 Sommaire</div>
-            <ul class="sidebar-menu">
-                <li><a href="#" onclick="showChapter('intro')" class="active">Introduction</a></li>
-                <li><a href="#" onclick="showChapter('chapter1')">Chapitre 1: Bougies Japonaises</a></li>
-                <li><a href="#" onclick="showChapter('chapter2')">Chapitre 2: Patterns Bullish</a></li>
-                <li><a href="#" onclick="showChapter('chapter3')">Chapitre 3: Patterns Bearish</a></li>
-                <li><a href="#" onclick="showChapter('chapter4')">Chapitre 4: Indicateurs</a></li>
-                <li><a href="#" onclick="showChapter('chapter5')">Chapitre 5: Stratégies</a></li>
-                <li><a href="#" onclick="showChapter('chapter6')">Chapitre 6: Cas Pratiques</a></li>
-                <li><a href="#" onclick="showChapter('conclusion')">Conclusion</a></li>
-            </ul>
-        </div>
-
-        <!-- Main Content -->
-        <div class="book-content">
-
-            <!-- Introduction -->
-            <div id="intro" class="chapter active">
-                <div class="chapter-number">📖 Introduction</div>
-                <h1 class="chapter-title">Bienvenue dans le Book d'Analyse de Marché</h1>
-                
-                <div class="text-content">
-                    <p>Ce guide complet vous présente les fondamentaux de l'analyse technique des marchés financiers, 
-                    en mettant l'accent sur les <strong>bougies japonaises</strong> (candlesticks), l'outil d'analyse 
-                    le plus utilisé par les traders professionnels à travers le monde.</p>
-                    
-                    <p>Les bougies japonaises offrent une représentation visuelle claire et immédiate des mouvements 
-                    de prix. Elles combinent l'ouverture, la fermeture, le plus haut et le plus bas d'une période donnée 
-                    en une seule visualisation intuitive.</p>
-                </div>
-
-                <h2 class="section-subtitle">🎯 Objectifs de ce Book</h2>
-                <div class="key-points">
-                    <ul>
-                        <li>Comprendre la structure des bougies japonaises</li>
-                        <li>Identifier les patterns haussiers et baissiers</li>
-                        <li>Maîtriser les indicateurs techniques majeurs</li>
-                        <li>Développer une stratégie de trading cohérente</li>
-                        <li>Analyser des cas réels de marché</li>
-                        <li>Gérer les risques efficacement</li>
-                    </ul>
-                </div>
-
-                <h2 class="section-subtitle">📊 Pourquoi les Bougies Japonaises?</h2>
-                <div class="analysis-box">
-                    <div class="analysis-title">✓ Avantages des Candlesticks</div>
-                    <div class="analysis-content">
-                        Les bougies japonaises sont supérieures aux graphiques en barres car elles montrent visuellement 
-                        la force des acheteurs/vendeurs, les niveaux de support/résistance apparaissent instantanément, 
-                        et les patterns se forment naturellement. Elles permettent une analyse rapide et précise.
-                    </div>
-                </div>
-
-                <div class="page-break"></div>
-            </div>
-
-            <!-- Chapitre 1 -->
-            <div id="chapter1" class="chapter">
-                <div class="chapter-number">Chapitre 1</div>
-                <h1 class="chapter-title">Les Bougies Japonaises - Fondamentaux</h1>
-
-                <h2 class="section-subtitle">Structure d'une Bougie</h2>
-                <div class="text-content">
-                    Une bougie japonaise représente l'action des prix sur une période spécifique (1 minute, 5 minutes, 
-                    1 heure, 1 jour, etc.). Elle se compose de 4 éléments clés:
-                </div>
-
-                <!-- Candlestick Structure -->
-                <div class="candlestick-grid">
-                    <div class="candle-box">
-                        <div class="candle-title">OHLC</div>
-                        <div class="text-content" style="margin: 0;">
-                            <strong>O</strong>pen = Ouverture<br>
-                            <strong>H</strong>igh = Plus Haut<br>
-                            <strong>L</strong>ow = Plus Bas<br>
-                            <strong>C</strong>lose = Fermeture
-                        </div>
-                    </div>
-
-                    <div class="candle-box">
-                        <div class="candle-title">Le Corps</div>
-                        <div class="text-content" style="margin: 0;">
-                            Représente l'écart entre l'ouverture et la fermeture. Corps important = forte activité.
-                        </div>
-                    </div>
-
-                    <div class="candle-box">
-                        <div class="candle-title">Les Mèches</div>
-                        <div class="text-content" style="margin: 0;">
-                            Montrent les extrêmes. Mèches longues = volatilité élevée et rejet de prix.
-                        </div>
-                    </div>
-                </div>
-
-                <h2 class="section-subtitle">Candlesticks Haussiers vs Baissiers</h2>
-                
-                <div class="candlestick-grid">
-                    <div class="candle-box">
-                        <div class="candle-title">📈 Bougie Haussière (Bullish)</div>
-                        <div class="candle-visual">
-                            <div class="candle">
-                                <div class="wick"></div>
-                                <div class="body bullish" style="height: 60px;">H</div>
-                                <div class="wick"></div>
-                            </div>
-                        </div>
-                        <div class="candle-description">
-                            <strong>Couleur:</strong> Verte (ou blanche)<br>
-                            <strong>Signification:</strong> Les acheteurs dominent<br>
-                            <strong>Clôture > Ouverture</strong><br>
-                            <strong>Interprétation:</strong> Sentiment haussier
-                        </div>
-                    </div>
-
-                    <div class="candle-box">
-                        <div class="candle-title">📉 Bougie Baissière (Bearish)</div>
-                        <div class="candle-visual">
-                            <div class="candle">
-                                <div class="wick"></div>
-                                <div class="body bearish" style="height: 60px;">B</div>
-                                <div class="wick"></div>
-                            </div>
-                        </div>
-                        <div class="candle-description">
-                            <strong>Couleur:</strong> Rouge (ou noire)<br>
-                            <strong>Signification:</strong> Les vendeurs dominent<br>
-                            <strong>Clôture < Ouverture</strong><br>
-                            <strong>Interprétation:</strong> Sentiment baissier
-                        </div>
-                    </div>
-                </div>
-
-                <h2 class="section-subtitle">Analyse Détaillée</h2>
-                <div class="analysis-box">
-                    <div class="analysis-title">💡 Comment Lire une Bougie</div>
-                    <div class="analysis-content">
-                        1. <strong>Le Corps</strong> montre où s'est établi l'équilibre offre/demande<br>
-                        2. <strong>Les Mèches Supérieures</strong> montrent la résistance des vendeurs<br>
-                        3. <strong>Les Mèches Inférieures</strong> montrent le support des acheteurs<br>
-                        4. <strong>La Taille du Corps</strong> indique la force du mouvement<br>
-                        5. <strong>Les Rejets</strong> (longues mèches) indiquent une indécision
-                    </div>
-                </div>
-
-                <div class="page-break"></div>
-            </div>
-
-            <!-- Chapitre 2 -->
-            <div id="chapter2" class="chapter">
-                <div class="chapter-number">Chapitre 2</div>
-                <h1 class="chapter-title">Patterns Haussiers (Bullish Patterns)</h1>
-
-                <div class="text-content">
-                    Les patterns haussiers sont des formations de bougies qui indiquent une probable hausse des prix. 
-                    Ils représentent l'équilibre entre acheteurs et vendeurs favorisant les acheteurs.
-                </div>
-
-                <h2 class="section-subtitle">Pattern 1: Martteau (Hammer)</h2>
-                <div class="candlestick-grid">
-                    <div class="candle-box">
-                        <div class="candle-title">Hammer Pattern</div>
-                        <div class="candle-visual">
-                            <div class="candle">
-                                <div class="wick" style="height: 50px;"></div>
-                                <div class="body bullish" style="height: 15px;"></div>
-                                <div class="wick" style="height: 5px;"></div>
-                            </div>
-                        </div>
-                        <div class="candle-description">
-                            <strong>Structure:</strong> Longue mèche inférieure, petit corps<br>
-                            <strong>Signal:</strong> Achat potentiel après test du support<br>
-                            <strong>Force:</strong> Très fiable en zone de support
-                        </div>
-                    </div>
-
-                    <div class="candle-box">
-                        <div class="candle-title">Signification</div>
-                        <div class="candle-description">
-                            Le marché teste un support (mèche), mais les acheteurs le défendent (clôture élevée). 
-                            Cela crée une configuration "marteau" qui indique une probable reprise haussière.
-                        </div>
-                    </div>
-                </div>
-
-                <h2 class="section-subtitle">Pattern 2: Étoile du Matin (Morning Star)</h2>
-                <div class="analysis-box">
-                    <div class="analysis-title">☀️ Morning Star</div>
-                    <div class="analysis-content">
-                        <strong>Composition:</strong> 3 bougies<br>
-                        1. Bougie baissière forte<br>
-                        2. Petite bougie (indécision)<br>
-                        3. Bougie haussière forte<br>
-                        <strong>Signal:</strong> Signal d'inversion haussière très puissant
-                    </div>
-                </div>
-
-                <h2 class="section-subtitle">Pattern 3: Engulfing Haussier</h2>
-                <div class="candlestick-grid">
-                    <div class="candle-box">
-                        <div class="candle-title">Bullish Engulfing</div>
-                        <div class="candle-visual">
-                            <div class="candle" style="gap: 5px;">
-                                <div class="body bearish" style="height: 30px;"></div>
-                                <div class="body bullish" style="height: 60px;"></div>
-                            </div>
-                        </div>
-                        <div class="candle-description">
-                            La seconde bougie engloutit complètement la première. Signal d'inversion haussière.
-                        </div>
-                    </div>
-
-                    <div class="candle-box">
-                        <div class="candle-title">Points Clés</div>
-                        <div class="candle-description">
-                            <strong>Avant:</strong> Tendance baissière<br>
-                            <strong>Après:</strong> Probable hausse<br>
-                            <strong>Force:</strong> Plus forte en zone de support<br>
-                            <strong>Volume:</strong> Volume en hausse = signal plus fort
-                        </div>
-                    </div>
-                </div>
-
-                <div class="key-points">
-                    <div class="key-points-title">✓ Patterns Haussiers Majeurs</div>
-                    <ul>
-                        <li>Hammer - Test du support avec clôture élevée</li>
-                        <li>Morning Star - Inversion 3 bougies</li>
-                        <li>Bullish Engulfing - Absorption de bougie baissière</li>
-                        <li>Piercing Line - Pénétration du support</li>
-                        <li>Three White Soldiers - 3 bougies haussières consécutives</li>
-                    </ul>
-                </div>
-
-                <div class="page-break"></div>
-            </div>
-
-            <!-- Chapitre 3 -->
-            <div id="chapter3" class="chapter">
-                <div class="chapter-number">Chapitre 3</div>
-                <h1 class="chapter-title">Patterns Baissiers (Bearish Patterns)</h1>
-
-                <div class="text-content">
-                    Les patterns baissiers indiquent une probable baisse des prix. Ils représentent un déséquilibre 
-                    favorable aux vendeurs et souvent signalent une inversion de tendance haussière.
-                </div>
-
-                <h2 class="section-subtitle">Pattern 1: Pendu (Hanging Man)</h2>
-                <div class="candlestick-grid">
-                    <div class="candle-box">
-                        <div class="candle-title">Hanging Man Pattern</div>
-                        <div class="candle-visual">
-                            <div class="candle">
-                                <div class="wick" style="height: 5px;"></div>
-                                <div class="body bearish" style="height: 15px;"></div>
-                                <div class="wick" style="height: 50px;"></div>
-                            </div>
-                        </div>
-                        <div class="candle-description">
-                            <strong>Structure:</strong> Longue mèche inférieure, petit corps haut<br>
-                            <strong>Signal:</strong> Vente potentielle après test de résistance<br>
-                            <strong>Force:</strong> Très fiable en zone de résistance
-                        </div>
-                    </div>
-
-                    <div class="candle-box">
-                        <div class="candle-title">Signification</div>
-                        <div class="candle-description">
-                            Après une hausse, le marché teste les extrêmes mais ne parvient pas à maintenir les gains. 
-                            Les vendeurs reprennent le contrôle, créant une configuration d'avertissement baissier.
-                        </div>
-                    </div>
-                </div>
-
-                <h2 class="section-subtitle">Pattern 2: Étoile du Soir (Evening Star)</h2>
-                <div class="analysis-box">
-                    <div class="analysis-title">🌙 Evening Star</div>
-                    <div class="analysis-content">
-                        <strong>Composition:</strong> 3 bougies<br>
-                        1. Bougie haussière forte<br>
-                        2. Petite bougie (indécision)<br>
-                        3. Bougie baissière forte<br>
-                        <strong>Signal:</strong> Signal d'inversion baissière puissant
-                    </div>
-                </div>
-
-                <h2 class="section-subtitle">Pattern 3: Engulfing Baissier</h2>
-                <div class="candlestick-grid">
-                    <div class="candle-box">
-                        <div class="candle-title">Bearish Engulfing</div>
-                        <div class="candle-visual">
-                            <div class="candle" style="gap: 5px;">
-                                <div class="body bullish" style="height: 30px;"></div>
-                                <div class="body bearish" style="height: 60px;"></div>
-                            </div>
-                        </div>
-                        <div class="candle-description">
-                            La seconde bougie engloutit complètement la première. Signal d'inversion baissière.
-                        </div>
-                    </div>
-
-                    <div class="candle-box">
-                        <div class="candle-title">Points Clés</div>
-                        <div class="candle-description">
-                            <strong>Avant:</strong> Tendance haussière<br>
-                            <strong>Après:</strong> Probable baisse<br>
-                            <strong>Force:</strong> Plus forte en zone de résistance<br>
-                            <strong>Volume:</strong> Volume en hausse = signal plus fort
-                        </div>
-                    </div>
-                </div>
-
-                <div class="key-points">
-                    <div class="key-points-title">✗ Patterns Baissiers Majeurs</div>
-                    <ul>
-                        <li>Hanging Man - Rejet après hausse</li>
-                        <li>Evening Star - Inversion 3 bougies</li>
-                        <li>Bearish Engulfing - Absorption de bougie haussière</li>
-                        <li>Dark Cloud Cover - Couverture sombre</li>
-                        <li>Three Black Crows - 3 bougies baissières consécutives</li>
-                    </ul>
-                </div>
-
-                <div class="page-break"></div>
-            </div>
-
-            <!-- Chapitre 4 -->
-            <div id="chapter4" class="chapter">
-                <div class="chapter-number">Chapitre 4</div>
-                <h1 class="chapter-title">Indicateurs Techniques Essentiels</h1>
-
-                <div class="text-content">
-                    Les indicateurs techniques complètent l'analyse des bougies en fournissant des signaux 
-                    mathématiques objectifs. Ils aident à confirmer les tendances et à identifier les retournements.
-                </div>
-
-                <h2 class="section-subtitle">1. RSI (Relative Strength Index)</h2>
-                <div class="analysis-box">
-                    <div class="analysis-title">📊 RSI(14)</div>
-                    <div class="analysis-content">
-                        <strong>Formule:</strong> RSI = 100 - (100 / (1 + RS))<br>
-                        <strong>Plage:</strong> 0 à 100<br>
-                        <strong>Interprétation:</strong><br>
-                        • RSI > 70 = Suracheté (signal de vente)<br>
-                        • RSI < 30 = Survendu (signal d'achat)<br>
-                        • RSI 40-60 = Zone neutre<br>
-                        <strong>Utilité:</strong> Détecte les extrêmes et les divergences
-                    </div>
-                </div>
-
-                <h2 class="section-subtitle">2. MACD (Moving Average Convergence Divergence)</h2>
-                <div class="analysis-box">
-                    <div class="analysis-title">⚙️ MACD</div>
-                    <div class="analysis-content">
-                        <strong>Composants:</strong> Ligne MACD + Ligne Signal + Histogramme<br>
-                        <strong>Signaux:</strong><br>
-                        • MACD croise au-dessus de Signal = Achat<br>
-                        • MACD croise au-dessous de Signal = Vente<br>
-                        • Histogramme > 0 = Momentum haussier<br>
-                        • Histogramme < 0 = Momentum baissier<br>
-                        <strong>Utilité:</strong> Confirme les tendances et identifie les changements
-                    </div>
-                </div>
-
-                <h2 class="section-subtitle">3. Bandes de Bollinger</h2>
-                <div class="analysis-box">
-                    <div class="analysis-title">📈 Bollinger Bands</div>
-                    <div class="analysis-content">
-                        <strong>Composition:</strong> SMA(20) + 2 écarts-types<br>
-                        <strong>Interprétation:</strong><br>
-                        • Prix touche bande supérieure = Suracheté<br>
-                        • Prix touche bande inférieure = Survendu<br>
-                        • Bandes qui se resserrent = Volatilité faible<br>
-                        • Bandes qui s'élargissent = Volatilité élevée<br>
-                        <strong>Utilité:</strong> Mesure la volatilité et les extrêmes de prix
-                    </div>
-                </div>
-
-                <h2 class="section-subtitle">4. Moyennes Mobiles</h2>
-                <table class="comparison-table">
-                    <thead>
-                        <tr>
-                            <th>Type</th>
-                            <th>Période</th>
-                            <th>Utilité</th>
-                            <th>Signal</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><strong>SMA(50)</strong></td>
-                            <td>50 jours</td>
-                            <td>Tendance à moyen terme</td>
-                            <td>Prix > SMA50 = Haussier</td>
-                        </tr>
-                        <tr>
-                            <td><strong>SMA(200)</strong></td>
-                            <td>200 jours</td>
-                            <td>Tendance long terme</td>
-                            <td>Prix > SMA200 = Très haussier</td>
-                        </tr>
-                        <tr>
-                            <td><strong>EMA(12)</strong></td>
-                            <td>12 jours</td>
-                            <td>Réactivité rapide</td>
-                            <td>Croisement EMA12/EMA26</td>
-                        </tr>
-                    </tbody>
-                </table>
-
-                <div class="page-break"></div>
-            </div>
-
-            <!-- Chapitre 5 -->
-            <div id="chapter5" class="chapter">
-                <div class="chapter-number">Chapitre 5</div>
-                <h1 class="chapter-title">Stratégies de Trading</h1>
-
-                <div class="text-content">
-                    Une stratégie de trading cohérente combine l'analyse des bougies, les indicateurs techniques, 
-                    et une gestion des risques rigoureuse.
-                </div>
-
-                <h2 class="section-subtitle">🎯 Stratégie 1: Support & Résistance</h2>
-                <div class="analysis-box">
-                    <div class="analysis-title">Principes</div>
-                    <div class="analysis-content">
-                        <strong>Support:</strong> Zone où les acheteurs entrent, freinant la baisse<br>
-                        <strong>Résistance:</strong> Zone où les vendeurs entrent, freinant la hausse<br>
-                        <strong>Cassure:</strong> Dépassement d'un niveau clé = signal fort<br>
-                        <br>
-                        <strong>Signaux d'Entrée:</strong><br>
-                        • Achat: Rebond sur support avec confirmation bougie haussière<br>
-                        • Vente: Rejet à la résistance avec confirmation bougie baissière
-                    </div>
-                </div>
-
-                <h2 class="section-subtitle">📊 Stratégie 2: Suivi de Tendance</h2>
-                <div class="key-points">
-                    <div class="key-points-title">Trend Following</div>
-                    <ul>
-                        <li>Identifier la tendance principale (haussière, baissière, latérale)</li>
-                        <li>Utiliser les moyennes mobiles pour confirmer</li>
-                        <li>Entrer lors de corrections légères dans la tendance</li>
-                        <li>Sortir quand l'indicateur montre un retournement</li>
-                        <li>Utiliser des stop-loss pour limiter les pertes</li>
-                    </ul>
-                </div>
-
-                <h2 class="section-subtitle">🔄 Stratégie 3: Retournement</h2>
-                <div class="analysis-box">
-                    <div class="analysis-title">Reversal Trading</div>
-                    <div class="analysis-content">
-                        <strong>Objectif:</strong> Trader les points de retournement<br>
-                        <strong>Signaux:</strong><br>
-                        • Morning Star en bas = Achat<br>
-                        • Evening Star en haut = Vente<br>
-                        • RSI extrême + divergence = Retournement probable<br>
-                        <strong>Avantage:</strong> Potentiel de gain élevé<br>
-                        <strong>Inconvénient:</strong> Plus de fausses cassures
-                    </div>
-                </div>
-
-                <h2 class="section-subtitle">⚠️ Gestion des Risques</h2>
-                <table class="comparison-table">
-                    <thead>
-                        <tr>
-                            <th>Élément</th>
-                            <th>Description</th>
-                            <th>Importance</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><strong>Stop-Loss</strong></td>
-                            <td>Limite de perte maximale par trade</td>
-                            <td>Critique</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Take-Profit</strong></td>
-                            <td>Objectif de gain à atteindre</td>
-                            <td>Important</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Ratio R:R</strong></td>
-                            <td>Risque vs Récompense (minimum 1:2)</td>
-                            <td>Essentiel</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Taille Position</strong></td>
-                            <td>% du capital par trade (max 2%)</td>
-                            <td>Fondamental</td>
-                        </tr>
-                    </tbody>
-                </table>
-
-                <div class="page-break"></div>
-            </div>
-
-            <!-- Chapitre 6 -->
-            <div id="chapter6" class="chapter">
-                <div class="chapter-number">Chapitre 6</div>
-                <h1 class="chapter-title">Cas Pratiques & Analyses Réelles</h1>
-
-                <div class="text-content">
-                    Examinons des exemples concrets d'analyse de marché utilisant les bougies japonaises 
-                    et les indicateurs techniques.
-                </div>
-
-                <h2 class="section-subtitle">📈 Cas 1: EURUSD - Rebond sur Support</h2>
-                <div class="analysis-box">
-                    <div class="analysis-title">Scénario</div>
-                    <div class="analysis-content">
-                        Le pair EURUSD descend depuis une résistance à 1.1050. Il teste le support à 1.0850.
-                    </div>
-                </div>
-
-                <div class="candlestick-grid">
-                    <div class="candle-box">
-                        <div class="candle-title">Jour 1-2: Approche</div>
-                        <div class="candle-visual">
-                            <div class="candle">
-                                <div class="body bearish" style="height: 50px;"></div>
-                            </div>
-                            <div class="candle">
-                                <div class="body bearish" style="height: 45px;"></div>
-                            </div>
-                        </div>
-                        <div class="candle-description">
-                            Deux bougies baissières consécutives testent le support.
-                        </div>
-                    </div>
-
-                    <div class="candle-box">
-                        <div class="candle-title">Jour 3: Signal d'Achat</div>
-                        <div class="candle-visual">
-                            <div class="candle">
-                                <div class="wick" style="height: 40px;"></div>
-                                <div class="body bullish" style="height: 50px;"></div>
-                                <div class="wick" style="height: 5px;"></div>
-                            </div>
-                        </div>
-                        <div class="candle-description">
-                            Bougie haussière avec longue mèche = Hammer. 
-                            Support défendu. ACHAT!
-                        </div>
-                    </div>
-
-                    <div class="candle-box">
-                        <div class="candle-title">Jour 4-5: Confirmation</div>
-                        <div class="candle-visual">
-                            <div class="candle">
-                                <div class="body bullish" style="height: 55px;"></div>
-                            </div>
-                            <div class="candle">
-                                <div class="body bullish" style="height: 60px;"></div>
-                            </div>
-                        </div>
-                        <div class="candle-description">
-                            Deux bougies haussières consécutives = Confirmation. 
-                            Momentum positif.
-                        </div>
-                    </div>
-                </div>
-
-                <div class="key-points">
-                    <div class="key-points-title">Analyse Détaillée</div>
-                    <ul>
-                        <li>Support 1.0850 testé 3 fois = Support fort</li>
-                        <li>Hammer pattern = Rejection du bas, acheteurs forts</li>
-                        <li>RSI passe de <30 (survendu) à >50 = Momentum change</li>
-                        <li>MACD croise au-dessus de la ligne signal = Confirmation</li>
-                        <li>Objectif: Résistance à 1.0950 puis 1.1000</li>
-                        <li>Stop-Loss: Sous 1.0820 (cassure du support)</li>
-                    </ul>
-                </div>
-
-                <h2 class="section-subtitle">📉 Cas 2: GBP/USD - Inversion à la Résistance</h2>
-                <div class="analysis-box">
-                    <div class="analysis-title">Scénario</div>
-                    <div class="analysis-content">
-                        GBP/USD a atteint une résistance à 1.3050. Trois bougies se forment: haussière, 
-                        petite, puis baissière.
-                    </div>
-                </div>
-
-                <div class="candlestick-grid">
-                    <div class="candle-box">
-                        <div class="candle-title">Jour 1: Approche</div>
-                        <div class="candle-visual">
-                            <div class="candle">
-                                <div class="body bullish" style="height: 60px;"></div>
-                            </div>
-                        </div>
-                        <div class="candle-description">
-                            Bougie haussière forte atteignant la résistance.
-                        </div>
-                    </div>
-
-                    <div class="candle-box">
-                        <div class="candle-title">Jour 2: Indécision</div>
-                        <div class="candle-visual">
-                            <div class="candle">
-                                <div class="wick" style="height: 20px;"></div>
-                                <div class="body bullish" style="height: 15px;"></div>
-                                <div class="wick" style="height: 15px;"></div>
-                            </div>
-                        </div>
-                        <div class="candle-description">
-                            Petite bougie = Indécision au sommet.
-                        </div>
-                    </div>
-
-                    <div class="candle-box">
-                        <div class="candle-title">Jour 3: Signal de Vente</div>
-                        <div class="candle-visual">
-                            <div class="candle">
-                                <div class="wick" style="height: 5px;"></div>
-                                <div class="body bearish" style="height: 65px;"></div>
-                                <div class="wick" style="height: 10px;"></div>
-                            </div>
-                        </div>
-                        <div class="candle-description">
-                            Bougie baissière forte = Evening Star!
-                            VENTE!
-                        </div>
-                    </div>
-                </div>
-
-                <div class="key-points">
-                    <div class="key-points-title">Analyse Détaillée</div>
-                    <ul>
-                        <li>Evening Star pattern = Inversion haussière très fiable</li>
-                        <li>RSI atteint >70 (suracheté) = Confirmation</li>
-                        <li>MACD divergence = Prix monte mais momentum baisse</li>
-                        <li>Rejet à la résistance = Cassure impossible</li>
-                        <li>Objectif: Support à 1.2950 puis 1.2900</li>
-                        <li>Stop-Loss: Au-dessus de 1.3100 (cassure de la résistance)</li>
-                    </ul>
-                </div>
-
-                <div class="page-break"></div>
-            </div>
-
-            <!-- Conclusion -->
-            <div id="conclusion" class="chapter">
-                <div class="chapter-number">📚 Conclusion</div>
-                <h1 class="chapter-title">Maîtriser l'Analyse de Marché</h1>
-
-                <h2 class="section-subtitle">Résumé des Apprentissages</h2>
-                <div class="text-content">
-                    Vous disposez maintenant des connaissances essentielles pour analyser les marchés financiers 
-                    en utilisant les bougies japonaises. Voici les points clés à retenir:
-                </div>
-
-                <div class="key-points">
-                    <div class="key-points-title">✓ Fondamentaux Essentiels</div>
-                    <ul>
-                        <li>Les bougies japonaises combinent OHLC en une visualisation claire</li>
-                        <li>Les couleurs (vert/rouge) indiquent la direction (haussier/baissier)</li>
-                        <li>Les mèches montrent la volatilité et les rejets de prix</li>
-                        <li>Les patterns (Hammer, Morning Star, etc.) offrent des signaux fiables</li>
-                        <li>Les indicateurs (RSI, MACD, Bollinger) confirment les signaux</li>
-                        <li>La gestion des risques est plus importante que la prédiction exacte</li>
-                    </ul>
-                </div>
-
-                <h2 class="section-subtitle">🚀 Prochaines Étapes</h2>
-                <div class="analysis-box">
-                    <div class="analysis-title">Pour Progresser</div>
-                    <div class="analysis-content">
-                        1. <strong>Pratiquer sur un compte démo</strong> - Appliquez les stratégies sans risque<br>
-                        2. <strong>Tenir un journal de trading</strong> - Documentez chaque trade<br>
-                        3. <strong>Analyser les graphiques historiques</strong> - Identifiez les patterns<br>
-                        4. <strong>Maîtriser la gestion des risques</strong> - C'est la clé de la survie<br>
-                        5. <strong>Rester émotionnellement stable</strong> - Suivez votre plan, pas les émotions<br>
-                        6. <strong>Continuer à apprendre</strong> - Les marchés évoluent constamment
-                    </div>
-                </div>
-
-                <h2 class="section-subtitle">⚠️ Points d'Attention Importants</h2>
-                <div class="analysis-box">
-                    <div class="analysis-title">Avertissement</div>
-                    <div class="analysis-content">
-                        • Le trading comporte des risques élevés<br>
-                        • Aucun indicateur n'est 100% fiable<br>
-                        • Les pertes sont possibles et probables au début<br>
-                        • Ne tradez jamais avec de l'argent que vous ne pouvez pas perdre<br>
-                        • La patience et la discipline sont plus importantes que la vitesse<br>
-                        • L'éducation continue est obligatoire pour réussir
-                    </div>
-                </div>
-
-                <h2 class="section-subtitle">💡 Citations de Traders Célèbres</h2>
-                <div style="margin: 30px 0;">
-                    <div style="background: #f0f8ff; padding: 20px; border-left: 5px solid #00d4ff; margin: 15px 0;">
-                        <p style="font-style: italic; color: #444;">
-                            "Dans le trading, il n'y a pas de saint graal. Le succès vient de la discipline, 
-                            de la gestion des risques, et de l'apprentissage constant."
-                        </p>
-                        <p style="text-align: right; color: #00d4ff; margin-top: 10px;">— Mark Douglas</p>
-                    </div>
-
-                    <div style="background: #f0f8ff; padding: 20px; border-left: 5px solid #00d4ff; margin: 15px 0;">
-                        <p style="font-style: italic; color: #444;">
-                            "Le marché n'est pas une machine à faire de l'argent, c'est une arène où la 
-                            connaissance et la psychologie s'affrontent."
-                        </p>
-                        <p style="text-align: right; color: #00d4ff; margin-top: 10px;">— Jesse Livermore</p>
-                    </div>
-                </div>
-
-                <h2 class="section-subtitle">🎓 Modules Recommandés pour Continuer</h2>
-                <div class="key-points">
-                    <div class="key-points-title">Prochaines Formations</div>
-                    <ul>
-                        <li>Analyse Harmonique et Fibonacci</li>
-                        <li>Trading sur Volumes et Profils</li>
-                        <li>Théorie des Ondes d'Elliott</li>
-                        <li>Psychologie du Trading Avancée</li>
-                        <li>Algorithmes et Trading Automatisé</li>
-                        <li>Gestion Avancée du Portefeuille</li>
-                    </ul>
-                </div>
-
-                <div style="margin-top: 50px; padding: 30px; background: #f0f8ff; border-radius: 10px; text-align: center;">
-                    <h3 style="color: #00d4ff; margin-bottom: 15px;">© 2024 HACKEN STORE</h3>
-                    <p style="color: #666; margin: 10px 0;">Plateforme d'Analyse de Marché Professional</p>
-                    <p style="color: #666; margin: 10px 0;">Créateurs: HACKEN STORE</p>
-                    <p style="color: #aaa; margin-top: 15px; font-size: 12px;">
-                        Cet ouvrage a été créé pour fournir une éducation de haute qualité sur les marchés financiers.
-                    </p>
-                </div>
-            </div>
-
-        </div>
+<!-- FIRE PARTICLES -->
+<div id="fire-particles"></div>
+<div class="bg-flames"></div>
+<div class="bg-grid"></div>
+
+<!-- ======= HEADER ======= -->
+<header class="header">
+  <div class="header-inner">
+    <div class="logo">
+      <div class="logo-icon">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/Free_Fire_Logo.png/240px-Free_Fire_Logo.png" alt="FF" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
+        <span style="display:none;color:#fff;font-size:20px;"><i class="fas fa-fire"></i></span>
+      </div>
+      <div class="logo-text">
+        <span class="logo-game">FREE FIRE</span>
+        <span class="logo-store">HACKEN STORE</span>
+      </div>
+      <div class="logo-official"><i class="fas fa-shield-alt"></i> OFFICIEL</div>
+    </div>
+    <nav class="nav-pills">
+      <span class="nav-pill active"><i class="fas fa-gem"></i> Diamants</span>
+      <span class="nav-pill"><i class="fas fa-crown"></i> Membership</span>
+      <span class="nav-pill"><i class="fas fa-headset"></i> Support</span>
+    </nav>
+    <div class="live-badge">
+      <div class="live-dot"></div>
+      <span>LIVE · EN LIGNE</span>
+    </div>
+  </div>
+  <div class="ticker-bar">
+    <div class="ticker-inner">
+      🔥 RECHARGE FREE FIRE INSTANTANÉE · 💎 DIAMANTS GARANTIS · ⚡ LIVRAISON 30 SEC · 🛡️ 100% SÉCURISÉ · 🎮 TOUS SERVEURS FF · 👑 +2M JOUEURS SATISFAITS · 🔥
+    </div>
+  </div>
+</header>
+
+<!-- ======= HERO ======= -->
+<section class="hero">
+  <div class="hero-bg-char">
+    <div class="ff-char-silhouette"></div>
+  </div>
+  <div class="hero-content">
+    <div class="hero-tag"><i class="fas fa-fire"></i> PLATEFORME #1 FREE FIRE</div>
+    <h1 class="hero-title">
+      <span class="ff-yellow">FREE FIRE</span><br/>
+      <span class="ff-white">DIAMOND</span>
+      <span class="ff-orange"> RECHARGE</span>
+    </h1>
+    <p class="hero-sub">Rechargez vos diamants FF en quelques secondes · Sécurisé · Instantané · Garanti</p>
+    <div class="hero-counters">
+      <div class="counter"><span class="cval">2.4M+</span><span class="clabel">Commandes</span></div>
+      <div class="c-sep"></div>
+      <div class="counter"><span class="cval">99.9%</span><span class="clabel">Succès</span></div>
+      <div class="c-sep"></div>
+      <div class="counter"><span class="cval">30s</span><span class="clabel">Livraison</span></div>
+      <div class="c-sep"></div>
+      <div class="counter"><span class="cval">24/7</span><span class="clabel">Support</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ======= MAIN ======= -->
+<main class="main">
+
+  <!-- ÉTAPE 1 : UID + SERVEUR -->
+  <div class="ff-card" id="step1">
+    <div class="ff-card-glow"></div>
+    <div class="card-head">
+      <div class="step-badge">01</div>
+      <div>
+        <h2 class="card-title"><i class="fas fa-user-circle"></i> Informations du Joueur FF</h2>
+        <p class="card-sub">Entrez votre UID Free Fire et choisissez votre région</p>
+      </div>
     </div>
 
-    <!-- Footer -->
-    <footer>
-        <div class="footer-text">© 2024 HACKEN STORE - Book d'Analyse de Marché Professional</div>
-        <div class="footer-text">Créateurs: HACKEN STORE</div>
-        <div class="footer-text">Guide Complet des Bougies Japonaises | Analyse Technique Professional</div>
-        <div class="footer-text" style="margin-top: 20px; font-size: 12px;">
-            Cet ouvrage contient des informations éducatives. Les trading et investissements comportent des risques.
+    <div class="form-row">
+      <div class="form-col">
+        <label class="ff-label"><i class="fas fa-id-badge"></i> UID Free Fire</label>
+        <div class="ff-input-wrap">
+          <input type="text" id="uid-input" class="ff-input" placeholder="Ex: 123456789" maxlength="12"/>
+          <div class="ff-input-icon"><i class="fas fa-gamepad"></i></div>
         </div>
-    </footer>
+        <div class="uid-status" id="uid-status"></div>
+      </div>
+      <div class="form-col">
+        <label class="ff-label"><i class="fas fa-globe"></i> Serveur / Région</label>
+        <div class="ff-select-wrap">
+          <select class="ff-select" id="server-select">
+            <option value="">-- Sélectionner un serveur --</option>
+            <optgroup label="🌍 Europe">
+              <option value="EU-FR">🇫🇷 France – Serveur EU</option>
+              <option value="EU-DE">🇩🇪 Allemagne – Serveur EU</option>
+              <option value="EU-ES">🇪🇸 Espagne – Serveur EU</option>
+              <option value="EU-PT">🇵🇹 Portugal – Serveur EU</option>
+              <option value="EU-IT">🇮🇹 Italie – Serveur EU</option>
+              <option value="EU-BE">🇧🇪 Belgique – Serveur EU</option>
+            </optgroup>
+            <optgroup label="🌍 Afrique / Moyen-Orient">
+              <option value="AF-MA">🇲🇦 Maroc – Serveur AF</option>
+              <option value="AF-DZ">🇩🇿 Algérie – Serveur AF</option>
+              <option value="AF-TN">🇹🇳 Tunisie – Serveur AF</option>
+              <option value="AF-SN">🇸🇳 Sénégal – Serveur AF</option>
+              <option value="AF-CI">🇨🇮 Côte d'Ivoire – Serveur AF</option>
+              <option value="AF-EG">🇪🇬 Égypte – Serveur ME</option>
+              <option value="ME-SA">🇸🇦 Arabie Saoudite – Serveur ME</option>
+            </optgroup>
+            <optgroup label="🌏 Asie">
+              <option value="AS-ID">🇮🇩 Indonésie – Serveur AS</option>
+              <option value="AS-TH">🇹🇭 Thaïlande – Serveur AS</option>
+              <option value="AS-PH">🇵🇭 Philippines – Serveur AS</option>
+              <option value="AS-MY">🇲🇾 Malaisie – Serveur AS</option>
+              <option value="AS-SG">🇸🇬 Singapour – Serveur AS</option>
+              <option value="AS-VN">🇻🇳 Vietnam – Serveur AS</option>
+            </optgroup>
+            <optgroup label="🌎 Amérique">
+              <option value="NA-US">🇺🇸 USA – Serveur NA</option>
+              <option value="SA-BR">🇧🇷 Brésil – Serveur SA</option>
+              <option value="SA-MX">🇲🇽 Mexique – Serveur SA</option>
+            </optgroup>
+          </select>
+          <div class="ff-select-arrow"><i class="fas fa-chevron-down"></i></div>
+        </div>
+        <div class="server-ping" id="server-ping"></div>
+      </div>
+    </div>
 
-    <script>
-        // Navigation
-        function showChapter(chapterId) {
-            // Masquer tous les chapitres
-            document.querySelectorAll('.chapter').forEach(chapter => {
-                chapter.classList.remove('active');
-            });
+    <div class="verify-wrap">
+      <button class="btn-verify" id="btn-verify" onclick="verifyUID()">
+        <i class="fas fa-search"></i>
+        <span>VÉRIFIER MON COMPTE</span>
+        <div class="btn-fire"></div>
+      </button>
+    </div>
 
-            // Afficher le chapitre sélectionné
-            const selectedChapter = document.getElementById(chapterId);
-            if (selectedChapter) {
-                selectedChapter.classList.add('active');
-            }
+    <!-- Carte joueur -->
+    <div class="player-card hidden" id="player-card">
+      <div class="player-avatar-wrap">
+        <div class="avatar-fire-ring"></div>
+        <div class="player-avatar"><i class="fas fa-skull"></i></div>
+        <div class="player-rank">DIAMOND</div>
+      </div>
+      <div class="player-details">
+        <div class="player-name" id="pname">—</div>
+        <div class="player-uid" id="puid">UID : —</div>
+        <div class="player-server" id="pserver">Serveur : —</div>
+        <div class="player-kills"><i class="fas fa-crosshairs"></i> <span id="pkills">—</span> kills</div>
+      </div>
+      <div class="player-verified">
+        <div class="verified-icon"><i class="fas fa-check"></i></div>
+        <span>Vérifié</span>
+      </div>
+    </div>
+  </div>
 
-            // Mettre à jour le menu actif
-            document.querySelectorAll('.sidebar-menu a').forEach(link => {
-                link.classList.remove('active');
-            });
-            event.target.classList.add('active');
+  <!-- ÉTAPE 2 : PRODUITS -->
+  <div class="ff-card" id="step2">
+    <div class="ff-card-glow"></div>
+    <div class="card-head">
+      <div class="step-badge">02</div>
+      <div>
+        <h2 class="card-title"><i class="fas fa-gem"></i> Choisir votre Recharge</h2>
+        <p class="card-sub">Diamants ou Membership — Tout pour dominer la partie !</p>
+      </div>
+    </div>
 
-            // Scroll vers le haut
-            window.scrollTo(0, 0);
-        }
+    <!-- TABS -->
+    <div class="ff-tabs">
+      <button class="ff-tab active" id="tab-d" onclick="switchTab('d')">
+        <i class="fas fa-gem"></i> DIAMANTS
+      </button>
+      <button class="ff-tab" id="tab-m" onclick="switchTab('m')">
+        <i class="fas fa-crown"></i> MEMBERSHIP
+      </button>
+      <button class="ff-tab" id="tab-b" onclick="switchTab('b')">
+        <i class="fas fa-box-open"></i> BUNDLES
+      </button>
+    </div>
 
-        // Ajouter des event listeners aux boutons du TOC
-        document.addEventListener('DOMContentLoaded', function() {
-            document.querySelectorAll('.toc-list a').forEach(link => {
-                link.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const chapterId = this.getAttribute('href').substring(1);
-                    showChapter(chapterId);
-                });
-            });
-        });
-    </script>
+    <!-- ===== DIAMANTS ===== -->
+    <div id="panel-d" class="tab-panel">
+      <div class="diamonds-grid">
+
+        <div class="dcard" data-type="diamonds" data-amount="100" data-price="0.99" onclick="selectProduct(this)">
+          <div class="dcard-shine"></div>
+          <div class="dcard-top">STARTER</div>
+          <div class="dcard-gems">
+            <i class="fas fa-gem"></i>
+          </div>
+          <div class="dcard-amount">100</div>
+          <div class="dcard-label">Diamants</div>
+          <div class="dcard-bonus"></div>
+          <div class="dcard-price">0.99€</div>
+        </div>
+
+        <div class="dcard" data-type="diamonds" data-amount="210" data-price="1.99" onclick="selectProduct(this)">
+          <div class="dcard-shine"></div>
+          <div class="dcard-gems"><i class="fas fa-gem"></i><i class="fas fa-gem"></i></div>
+          <div class="dcard-amount">210</div>
+          <div class="dcard-label">Diamants</div>
+          <div class="dcard-bonus"></div>
+          <div class="dcard-price">1.99€</div>
+        </div>
+
+        <div class="dcard hot" data-type="diamonds" data-amount="310" data-price="2.99" onclick="selectProduct(this)">
+          <div class="dcard-shine"></div>
+          <div class="dcard-top hot-badge">🔥 POPULAIRE</div>
+          <div class="dcard-gems"><i class="fas fa-gem"></i><i class="fas fa-gem"></i><i class="fas fa-gem"></i></div>
+          <div class="dcard-amount">310</div>
+          <div class="dcard-label">Diamants</div>
+          <div class="dcard-bonus">+20 bonus</div>
+          <div class="dcard-price">2.99€</div>
+        </div>
+
+        <div class="dcard" data-type="diamonds" data-amount="520" data-price="4.99" onclick="selectProduct(this)">
+          <div class="dcard-shine"></div>
+          <div class="dcard-gems"><i class="fas fa-gem"></i><i class="fas fa-gem"></i><i class="fas fa-gem"></i></div>
+          <div class="dcard-amount">520</div>
+          <div class="dcard-label">Diamants</div>
+          <div class="dcard-bonus">+30 bonus</div>
+          <div class="dcard-price">4.99€</div>
+        </div>
+
+        <div class="dcard deal" data-type="diamonds" data-amount="1060" data-price="9.99" onclick="selectProduct(this)">
+          <div class="dcard-shine"></div>
+          <div class="dcard-top deal-badge">💎 BEST DEAL</div>
+          <div class="dcard-gems"><i class="fas fa-gem"></i><i class="fas fa-gem"></i><i class="fas fa-gem"></i><i class="fas fa-gem"></i></div>
+          <div class="dcard-amount">1060</div>
+          <div class="dcard-label">Diamants</div>
+          <div class="dcard-bonus">+100 bonus</div>
+          <div class="dcard-price">9.99€</div>
+        </div>
+
+        <div class="dcard" data-type="diamonds" data-amount="2180" data-price="19.99" onclick="selectProduct(this)">
+          <div class="dcard-shine"></div>
+          <div class="dcard-gems"><i class="fas fa-gem"></i><i class="fas fa-gem"></i><i class="fas fa-gem"></i><i class="fas fa-gem"></i><i class="fas fa-gem"></i></div>
+          <div class="dcard-amount">2180</div>
+          <div class="dcard-label">Diamants</div>
+          <div class="dcard-bonus">+200 bonus</div>
+          <div class="dcard-price">19.99€</div>
+        </div>
+
+        <div class="dcard elite" data-type="diamonds" data-amount="5600" data-price="49.99" onclick="selectProduct(this)">
+          <div class="dcard-shine"></div>
+          <div class="dcard-top elite-badge">⭐ ELITE</div>
+          <div class="dcard-gems"><i class="fas fa-gem"></i><i class="fas fa-gem"></i><i class="fas fa-gem"></i><i class="fas fa-gem"></i><i class="fas fa-gem"></i><i class="fas fa-gem"></i></div>
+          <div class="dcard-amount">5600</div>
+          <div class="dcard-label">Diamants</div>
+          <div class="dcard-bonus">+600 bonus</div>
+          <div class="dcard-price">49.99€</div>
+        </div>
+
+        <div class="dcard legendary" data-type="diamonds" data-amount="11200" data-price="99.99" onclick="selectProduct(this)">
+          <div class="dcard-shine"></div>
+          <div class="dcard-top legend-badge">👑 LEGENDARY</div>
+          <div class="dcard-gems"><i class="fas fa-gem"></i><i class="fas fa-gem"></i><i class="fas fa-gem"></i><i class="fas fa-gem"></i><i class="fas fa-gem"></i><i class="fas fa-gem"></i><i class="fas fa-gem"></i><i class="fas fa-gem"></i></div>
+          <div class="dcard-amount">11200</div>
+          <div class="dcard-label">Diamants</div>
+          <div class="dcard-bonus">+1500 bonus</div>
+          <div class="dcard-price">99.99€</div>
+        </div>
+
+        <div class="dcard custom-card" data-type="custom" onclick="openCustom()">
+          <div class="dcard-shine"></div>
+          <div class="dcard-gems"><i class="fas fa-sliders-h"></i></div>
+          <div class="dcard-amount">?</div>
+          <div class="dcard-label">Personnalisé</div>
+          <div class="dcard-bonus"></div>
+          <div class="dcard-price">Custom</div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ===== MEMBERSHIP ===== -->
+    <div id="panel-m" class="tab-panel hidden">
+      <div class="member-grid">
+
+        <div class="mcard weekly" data-type="membership" data-plan="Weekly Membership" data-price="2.49" onclick="selectProduct(this)">
+          <div class="mcard-glow"></div>
+          <div class="mcard-icon"><i class="fas fa-calendar-week"></i></div>
+          <div class="mcard-duration">7 JOURS</div>
+          <div class="mcard-name">Weekly Pass</div>
+          <div class="mcard-perks">
+            <div class="perk"><i class="fas fa-gem"></i> 350 Diamants</div>
+            <div class="perk"><i class="fas fa-tshirt"></i> Costume exclusif</div>
+            <div class="perk"><i class="fas fa-bolt"></i> +100% XP</div>
+            <div class="perk"><i class="fas fa-star"></i> Badge spécial</div>
+          </div>
+          <div class="mcard-price">2.49€<span>/sem</span></div>
+          <div class="mcard-btn">Souscrire <i class="fas fa-fire"></i></div>
+        </div>
+
+        <div class="mcard monthly best" data-type="membership" data-plan="Monthly Membership" data-price="9.99" onclick="selectProduct(this)">
+          <div class="mcard-glow"></div>
+          <div class="mcard-hot">🔥 LE PLUS POPULAIRE</div>
+          <div class="mcard-icon"><i class="fas fa-crown"></i></div>
+          <div class="mcard-duration">30 JOURS</div>
+          <div class="mcard-name">Monthly Elite</div>
+          <div class="mcard-perks">
+            <div class="perk"><i class="fas fa-gem"></i> 1500 Diamants</div>
+            <div class="perk"><i class="fas fa-tshirt"></i> 2 Costumes</div>
+            <div class="perk"><i class="fas fa-bolt"></i> +200% XP</div>
+            <div class="perk"><i class="fas fa-shield-alt"></i> VIP Shield</div>
+            <div class="perk"><i class="fas fa-gift"></i> Pack surprise</div>
+          </div>
+          <div class="mcard-price">9.99€<span>/mois</span></div>
+          <div class="mcard-btn">Souscrire <i class="fas fa-fire"></i></div>
+        </div>
+
+        <div class="mcard quarterly" data-type="membership" data-plan="Quarterly Membership" data-price="24.99" onclick="selectProduct(this)">
+          <div class="mcard-glow"></div>
+          <div class="mcard-icon"><i class="fas fa-calendar-check"></i></div>
+          <div class="mcard-duration">90 JOURS</div>
+          <div class="mcard-name">Quarterly Pro</div>
+          <div class="mcard-perks">
+            <div class="perk"><i class="fas fa-gem"></i> 5000 Diamants</div>
+            <div class="perk"><i class="fas fa-tshirt"></i> 5 Costumes</div>
+            <div class="perk"><i class="fas fa-bolt"></i> Triple XP</div>
+            <div class="perk"><i class="fas fa-shield-alt"></i> VIP Tier 2</div>
+            <div class="perk"><i class="fas fa-gift"></i> Cadeaux hebdo</div>
+          </div>
+          <div class="mcard-price">24.99€<span>/3 mois</span></div>
+          <div class="mcard-btn">Souscrire <i class="fas fa-fire"></i></div>
+        </div>
+
+        <div class="mcard yearly" data-type="membership" data-plan="Annual VIP" data-price="79.99" onclick="selectProduct(this)">
+          <div class="mcard-glow"></div>
+          <div class="mcard-hot gold-badge">👑 MEILLEURE VALEUR</div>
+          <div class="mcard-icon"><i class="fas fa-trophy"></i></div>
+          <div class="mcard-duration">365 JOURS</div>
+          <div class="mcard-name">Annual VIP</div>
+          <div class="mcard-perks">
+            <div class="perk"><i class="fas fa-gem"></i> 22000 Diamants</div>
+            <div class="perk"><i class="fas fa-tshirt"></i> Tous les skins</div>
+            <div class="perk"><i class="fas fa-infinity"></i> XP illimité</div>
+            <div class="perk"><i class="fas fa-shield-alt"></i> VIP MAX</div>
+            <div class="perk"><i class="fas fa-headset"></i> Support dédié</div>
+            <div class="perk"><i class="fas fa-gift"></i> Cadeaux quotidiens</div>
+          </div>
+          <div class="mcard-price">79.99€<span>/an</span></div>
+          <div class="mcard-btn">Souscrire <i class="fas fa-fire"></i></div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ===== BUNDLES ===== -->
+    <div id="panel-b" class="tab-panel hidden">
+      <div class="bundles-grid">
+
+        <div class="bcard" data-type="bundle" data-plan="Starter Bundle" data-price="4.99" onclick="selectProduct(this)">
+          <div class="bcard-img"><i class="fas fa-box"></i></div>
+          <div class="bcard-name">Starter Bundle</div>
+          <div class="bcard-content">
+            <div class="bitem"><i class="fas fa-gem"></i> 500 Diamants</div>
+            <div class="bitem"><i class="fas fa-tshirt"></i> Costume Soldat</div>
+            <div class="bitem"><i class="fas fa-gun"></i> Skin Arme</div>
+          </div>
+          <div class="bcard-price">4.99€</div>
+          <div class="bcard-save">Économisez 30%</div>
+        </div>
+
+        <div class="bcard hot-bundle" data-type="bundle" data-plan="Fire Bundle" data-price="14.99" onclick="selectProduct(this)">
+          <div class="bcard-hot">🔥 HOT</div>
+          <div class="bcard-img"><i class="fas fa-fire"></i></div>
+          <div class="bcard-name">Fire Bundle</div>
+          <div class="bcard-content">
+            <div class="bitem"><i class="fas fa-gem"></i> 1500 Diamants</div>
+            <div class="bitem"><i class="fas fa-tshirt"></i> Costume Legendary</div>
+            <div class="bitem"><i class="fas fa-gun"></i> 3 Skins Armes</div>
+            <div class="bitem"><i class="fas fa-car"></i> Skin Véhicule</div>
+          </div>
+          <div class="bcard-price">14.99€</div>
+          <div class="bcard-save">Économisez 45%</div>
+        </div>
+
+        <div class="bcard vip-bundle" data-type="bundle" data-plan="VIP Bundle" data-price="39.99" onclick="selectProduct(this)">
+          <div class="bcard-hot">👑 VIP</div>
+          <div class="bcard-img"><i class="fas fa-crown"></i></div>
+          <div class="bcard-name">VIP Bundle</div>
+          <div class="bcard-content">
+            <div class="bitem"><i class="fas fa-gem"></i> 5000 Diamants</div>
+            <div class="bitem"><i class="fas fa-tshirt"></i> Pack Complet</div>
+            <div class="bitem"><i class="fas fa-gun"></i> Toutes Armes</div>
+            <div class="bitem"><i class="fas fa-car"></i> 2 Véhicules</div>
+            <div class="bitem"><i class="fas fa-dog"></i> Pet exclusif</div>
+          </div>
+          <div class="bcard-price">39.99€</div>
+          <div class="bcard-save">Économisez 60%</div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Récap sélection -->
+    <div class="selection-bar hidden" id="selection-bar">
+      <div class="sel-icon"><i class="fas fa-check-circle"></i></div>
+      <div class="sel-text">
+        <span id="sel-label">—</span>
+        <span class="sel-price" id="sel-price"></span>
+      </div>
+      <div class="sel-clear" onclick="clearSelection()"><i class="fas fa-times"></i></div>
+    </div>
+  </div>
+
+  <!-- ÉTAPE 3 : PAIEMENT -->
+  <div class="ff-card" id="step3">
+    <div class="ff-card-glow"></div>
+    <div class="card-head">
+      <div class="step-badge">03</div>
+      <div>
+        <h2 class="card-title"><i class="fas fa-credit-card"></i> Méthode de Paiement</h2>
+        <p class="card-sub">Sécurisé · Chiffré · Instantané</p>
+      </div>
+    </div>
+    <div class="pay-grid">
+      <div class="pay-opt" onclick="selectPay(this,'card')">
+        <i class="fas fa-credit-card"></i><span>Carte</span>
+      </div>
+      <div class="pay-opt" onclick="selectPay(this,'paypal')">
+        <i class="fab fa-paypal"></i><span>PayPal</span>
+      </div>
+      <div class="pay-opt" onclick="selectPay(this,'crypto')">
+        <i class="fab fa-bitcoin"></i><span>Crypto</span>
+      </div>
+      <div class="pay-opt" onclick="selectPay(this,'orange')">
+        <i class="fas fa-mobile-alt"></i><span>Orange</span>
+      </div>
+      <div class="pay-opt" onclick="selectPay(this,'google')">
+        <i class="fab fa-google-pay"></i><span>Google Pay</span>
+      </div>
+      <div class="pay-opt" onclick="selectPay(this,'apple')">
+        <i class="fab fa-apple-pay"></i><span>Apple Pay</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- BOUTON ENVOYER -->
+  <div class="send-wrap">
+    <div class="total-row">
+      <span class="total-label">Total :</span>
+      <span class="total-val" id="total-val">—</span>
+    </div>
+    <button class="btn-send" onclick="sendOrder()">
+      <div class="send-fire-left"><i class="fas fa-fire"></i></div>
+      <div class="send-center">
+        <span class="send-main">RECHARGER MAINTENANT</span>
+        <span class="send-sub"><i class="fas fa-bolt"></i> Livraison en 30 secondes</span>
+      </div>
+      <div class="send-fire-right"><i class="fas fa-fire"></i></div>
+    </button>
+    <div class="secure-row">
+      <span><i class="fas fa-lock"></i> SSL 256-bit</span>
+      <span><i class="fas fa-shield-alt"></i> Anti-fraude</span>
+      <span><i class="fas fa-check-double"></i> 100% Garanti</span>
+    </div>
+  </div>
+
+</main>
+
+<!-- ======= LOADING OVERLAY ======= -->
+<div class="ff-loading hidden" id="ff-loading">
+  <div class="loading-box">
+    <div class="loading-gem-anim">
+      <div class="l-ring r1"></div>
+      <div class="l-ring r2"></div>
+      <div class="l-ring r3"></div>
+      <div class="l-gem"><i class="fas fa-gem"></i></div>
+    </div>
+    <div class="loading-title">Traitement de votre commande…</div>
+    <div class="loading-sub" id="loading-sub">Connexion aux serveurs Free Fire…</div>
+    <div class="lbar-wrap">
+      <div class="lbar-fill" id="lbar-fill"></div>
+      <div class="lbar-glow"></div>
+    </div>
+    <div class="lbar-pct" id="lbar-pct">0%</div>
+    <div class="loading-steps">
+      <div class="lstep" id="ls1"><div class="ldot"></div><span>Connexion serveur FF</span></div>
+      <div class="lstep" id="ls2"><div class="ldot"></div><span>Vérification UID</span></div>
+      <div class="lstep" id="ls3"><div class="ldot"></div><span>Traitement paiement</span></div>
+      <div class="lstep" id="ls4"><div class="ldot"></div><span>Envoi des diamants 💎</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ======= SUCCESS OVERLAY ======= -->
+<div class="ff-success hidden" id="ff-success">
+  <div class="success-box">
+    <div id="confetti-wrap"></div>
+
+    <div class="success-anim">
+      <div class="success-ring sr1"></div>
+      <div class="success-ring sr2"></div>
+      <div class="success-icon"><i class="fas fa-gem"></i></div>
+    </div>
+
+    <div class="success-title">💎 RECHARGE RÉUSSIE !</div>
+    <div class="success-subtitle">Vos diamants ont été envoyés avec succès !</div>
+
+    <div class="success-details">
+      <div class="sd-row"><i class="fas fa-user"></i><span id="sd-uid">—</span></div>
+      <div class="sd-row"><i class="fas fa-globe"></i><span id="sd-server">—</span></div>
+      <div class="sd-row"><i class="fas fa-gem"></i><span id="sd-product">—</span></div>
+      <div class="sd-row"><i class="fas fa-credit-card"></i><span id="sd-pay">—</span></div>
+      <div class="sd-row gold-row"><i class="fas fa-euro-sign"></i><span id="sd-total">—</span></div>
+    </div>
+
+    <div class="success-timer">
+      <i class="fas fa-clock"></i>
+      Crédité sur votre compte Free Fire en <strong>moins de 30 secondes</strong>.
+      Vérifiez votre inventaire en jeu !
+    </div>
+
+    <div class="success-orderid">
+      <span>Référence :</span>
+      <span class="orderid" id="orderid">—</span>
+    </div>
+
+    <div class="success-btns">
+      <button class="btn-home" onclick="closeSuccess()"><i class="fas fa-home"></i> Retour</button>
+      <button class="btn-chat-open" onclick="openChat()"><i class="fas fa-comments"></i> Support Chat</button>
+    </div>
+  </div>
+</div>
+
+<!-- ======= CHAT SUPPORT ======= -->
+<div class="ff-chat hidden" id="ff-chat">
+  <div class="chat-wrap">
+    <div class="chat-head">
+      <div class="chat-avatar">
+        <div class="ca-ring"></div>
+        <div class="ca-inner"><i class="fas fa-headset"></i></div>
+        <div class="ca-live"></div>
+      </div>
+      <div class="chat-agent">
+        <div class="ca-name"><i class="fas fa-fire"></i> HACKEN Support FF</div>
+        <div class="ca-status"><div class="dot-live"></div> En ligne · Répond instantanément</div>
+      </div>
+      <button class="chat-x" onclick="closeChat()"><i class="fas fa-times"></i></button>
+    </div>
+
+    <div class="chat-body" id="chat-body"></div>
+
+    <div class="chat-foot">
+      <input class="chat-in" id="chat-in" placeholder="Écrivez votre message…"
+             onkeydown="if(event.key==='Enter') sendChat()"/>
+      <button class="chat-send-btn" onclick="sendChat()"><i class="fas fa-paper-plane"></i></button>
+    </div>
+  </div>
+</div>
+
+<!-- ======= CUSTOM MODAL ======= -->
+<div class="ff-modal hidden" id="ff-modal">
+  <div class="modal-wrap">
+    <div class="modal-head">
+      <h3><i class="fas fa-gem"></i> Montant Personnalisé</h3>
+      <button onclick="closeCustom()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <label>Nombre de diamants souhaité</label>
+      <input type="number" id="custom-val" class="ff-input" min="50" max="100000" placeholder="Ex: 750"/>
+      <div class="custom-price-est" id="custom-est">Prix estimé : —</div>
+    </div>
+    <div class="modal-foot">
+      <button class="mbtn-cancel" onclick="closeCustom()">Annuler</button>
+      <button class="mbtn-ok" onclick="confirmCustom()"><i class="fas fa-fire"></i> Confirmer</button>
+    </div>
+  </div>
+</div>
+
+<!-- ======= FOOTER ======= -->
+<footer class="ff-footer">
+  <div class="footer-wrap">
+    <div class="footer-logo">
+      <i class="fas fa-fire"></i>
+      <span>HACKEN STORE</span>
+      <span class="footer-ff">× FREE FIRE</span>
+    </div>
+    <div class="footer-links">
+      <a href="#">CGU</a><a href="#">Confidentialité</a><a href="#">FAQ</a><a href="#">Contact</a>
+    </div>
+    <p class="footer-disclaimer">© 2025 HACKEN STORE · Site de simulation · Non affilié à Garena Free Fire</p>
+  </div>
+  <div class="footer-sig">
+    <span class="sig-flame">🔥</span>
+    <span>Powered by <strong>HACKEN STORE</strong></span>
+    <span class="sig-flame">🔥</span>
+  </div>
+</footer>
+
+<script src="app.js"></script>
 </body>
 </html>
